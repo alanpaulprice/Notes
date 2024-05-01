@@ -1,0 +1,9 @@
+## Interface: 11500
+## Title: Notes
+## Version: 1.0.0
+## Author: alanpaulprice
+## Notes: A simple notepad.
+## SavedVariables: Notes_Config, Notes_DB
+## SavedVariablesPerCharacter:
+
+Core.lua

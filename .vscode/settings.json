@@ -1,0 +1,16 @@
+{
+	"Lua.diagnostics.globals": [
+		"InterfaceOptions_AddCategory",
+		"ReloadUI",
+		"SlashCmdList",
+		"FrameStackTooltip",
+		"FrameStackTooltip_Toggle",
+		"NUM_CHAT_WINDOWS",
+		"APIDocumentation",
+		"SearchBoxTemplate_OnTextChanged",
+		"SetItemRef",
+		"HIGHLIGHT_FONT_COLOR_CODE",
+		"HandleModifiedItemClick",
+		"ScrollUtil"
+	]
+}
