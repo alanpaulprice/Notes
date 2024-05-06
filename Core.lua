@@ -16,10 +16,10 @@ local Notes = {}
 Notes.MainFrame = CreateFrame("Frame", "Notes_MainFrame", UIParent, "BasicFrameTemplate")
 Notes.MainFrame:Hide()
 Notes.MainFrame:SetSize(338, 424)
-Notes.MainFrame:SetPoint("CENTER", UIParent, "CENTER")
--- Notes_MainFrame.Bg:SetTexture("Interface\\MailFrame\\UI-MailFrameBG")
-Notes.MainFrame:SetMovable(true)
+Notes.MainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 Notes.MainFrame:SetClipsChildren(true)
+
+---------------------------------------------------------------------------------------------- TITLE
 
 Notes.MainFrame.TitleText:SetText("Notes")
 Notes.MainFrame.TitleText:ClearAllPoints()
@@ -30,7 +30,6 @@ Notes.MainFrame.TitleText:SetTextColor(1, 1, 1)
 --------------------------------------------------------------------------------------------- MOVING
 
 Notes.MainFrame:SetMovable(true)
--- Notes.MainFrame:EnableMouse(true)
 
 Notes.MainFrame:SetScript("OnMouseDown", function(self, button)
 	if button == "LeftButton" then
@@ -153,12 +152,24 @@ end
 Notes.ScrollingEditBox:RegisterCallback("OnTextChanged", Notes.OnScrollingEditBoxTextChange, self)
 
 function Notes.MainFrame:Toggle()
-	Notes.MainFrame:SetShown(not Notes.MainFrame:IsShown())
+	self:SetShown(not self:IsShown())
 end
 
-SLASH_TOGGLENOTES1 = "/notes"
-SlashCmdList.TOGGLENOTES = function()
-	Notes.MainFrame:Toggle()
+function Notes.MainFrame:ResetSizeAndPosition()
+	self:SetSize(338, 424)
+	self:ClearAllPoints()
+	self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+end
+
+SLASH_NOTES1 = "/notes"
+SlashCmdList.NOTES = function(message)
+	if message == "" then
+		Notes.MainFrame:Toggle()
+	elseif message == "reset" then
+		Notes.MainFrame:ResetSizeAndPosition()
+	else
+		print(addonName .. ": Unknown argument '" .. message .. "' received.")
+	end
 end
 
 function Notes:Init()
@@ -172,7 +183,7 @@ function Notes:Init()
 	Notes.ScrollingEditBox.ScrollBox.EditBox:SetText(Notes_DB.note)
 end
 
-function Notes:OnAddonLoaded(self, name)
+function Notes:OnAddonLoaded(_, name)
 	if name == addonName then
 		Notes:Init()
 		print(addonName .. " has loaded.")
