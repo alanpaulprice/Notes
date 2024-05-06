@@ -44,6 +44,90 @@ Notes.MainFrame:SetScript("OnMouseUp", function(self, button)
 	end
 end)
 
+------------------------------------------------------------------------------------------- RESIZING
+
+Notes.MainFrame:SetResizable(true)
+
+------------------------------------------------------------------------ BORDERS
+
+Notes.MainFrame.RightBorder:SetScript("OnMouseDown", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StartSizing("RIGHT")
+	end
+end)
+
+Notes.MainFrame.RightBorder:SetScript("OnMouseUp", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StopMovingOrSizing()
+	end
+end)
+
+Notes.MainFrame.BottomBorder:SetScript("OnMouseDown", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StartSizing("BOTTOM")
+	end
+end)
+
+Notes.MainFrame.BottomBorder:SetScript("OnMouseUp", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StopMovingOrSizing()
+	end
+end)
+
+Notes.MainFrame.LeftBorder:SetScript("OnMouseDown", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StartSizing("LEFT")
+	end
+end)
+
+Notes.MainFrame.LeftBorder:SetScript("OnMouseUp", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StopMovingOrSizing()
+	end
+end)
+
+------------------------------------------------------------------------ CORNERS
+
+Notes.MainFrame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StartSizing("BOTTOMRIGHT")
+	end
+end)
+
+Notes.MainFrame.BotRightCorner:SetScript("OnMouseUp", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StopMovingOrSizing()
+	end
+end)
+
+Notes.MainFrame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StartSizing("BOTTOMLEFT")
+	end
+end)
+
+Notes.MainFrame.BotLeftCorner:SetScript("OnMouseUp", function(_, button)
+	if button == "LeftButton" then
+		Notes.MainFrame:StopMovingOrSizing()
+	end
+end)
+
+----------------------------------------------------------- ENFORCE MINIMUM SIZE
+
+function Notes.MainFrame:EnforceMinimumSize()
+	local minimumWidth, minimumHeight, currentWidth, currentHeight = 100, 100, self:GetWidth(), self:GetHeight()
+
+	if currentWidth < minimumWidth then
+		self:SetWidth(minimumWidth)
+	end
+
+	if currentHeight < minimumHeight then
+		self:SetHeight(minimumHeight)
+	end
+end
+
+Notes.MainFrame:SetScript("OnSizeChanged", Notes.MainFrame.EnforceMinimumSize)
+
 ----------------------------------------------------------------------------------------------------- SCROLLING EDIT BOX
 
 Notes.ScrollingEditBox = CreateFrame("Frame", "Notes_ScrollingEditBox", Notes.MainFrame, "ScrollingEditBoxTemplate")
