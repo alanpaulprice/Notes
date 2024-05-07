@@ -11,6 +11,7 @@
 		"SetItemRef",
 		"HIGHLIGHT_FONT_COLOR_CODE",
 		"HandleModifiedItemClick",
-		"ScrollUtil"
+		"ScrollUtil",
+		"AddonCompartmentFrame"
 	]
 }
