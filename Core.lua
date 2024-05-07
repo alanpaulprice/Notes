@@ -152,7 +152,15 @@ end
 Notes.ScrollingEditBox:RegisterCallback("OnTextChanged", Notes.OnScrollingEditBoxTextChange, self)
 
 function Notes.MainFrame:Toggle()
-	self:SetShown(not self:IsShown())
+	local previousShown = self:IsShown()
+
+	self:SetShown(not previousShown)
+
+	if previousShown then
+		PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
+	else
+		PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
+	end
 end
 
 function Notes.MainFrame:ResetSizeAndPosition()
