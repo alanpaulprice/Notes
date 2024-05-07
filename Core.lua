@@ -31,21 +31,30 @@ Notes.MainFrame.TitleText:SetTextColor(1, 1, 1)
 
 Notes.MainFrame:SetMovable(true)
 
-Notes.MainFrame:SetScript("OnMouseDown", function(self, button)
+Notes.MainFrame.TitleBg:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		self:StartMoving()
+		Notes.MainFrame:StartMoving()
 	end
 end)
 
-Notes.MainFrame:SetScript("OnMouseUp", function(self, button)
+Notes.MainFrame.TitleBg:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		self:StopMovingOrSizing()
+		Notes.MainFrame:StopMovingOrSizing()
 	end
 end)
+
+------------------------------------------------------------------------- CURSOR
+
+Notes.MainFrame.TitleBg:SetScript("OnEnter", function()
+	SetCursor("Interface\\CURSOR\\OPENHAND.blp")
+end)
+
+Notes.MainFrame.TitleBg:SetScript("OnLeave", ResetCursor)
 
 ------------------------------------------------------------------------------------------- RESIZING
 
 Notes.MainFrame:SetResizable(true)
+Notes.MainFrame:SetResizeBounds(100, 100)
 
 ------------------------------------------------------------------------ BORDERS
 
@@ -111,21 +120,26 @@ Notes.MainFrame.BotLeftCorner:SetScript("OnMouseUp", function(_, button)
 	end
 end)
 
------------------------------------------------------------ ENFORCE MINIMUM SIZE
+------------------------------------------------------------------------- CURSOR
 
-function Notes.MainFrame:EnforceMinimumSize()
-	local minimumWidth, minimumHeight, currentWidth, currentHeight = 100, 100, self:GetWidth(), self:GetHeight()
-
-	if currentWidth < minimumWidth then
-		self:SetWidth(minimumWidth)
-	end
-
-	if currentHeight < minimumHeight then
-		self:SetHeight(minimumHeight)
-	end
+function Notes:SetSizeCursor()
+	SetCursor("Interface\\CURSOR\\UI-Cursor-Size.blp")
 end
 
-Notes.MainFrame:SetScript("OnSizeChanged", Notes.MainFrame.EnforceMinimumSize)
+Notes.MainFrame.RightBorder:SetScript("OnEnter", Notes.SetSizeCursor)
+Notes.MainFrame.RightBorder:SetScript("OnLeave", ResetCursor)
+
+Notes.MainFrame.BottomBorder:SetScript("OnEnter", Notes.SetSizeCursor)
+Notes.MainFrame.BottomBorder:SetScript("OnLeave", ResetCursor)
+
+Notes.MainFrame.LeftBorder:SetScript("OnEnter", Notes.SetSizeCursor)
+Notes.MainFrame.LeftBorder:SetScript("OnLeave", ResetCursor)
+
+Notes.MainFrame.BotRightCorner:SetScript("OnEnter", Notes.SetSizeCursor)
+Notes.MainFrame.BotRightCorner:SetScript("OnLeave", ResetCursor)
+
+Notes.MainFrame.BotLeftCorner:SetScript("OnEnter", Notes.SetSizeCursor)
+Notes.MainFrame.BotLeftCorner:SetScript("OnLeave", ResetCursor)
 
 ----------------------------------------------------------------------------------------------------- SCROLLING EDIT BOX
 
