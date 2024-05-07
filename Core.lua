@@ -9,7 +9,9 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 
 local addonName, core = ...
-local Notes = {}
+local Notes = {
+	MinimapButton = {},
+}
 
 ------------------------------------------------------------------------------------------------------------- MAIN FRAME
 
@@ -177,6 +179,8 @@ function Notes.MainFrame:Toggle()
 	end
 end
 
+---------------------------------------------------------------------------------------------------- RESET SIZE/POSITION
+
 function Notes.MainFrame:ResetSizeAndPosition()
 	self:SetSize(338, 424)
 	self:ClearAllPoints()
@@ -194,6 +198,31 @@ SlashCmdList.NOTES = function(message)
 	end
 end
 
+---------------------------------------------------------------------------------------------------- MINIMAP BUTTON INIT
+
+function Notes.MinimapButton:Init()
+	local minimapButton = LibStub("LibDataBroker-1.1"):NewDataObject("Notes", {
+		type = "data source",
+		text = "Notes",
+		icon = "Interface\\ICONS\\INV_Misc_PaperBundle02a.blp", -- "Interface\\ICONS\\INV_Misc_Note_04.blp"
+		OnClick = function()
+			Notes.MainFrame:Toggle()
+		end,
+		OnTooltipShow = function(tooltip)
+			if not tooltip or not tooltip.AddLine then
+				return
+			end
+
+			tooltip:AddLine("Notes")
+		end,
+	})
+
+	local icon = LibStub("LibDBIcon-1.0", true)
+	icon:Register("Notes", minimapButton, Notes_DB)
+end
+
+------------------------------------------------------------------------------------------------------------------- INIT
+
 function Notes:Init()
 	if Notes_DB == nil then
 		Notes_DB = {
@@ -203,12 +232,15 @@ function Notes:Init()
 	end
 
 	Notes.ScrollingEditBox.ScrollBox.EditBox:SetText(Notes_DB.note)
+
+	Notes.MinimapButton:Init()
 end
+
+------------------------------------------------------------------------------------------------------- ON ADD ON LOADED
 
 function Notes:OnAddonLoaded(_, name)
 	if name == addonName then
 		Notes:Init()
-		print(addonName .. " has loaded.")
 	end
 end
 

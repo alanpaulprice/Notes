@@ -6,4 +6,6 @@
 ## SavedVariables: Notes_Config, Notes_DB
 ## SavedVariablesPerCharacter:
 
+LibDBIcon-1.0\embeds.xml
+
 Core.lua
