@@ -3,9 +3,11 @@
 ## Version: 1.0.0
 ## Author: alanpaulprice
 ## Notes: A simple notepad.
-## SavedVariables: Notes_Config, Notes_DB
+## SavedVariables: NotesConfig, NotesDB
 ## SavedVariablesPerCharacter:
 
 LibDBIcon-1.0\embeds.xml
 
 Core.lua
+Database.lua
+MainFrame.lua
