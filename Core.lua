@@ -1,10 +1,6 @@
 local addonName, addon = ...
 
---------------------------------------------------------------------------------------------------------- MINIMAP BUTTON
-
 addon.MinimapButton = {}
-
------------------------------------------------------------------------------------------------ INIT
 
 function addon.MinimapButton:Initialize()
 	local minimapButton = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
@@ -31,8 +27,6 @@ function addon.MinimapButton:Initialize()
 	icon:Register(addonName, minimapButton, NotesDB)
 end
 
---------------------------------------------------------------------------------------------------------- SLASH COMMANDS
-
 function addon:ConfigureSlashCommands()
 	SLASH_NOTES1 = "/" .. string.lower(addonName)
 	SlashCmdList.NOTES = function(message)
@@ -46,16 +40,12 @@ function addon:ConfigureSlashCommands()
 	end
 end
 
-------------------------------------------------------------------------------------------------------------------- INIT
-
 function addon:Initialize()
 	addon.Database:Initialize()
 	addon.MinimapButton:Initialize()
 	addon.MainFrame:Initialize()
 	addon:ConfigureSlashCommands()
 end
-
-------------------------------------------------------------------------------------------------------- ON ADD ON LOADED
 
 function addon:OnAddonLoaded(_, name)
 	if name == addonName then
@@ -66,8 +56,6 @@ end
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 events:SetScript("OnEvent", addon.OnAddonLoaded)
-
--------------------------------------------------------------------------------------------------------------- UTILITIES
 
 function addon:PrintKeys(tbl)
 	for key, _ in pairs(tbl) do
