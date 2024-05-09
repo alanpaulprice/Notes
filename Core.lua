@@ -8,166 +8,169 @@ end
 
 ------------------------------------------------------------------------------------------------------------------------
 
-local addonName, core = ...
-local Notes = {
-	MinimapButton = {},
-}
+local addonName, addon = ...
 
 ------------------------------------------------------------------------------------------------------------- MAIN FRAME
 
-Notes.MainFrame = CreateFrame("Frame", "Notes_MainFrame", UIParent, "BasicFrameTemplate")
-Notes.MainFrame:Hide()
-Notes.MainFrame:SetSize(338, 424)
-Notes.MainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-Notes.MainFrame:SetClipsChildren(true)
+addon.MainFrame = CreateFrame("Frame", addonName .. "_MainFrame", UIParent, "BasicFrameTemplate")
+addon.MainFrame:Hide()
+addon.MainFrame:SetSize(338, 424)
+addon.MainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+addon.MainFrame:SetClipsChildren(true)
 
 ---------------------------------------------------------------------------------------------- TITLE
 
-Notes.MainFrame.TitleText:SetText("Notes")
-Notes.MainFrame.TitleText:ClearAllPoints()
-Notes.MainFrame.TitleText:SetPoint("TOPLEFT", Notes.MainFrame.TopBorder, "TOPLEFT", 0, 0)
-Notes.MainFrame.TitleText:SetPoint("BOTTOMRIGHT", Notes.MainFrame.TopBorder, "BOTTOMRIGHT", 0, 3)
-Notes.MainFrame.TitleText:SetTextColor(1, 1, 1)
+addon.MainFrame.TitleText:SetText(addonName)
+addon.MainFrame.TitleText:ClearAllPoints()
+addon.MainFrame.TitleText:SetPoint("TOPLEFT", addon.MainFrame.TopBorder, "TOPLEFT", 0, 0)
+addon.MainFrame.TitleText:SetPoint("BOTTOMRIGHT", addon.MainFrame.TopBorder, "BOTTOMRIGHT", 0, 3)
+addon.MainFrame.TitleText:SetTextColor(1, 1, 1)
 
 --------------------------------------------------------------------------------------------- MOVING
 
-Notes.MainFrame:SetMovable(true)
+addon.MainFrame:SetMovable(true)
 
-Notes.MainFrame.TitleBg:SetScript("OnMouseDown", function(_, button)
+addon.MainFrame.TitleBg:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StartMoving()
+		addon.MainFrame:StartMoving()
 	end
 end)
 
-Notes.MainFrame.TitleBg:SetScript("OnMouseUp", function(_, button)
+addon.MainFrame.TitleBg:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StopMovingOrSizing()
+		addon.MainFrame:StopMovingOrSizing()
 	end
 end)
 
 ------------------------------------------------------------------------- CURSOR
 
-Notes.MainFrame.TitleBg:SetScript("OnEnter", function()
+addon.MainFrame.TitleBg:SetScript("OnEnter", function()
 	SetCursor("Interface\\CURSOR\\OPENHAND.blp")
 end)
 
-Notes.MainFrame.TitleBg:SetScript("OnLeave", ResetCursor)
+addon.MainFrame.TitleBg:SetScript("OnLeave", ResetCursor)
 
 ------------------------------------------------------------------------------------------- RESIZING
 
-Notes.MainFrame:SetResizable(true)
-Notes.MainFrame:SetResizeBounds(100, 100)
+addon.MainFrame:SetResizable(true)
+addon.MainFrame:SetResizeBounds(100, 100)
 
 ------------------------------------------------------------------------ BORDERS
 
-Notes.MainFrame.RightBorder:SetScript("OnMouseDown", function(_, button)
+addon.MainFrame.RightBorder:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StartSizing("RIGHT")
+		addon.MainFrame:StartSizing("RIGHT")
 	end
 end)
 
-Notes.MainFrame.RightBorder:SetScript("OnMouseUp", function(_, button)
+addon.MainFrame.RightBorder:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StopMovingOrSizing()
+		addon.MainFrame:StopMovingOrSizing()
 	end
 end)
 
-Notes.MainFrame.BottomBorder:SetScript("OnMouseDown", function(_, button)
+addon.MainFrame.BottomBorder:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StartSizing("BOTTOM")
+		addon.MainFrame:StartSizing("BOTTOM")
 	end
 end)
 
-Notes.MainFrame.BottomBorder:SetScript("OnMouseUp", function(_, button)
+addon.MainFrame.BottomBorder:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StopMovingOrSizing()
+		addon.MainFrame:StopMovingOrSizing()
 	end
 end)
 
-Notes.MainFrame.LeftBorder:SetScript("OnMouseDown", function(_, button)
+addon.MainFrame.LeftBorder:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StartSizing("LEFT")
+		addon.MainFrame:StartSizing("LEFT")
 	end
 end)
 
-Notes.MainFrame.LeftBorder:SetScript("OnMouseUp", function(_, button)
+addon.MainFrame.LeftBorder:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StopMovingOrSizing()
+		addon.MainFrame:StopMovingOrSizing()
 	end
 end)
 
 ------------------------------------------------------------------------ CORNERS
 
-Notes.MainFrame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
+addon.MainFrame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StartSizing("BOTTOMRIGHT")
+		addon.MainFrame:StartSizing("BOTTOMRIGHT")
 	end
 end)
 
-Notes.MainFrame.BotRightCorner:SetScript("OnMouseUp", function(_, button)
+addon.MainFrame.BotRightCorner:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StopMovingOrSizing()
+		addon.MainFrame:StopMovingOrSizing()
 	end
 end)
 
-Notes.MainFrame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
+addon.MainFrame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StartSizing("BOTTOMLEFT")
+		addon.MainFrame:StartSizing("BOTTOMLEFT")
 	end
 end)
 
-Notes.MainFrame.BotLeftCorner:SetScript("OnMouseUp", function(_, button)
+addon.MainFrame.BotLeftCorner:SetScript("OnMouseUp", function(_, button)
 	if button == "LeftButton" then
-		Notes.MainFrame:StopMovingOrSizing()
+		addon.MainFrame:StopMovingOrSizing()
 	end
 end)
 
 ------------------------------------------------------------------------- CURSOR
 
-function Notes:SetSizeCursor()
+function addon:SetSizeCursor()
 	SetCursor("Interface\\CURSOR\\UI-Cursor-Size.blp")
 end
 
-Notes.MainFrame.RightBorder:SetScript("OnEnter", Notes.SetSizeCursor)
-Notes.MainFrame.RightBorder:SetScript("OnLeave", ResetCursor)
+addon.MainFrame.RightBorder:SetScript("OnEnter", addon.SetSizeCursor)
+addon.MainFrame.RightBorder:SetScript("OnLeave", ResetCursor)
 
-Notes.MainFrame.BottomBorder:SetScript("OnEnter", Notes.SetSizeCursor)
-Notes.MainFrame.BottomBorder:SetScript("OnLeave", ResetCursor)
+addon.MainFrame.BottomBorder:SetScript("OnEnter", addon.SetSizeCursor)
+addon.MainFrame.BottomBorder:SetScript("OnLeave", ResetCursor)
 
-Notes.MainFrame.LeftBorder:SetScript("OnEnter", Notes.SetSizeCursor)
-Notes.MainFrame.LeftBorder:SetScript("OnLeave", ResetCursor)
+addon.MainFrame.LeftBorder:SetScript("OnEnter", addon.SetSizeCursor)
+addon.MainFrame.LeftBorder:SetScript("OnLeave", ResetCursor)
 
-Notes.MainFrame.BotRightCorner:SetScript("OnEnter", Notes.SetSizeCursor)
-Notes.MainFrame.BotRightCorner:SetScript("OnLeave", ResetCursor)
+addon.MainFrame.BotRightCorner:SetScript("OnEnter", addon.SetSizeCursor)
+addon.MainFrame.BotRightCorner:SetScript("OnLeave", ResetCursor)
 
-Notes.MainFrame.BotLeftCorner:SetScript("OnEnter", Notes.SetSizeCursor)
-Notes.MainFrame.BotLeftCorner:SetScript("OnLeave", ResetCursor)
+addon.MainFrame.BotLeftCorner:SetScript("OnEnter", addon.SetSizeCursor)
+addon.MainFrame.BotLeftCorner:SetScript("OnLeave", ResetCursor)
 
 ----------------------------------------------------------------------------------------------------- SCROLLING EDIT BOX
 
-Notes.ScrollingEditBox = CreateFrame("Frame", "Notes_ScrollingEditBox", Notes.MainFrame, "ScrollingEditBoxTemplate")
-Notes.ScrollingEditBox:SetPoint("TOPLEFT", Notes.MainFrame.Bg, "TOPLEFT", 4, -2)
-Notes.ScrollingEditBox:SetPoint("BOTTOMRIGHT", Notes.MainFrame.Bg, "BOTTOMRIGHT", -26, 2)
+addon.MainFrame.ScrollingEditBox =
+	CreateFrame("Frame", addonName .. "_ScrollingEditBox", addon.MainFrame, "ScrollingEditBoxTemplate")
+addon.MainFrame.ScrollingEditBox:SetPoint("TOPLEFT", addon.MainFrame.Bg, "TOPLEFT", 4, -2)
+addon.MainFrame.ScrollingEditBox:SetPoint("BOTTOMRIGHT", addon.MainFrame.Bg, "BOTTOMRIGHT", -26, 2)
 
 ------------------------------------------------------------------------------------------------------------- SCROLL BAR
 
-Notes.ScrollingEditBox.ScrollBar =
-	CreateFrame("EventFrame", "Notes_ScrollingEditBox_ScrollBar", Notes.MainFrame, "WowTrimScrollBar")
-Notes.ScrollingEditBox.ScrollBar:SetPoint("TOPLEFT", Notes.MainFrame.Bg, "TOPRIGHT", -24, 0)
-Notes.ScrollingEditBox.ScrollBar:SetPoint("BOTTOMRIGHT", Notes.MainFrame.Bg, "BOTTOMRIGHT", 0, 0)
-ScrollUtil.RegisterScrollBoxWithScrollBar(Notes.ScrollingEditBox.ScrollBox, Notes.ScrollingEditBox.ScrollBar)
+addon.MainFrame.ScrollingEditBox.ScrollBar =
+	CreateFrame("EventFrame", addonName .. "_ScrollingEditBox_ScrollBar", addon.MainFrame, "WowTrimScrollBar")
+addon.MainFrame.ScrollingEditBox.ScrollBar:SetPoint("TOPLEFT", addon.MainFrame.Bg, "TOPRIGHT", -24, 0)
+addon.MainFrame.ScrollingEditBox.ScrollBar:SetPoint("BOTTOMRIGHT", addon.MainFrame.Bg, "BOTTOMRIGHT", 0, 0)
+ScrollUtil.RegisterScrollBoxWithScrollBar(
+	addon.MainFrame.ScrollingEditBox.ScrollBox,
+	addon.MainFrame.ScrollingEditBox.ScrollBar
+)
 
 --------------------------------------------------------------------------------------------------- TEXT CHANGE HANDLING
 
-function Notes:OnScrollingEditBoxTextChange(editBox)
+function addon.MainFrame:OnScrollingEditBoxTextChange(editBox)
 	if Notes_DB ~= nil then
 		Notes_DB.note = editBox:GetInputText()
 	end
 end
 
-Notes.ScrollingEditBox:RegisterCallback("OnTextChanged", Notes.OnScrollingEditBoxTextChange, self)
+addon.MainFrame.ScrollingEditBox:RegisterCallback("OnTextChanged", addon.MainFrame.OnScrollingEditBoxTextChange, self)
 
-function Notes.MainFrame:Toggle()
+------------------------------------------------------------------------------------------------------ MAIN FRAME TOGGLE
+
+function addon.MainFrame:Toggle()
 	local previousShown = self:IsShown()
 
 	self:SetShown(not previousShown)
@@ -181,49 +184,57 @@ end
 
 ---------------------------------------------------------------------------------------------------- RESET SIZE/POSITION
 
-function Notes.MainFrame:ResetSizeAndPosition()
+function addon.MainFrame:ResetSizeAndPosition()
 	self:SetSize(338, 424)
 	self:ClearAllPoints()
 	self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 end
 
-SLASH_NOTES1 = "/notes"
+SLASH_NOTES1 = "/" .. string.lower(addonName)
 SlashCmdList.NOTES = function(message)
 	if message == "" then
-		Notes.MainFrame:Toggle()
+		addon.MainFrame:Toggle()
 	elseif message == "reset" then
-		Notes.MainFrame:ResetSizeAndPosition()
+		addon.MainFrame:ResetSizeAndPosition()
 	else
 		print(addonName .. ": Unknown argument '" .. message .. "' received.")
 	end
 end
 
----------------------------------------------------------------------------------------------------- MINIMAP BUTTON INIT
+--------------------------------------------------------------------------------------------------------- MINIMAP BUTTON
 
-function Notes.MinimapButton:Init()
-	local minimapButton = LibStub("LibDataBroker-1.1"):NewDataObject("Notes", {
+addon.MinimapButton = {}
+
+----------------------------------------------------------------------------------------------- INIT
+
+function addon.MinimapButton:Init()
+	local minimapButton = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
 		type = "data source",
-		text = "Notes",
+		text = addonName,
 		icon = "Interface\\ICONS\\INV_Misc_PaperBundle02a.blp", -- "Interface\\ICONS\\INV_Misc_Note_04.blp"
-		OnClick = function()
-			Notes.MainFrame:Toggle()
+		OnClick = function(_, button)
+			if button == "LeftButton" then
+				addon.MainFrame:Toggle()
+			elseif button == "RightButton" then
+				--TODO: OPEN CONFIG
+			end
 		end,
 		OnTooltipShow = function(tooltip)
 			if not tooltip or not tooltip.AddLine then
 				return
 			end
 
-			tooltip:AddLine("Notes")
+			tooltip:AddLine(addonName)
 		end,
 	})
 
 	local icon = LibStub("LibDBIcon-1.0", true)
-	icon:Register("Notes", minimapButton, Notes_DB)
+	icon:Register(addonName, minimapButton, Notes_DB)
 end
 
 ------------------------------------------------------------------------------------------------------------------- INIT
 
-function Notes:Init()
+function addon:Init()
 	if Notes_DB == nil then
 		Notes_DB = {
 			config = {},
@@ -231,19 +242,19 @@ function Notes:Init()
 		}
 	end
 
-	Notes.ScrollingEditBox.ScrollBox.EditBox:SetText(Notes_DB.note)
+	addon.MainFrame.ScrollingEditBox.ScrollBox.EditBox:SetText(Notes_DB.note)
 
-	Notes.MinimapButton:Init()
+	addon.MinimapButton:Init()
 end
 
 ------------------------------------------------------------------------------------------------------- ON ADD ON LOADED
 
-function Notes:OnAddonLoaded(_, name)
+function addon:OnAddonLoaded(_, name)
 	if name == addonName then
-		Notes:Init()
+		addon:Init()
 	end
 end
 
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
-events:SetScript("OnEvent", Notes.OnAddonLoaded)
+events:SetScript("OnEvent", addon.OnAddonLoaded)
