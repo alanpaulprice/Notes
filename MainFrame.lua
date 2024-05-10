@@ -4,7 +4,6 @@ local MainFrame = addon.MainFrame
 
 local function CreateRootFrame()
 	MainFrame = CreateFrame("Frame", addonName .. "_MainFrame", UIParent, "BasicFrameTemplate")
-	MainFrame:Hide()
 	MainFrame:SetSize(338, 424)
 	MainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	MainFrame:SetClipsChildren(true)
@@ -131,14 +130,19 @@ function MainFrame:Initialize()
 end
 
 function MainFrame:Toggle()
-	local previousShown = MainFrame:IsShown()
-
-	MainFrame:SetShown(not previousShown)
-
-	if previousShown then
+	if type(_G[addonName .. "_MainFrame"]) ~= "table" then
+		MainFrame:Initialize()
 		PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
 	else
-		PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
+		local previousShown = MainFrame:IsShown()
+
+		MainFrame:SetShown(not previousShown)
+
+		if previousShown then
+			PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
+		else
+			PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
+		end
 	end
 end
 

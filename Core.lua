@@ -43,7 +43,6 @@ end
 function addon:Initialize()
 	addon.Database:Initialize()
 	addon.MinimapButton:Initialize()
-	addon.MainFrame:Initialize()
 	addon:ConfigureSlashCommands()
 end
 
