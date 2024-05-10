@@ -42,6 +42,12 @@ local function MakeFrameResizable()
 	MainFrame:SetResizable(true)
 	MainFrame:SetResizeBounds(100, 100)
 
+	local function onBorderOrCornerMouseDown(button, framePoint)
+		if button == "LeftButton" then
+			MainFrame:StartSizing(framePoint)
+		end
+	end
+
 	local function onBorderOrCornerMouseUp(_, button)
 		if button == "LeftButton" then
 			MainFrame:StopMovingOrSizing()
@@ -49,41 +55,31 @@ local function MakeFrameResizable()
 	end
 
 	MainFrame.RightBorder:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			MainFrame:StartSizing("RIGHT")
-		end
+		onBorderOrCornerMouseDown(button, "RIGHT")
 	end)
 
 	MainFrame.RightBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 
 	MainFrame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			MainFrame:StartSizing("BOTTOMRIGHT")
-		end
+		onBorderOrCornerMouseDown(button, "BOTTOMRIGHT")
 	end)
 
 	MainFrame.BotRightCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 
 	MainFrame.BottomBorder:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			MainFrame:StartSizing("BOTTOM")
-		end
+		onBorderOrCornerMouseDown(button, "BOTTOM")
 	end)
 
 	MainFrame.BottomBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 
 	MainFrame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			MainFrame:StartSizing("BOTTOMLEFT")
-		end
+		onBorderOrCornerMouseDown(button, "BOTTOMLEFT")
 	end)
 
 	MainFrame.BotLeftCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 
 	MainFrame.LeftBorder:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			MainFrame:StartSizing("LEFT")
-		end
+		onBorderOrCornerMouseDown(button, "LEFT")
 	end)
 
 	MainFrame.LeftBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
