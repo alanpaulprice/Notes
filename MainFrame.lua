@@ -54,54 +54,44 @@ local function MakeFrameResizable()
 		end
 	end
 
-	MainFrame.RightBorder:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "RIGHT")
-	end)
-
-	MainFrame.RightBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-
-	MainFrame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "BOTTOMRIGHT")
-	end)
-
-	MainFrame.BotRightCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-
-	MainFrame.BottomBorder:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "BOTTOM")
-	end)
-
-	MainFrame.BottomBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-
-	MainFrame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "BOTTOMLEFT")
-	end)
-
-	MainFrame.BotLeftCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-
-	MainFrame.LeftBorder:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "LEFT")
-	end)
-
-	MainFrame.LeftBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-
 	local function SetSizeCursor()
 		SetCursor("Interface\\CURSOR\\UI-Cursor-Size.blp")
 	end
 
+	MainFrame.RightBorder:SetScript("OnMouseDown", function(_, button)
+		onBorderOrCornerMouseDown(button, "RIGHT")
+	end)
+	MainFrame.RightBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 	MainFrame.RightBorder:SetScript("OnEnter", SetSizeCursor)
 	MainFrame.RightBorder:SetScript("OnLeave", ResetCursor)
 
-	MainFrame.BottomBorder:SetScript("OnEnter", SetSizeCursor)
-	MainFrame.BottomBorder:SetScript("OnLeave", ResetCursor)
-
-	MainFrame.LeftBorder:SetScript("OnEnter", SetSizeCursor)
-	MainFrame.LeftBorder:SetScript("OnLeave", ResetCursor)
-
+	MainFrame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
+		onBorderOrCornerMouseDown(button, "BOTTOMRIGHT")
+	end)
+	MainFrame.BotRightCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 	MainFrame.BotRightCorner:SetScript("OnEnter", SetSizeCursor)
 	MainFrame.BotRightCorner:SetScript("OnLeave", ResetCursor)
 
+	MainFrame.BottomBorder:SetScript("OnMouseDown", function(_, button)
+		onBorderOrCornerMouseDown(button, "BOTTOM")
+	end)
+	MainFrame.BottomBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
+	MainFrame.BottomBorder:SetScript("OnEnter", SetSizeCursor)
+	MainFrame.BottomBorder:SetScript("OnLeave", ResetCursor)
+
+	MainFrame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
+		onBorderOrCornerMouseDown(button, "BOTTOMLEFT")
+	end)
+	MainFrame.BotLeftCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
 	MainFrame.BotLeftCorner:SetScript("OnEnter", SetSizeCursor)
 	MainFrame.BotLeftCorner:SetScript("OnLeave", ResetCursor)
+
+	MainFrame.LeftBorder:SetScript("OnMouseDown", function(_, button)
+		onBorderOrCornerMouseDown(button, "LEFT")
+	end)
+	MainFrame.LeftBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
+	MainFrame.LeftBorder:SetScript("OnEnter", SetSizeCursor)
+	MainFrame.LeftBorder:SetScript("OnLeave", ResetCursor)
 end
 
 local function CreateScrollingEditBox()
