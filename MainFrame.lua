@@ -131,7 +131,7 @@ end
 
 function MainFrame:Toggle()
 	if type(_G[addonName .. "_MainFrame"]) ~= "table" then
-		MainFrame:Initialize()
+		self:Initialize()
 		PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
 	else
 		local previousShown = MainFrame:IsShown()

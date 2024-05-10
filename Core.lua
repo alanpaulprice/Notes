@@ -31,7 +31,7 @@ function addon:ConfigureSlashCommands()
 	SLASH_NOTES1 = "/" .. string.lower(addonName)
 	SlashCmdList.NOTES = function(message)
 		if message == "" then
-			addon.MainFrame.Toggle(addon.MainFrame)
+			addon.MainFrame:Toggle()
 		elseif message == "reset" then
 			addon.MainFrame:ResetSizeAndPosition()
 		else
