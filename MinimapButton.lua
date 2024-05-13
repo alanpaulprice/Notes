@@ -9,7 +9,7 @@ function MinimapButton:Initialize()
 		icon = "Interface\\ICONS\\INV_Misc_PaperBundle02a.blp", -- "Interface\\ICONS\\INV_Misc_Note_04.blp"
 		OnClick = function(_, button)
 			if button == "LeftButton" then
-				addon.MainFrame:Toggle()
+				addon.UI:Toggle()
 			elseif button == "RightButton" then
 				--TODO: OPEN CONFIG
 			end

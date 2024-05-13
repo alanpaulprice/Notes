@@ -4,9 +4,9 @@ function addon:ConfigureSlashCommands()
 	SLASH_NOTES1 = "/" .. string.lower(addonName)
 	SlashCmdList.NOTES = function(message)
 		if message == "" then
-			addon.MainFrame:Toggle()
+			addon.UI:Toggle()
 		elseif message == "reset" then
-			addon.MainFrame:ResetSizeAndPosition()
+			addon.UI:ResetSizeAndPosition()
 		else
 			print(addonName .. ": Unknown argument '" .. message .. "' received.")
 		end
