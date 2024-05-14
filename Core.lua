@@ -5,6 +5,8 @@ function addon:ConfigureSlashCommands()
 	SlashCmdList.NOTES = function(message)
 		if message == "" then
 			addon.UI:Toggle()
+		elseif message == "config" then
+			addon.Config:Toggle()
 		elseif message == "reset" then
 			addon.UI:ResetSizeAndPosition()
 		else
@@ -22,6 +24,7 @@ end
 function addon:OnAddonLoaded(_, name)
 	if name == addonName then
 		addon:Initialize()
+		addon.Config:Toggle() --! TEMP
 	end
 end
 

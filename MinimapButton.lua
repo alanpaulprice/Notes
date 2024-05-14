@@ -11,7 +11,7 @@ function MinimapButton:Initialize()
 			if button == "LeftButton" then
 				addon.UI:Toggle()
 			elseif button == "RightButton" then
-				--TODO: OPEN CONFIG
+				addon.Config:Toggle()
 			end
 		end,
 		OnTooltipShow = function(tooltip)

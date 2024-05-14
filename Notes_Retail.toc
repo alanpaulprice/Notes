@@ -12,3 +12,4 @@ Utilities.lua
 Core.lua
 Database.lua
 UI.lua
+Config.lua
