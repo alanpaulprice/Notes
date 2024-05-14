@@ -7,6 +7,7 @@ local function CreateRootFrame()
 	UI.Frame:SetSize(338, 424)
 	UI.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	UI.Frame:SetClipsChildren(true)
+	UI.Frame:EnableMouse(true)
 
 	UI.Frame.TitleText:SetText(addonName)
 	UI.Frame.TitleText:SetPoint("TOPLEFT", UI.Frame.TopBorder, "TOPLEFT", 0, 0)
