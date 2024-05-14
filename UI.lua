@@ -9,7 +9,6 @@ local function CreateRootFrame()
 	UI.Frame:SetClipsChildren(true)
 
 	UI.Frame.TitleText:SetText(addonName)
-	UI.Frame.TitleText:ClearAllPoints()
 	UI.Frame.TitleText:SetPoint("TOPLEFT", UI.Frame.TopBorder, "TOPLEFT", 0, 0)
 	UI.Frame.TitleText:SetPoint("BOTTOMRIGHT", UI.Frame.TopBorder, "BOTTOMRIGHT", 0, 3)
 	UI.Frame.TitleText:SetTextColor(1, 1, 1)
@@ -131,9 +130,25 @@ function UI:Toggle()
 		self:Initialize()
 		PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
 	else
+		local previousIsShown = UI.Frame:IsShown()
+
+		UI.Frame:SetShown(not previousIsShown)
+
+		if previousIsShown then
+			PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
+		else
+			PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
+		end
+
+		-- An alternative approach, which drops the frame from memory when hidden.
+		-- This has an issue where the frame position is not remembered.
+		-- It's likely overkill for such a lightweight addon.
+		-- Implementing custom position history isn't worth doing right now.
+		--[[
 		UI.Frame:Hide()
 		UI.Frame = nil
 		PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
+		]]
 	end
 end
 
