@@ -12,6 +12,8 @@
 		"HIGHLIGHT_FONT_COLOR_CODE",
 		"HandleModifiedItemClick",
 		"ScrollUtil",
-		"AddonCompartmentFrame"
+		"AddonCompartmentFrame",
+		"CreateMinimalSliderFormatter",
+		"MinimalSliderWithSteppersMixin",
 	]
 }
