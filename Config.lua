@@ -99,26 +99,19 @@ local function CreateFontSizeControl()
 	)
 end
 
-local function MakeFrameMoveable()
-	Config.Frame:SetMovable(true)
+local function CreateShowMinimapButtonCheckbox()
+	Config.Frame.ShowMinimapButtonLabel =
+		Config.Frame.FontSizeControl:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	Config.Frame.ShowMinimapButtonLabel:SetPoint("TOPLEFT", Config.Frame.FontSizeControl, "BOTTOMLEFT", 0, -10)
+	Config.Frame.ShowMinimapButtonLabel:SetText("Show Minimap Button")
 
-	Config.Frame.TitleBg:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			Config.Frame:StartMoving()
-		end
-	end)
-
-	Config.Frame.TitleBg:SetScript("OnMouseUp", function(_, button)
-		if button == "LeftButton" then
-			Config.Frame:StopMovingOrSizing()
-		end
-	end)
-
-	Config.Frame.TitleBg:SetScript("OnEnter", function()
-		SetCursor("Interface\\CURSOR\\OPENHAND.blp")
-	end)
-
-	Config.Frame.TitleBg:SetScript("OnLeave", ResetCursor)
+	Config.Frame.ShowMinimapButtonCheckbox = CreateFrame(
+		"CheckButton",
+		addonName .. "_Config.Frame.ShowMinimapButtonCheckbox",
+		Config.Frame,
+		"UICheckButtonTemplate"
+	)
+	Config.Frame.ShowMinimapButtonCheckbox:SetPoint("LEFT", Config.Frame.ShowMinimapButtonLabel, "RIGHT", 10, 0)
 end
 
 function Config:Initialize()
@@ -127,6 +120,7 @@ function Config:Initialize()
 	CreateResetPositionButton()
 	CreateResetSizeButton()
 	CreateFontSizeControl()
+	CreateShowMinimapButtonCheckbox()
 end
 
 function Config:Toggle()
