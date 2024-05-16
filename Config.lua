@@ -58,6 +58,7 @@ local function CreateFontSizeControl()
 	Config.Frame.FontSizeControl:SetPoint("TOP", Config.Frame.ResetSizeButton, "BOTTOM", 0, -10)
 	Config.Frame.FontSizeControl:SetPoint("LEFT", Config.Frame.Bg, "LEFT", 10, 0)
 	Config.Frame.FontSizeControl:SetPoint("RIGHT", Config.Frame.Bg, "RIGHT", -10, 0)
+	Config.Frame.FontSizeControl:SetHeight(52)
 
 	Config.Frame.FontSizeLabel = Config.Frame.FontSizeControl:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	Config.Frame.FontSizeLabel:SetPoint("TOPLEFT", Config.Frame.FontSizeControl, "TOPLEFT", 0, -19)
