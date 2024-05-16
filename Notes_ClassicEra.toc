@@ -3,7 +3,7 @@
 ## Version: 1.0.0
 ## Author: alanpaulprice
 ## Notes: A simple notepad.
-## SavedVariables: NotesConfig, NotesDB
+## SavedVariables: NotesConfig, NotesDB, NotesLDBIconDB
 ## SavedVariablesPerCharacter:
 
 LibDBIcon-1.0\embeds.xml

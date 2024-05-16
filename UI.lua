@@ -153,8 +153,11 @@ function UI:Toggle()
 	end
 end
 
-function UI:ResetSizeAndPosition()
+function UI:ResetSize()
 	UI.Frame:SetSize(338, 424)
+end
+
+function UI:ResetPosition()
 	UI.Frame:ClearAllPoints()
 	UI.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 end

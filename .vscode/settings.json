@@ -15,5 +15,6 @@
 		"AddonCompartmentFrame",
 		"CreateMinimalSliderFormatter",
 		"MinimalSliderWithSteppersMixin",
+		"InterfaceOptionsFrame_OpenToCategory",
 	]
 }

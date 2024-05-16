@@ -2,8 +2,22 @@ local addonName, addon = ...
 addon.MinimapButton = {}
 local MinimapButton = addon.MinimapButton
 
+function MinimapButton:Show()
+	NotesLDBIconDB.hide = false
+	MinimapButton.Icon:Show(addonName)
+end
+
+function MinimapButton:Hide()
+	NotesLDBIconDB.hide = true
+	MinimapButton.Icon:Hide(addonName)
+end
+
+function MinimapButton:GetShown()
+	return not NotesLDBIconDB.hide
+end
+
 function MinimapButton:Initialize()
-	local minimapButton = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
+	MinimapButton.Button = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
 		type = "data source",
 		text = addonName,
 		icon = "Interface\\ICONS\\INV_Misc_PaperBundle02a.blp", -- "Interface\\ICONS\\INV_Misc_Note_04.blp"
@@ -11,7 +25,7 @@ function MinimapButton:Initialize()
 			if button == "LeftButton" then
 				addon.UI:Toggle()
 			elseif button == "RightButton" then
-				addon.Config:Toggle()
+				addon.Config:Open()
 			end
 		end,
 		OnTooltipShow = function(tooltip)
@@ -23,6 +37,10 @@ function MinimapButton:Initialize()
 		end,
 	})
 
-	local icon = LibStub("LibDBIcon-1.0", true)
-	icon:Register(addonName, minimapButton, NotesDB)
+	if not NotesLDBIconDB then
+		NotesLDBIconDB = { hide = false }
+	end
+
+	MinimapButton.Icon = LibStub("LibDBIcon-1.0", true)
+	MinimapButton.Icon:Register(addonName, MinimapButton.Button, NotesLDBIconDB)
 end

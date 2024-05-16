@@ -3,54 +3,37 @@ addon.Config = {}
 local Config = addon.Config
 
 local function CreateRootFrame()
-	Config.Frame = CreateFrame("Frame", addonName .. "_Config", UIParent, "BasicFrameTemplate")
-	Config.Frame:SetSize(338, 424)
-	Config.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-	-- Config.Frame:SetClipsChildren(true)
-	Config.Frame:EnableMouse(true)
+	Config.Frame = CreateFrame("Frame", addonName .. "_Config.Frame", nil, nil)
+	Config.Frame:Hide()
+	Config.Frame.name = addonName
+	InterfaceOptions_AddCategory(Config.Frame)
 
-	Config.Frame.TitleText:SetText(addonName .. " (Configuration)")
-	Config.Frame.TitleText:SetPoint("TOPLEFT", Config.Frame.TopBorder, "TOPLEFT", 0, 0)
-	Config.Frame.TitleText:SetPoint("BOTTOMRIGHT", Config.Frame.TopBorder, "BOTTOMRIGHT", 0, 3)
-	Config.Frame.TitleText:SetTextColor(1, 1, 1)
-end
-
-local function MakeFrameMoveable()
-	Config.Frame:SetMovable(true)
-
-	Config.Frame.TitleBg:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
-			Config.Frame:StartMoving()
-		end
-	end)
-
-	Config.Frame.TitleBg:SetScript("OnMouseUp", function(_, button)
-		if button == "LeftButton" then
-			Config.Frame:StopMovingOrSizing()
-		end
-	end)
-
-	Config.Frame.TitleBg:SetScript("OnEnter", function()
-		SetCursor("Interface\\CURSOR\\OPENHAND.blp")
-	end)
-
-	Config.Frame.TitleBg:SetScript("OnLeave", ResetCursor)
+	Config.Frame.Title = Config.Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	Config.Frame.Title:SetPoint("TOPLEFT", 16, -16)
+	Config.Frame.Title:SetText(addonName)
 end
 
 local function CreateResetPositionButton()
 	Config.Frame.ResetPositionButton =
 		CreateFrame("Button", addonName .. "_Config.Frame.ResetPositionButton", Config.Frame, "UIPanelButtonTemplate")
-	Config.Frame.ResetPositionButton:SetPoint("TOP", Config.Frame.Bg, "TOP", 0, -20)
+	Config.Frame.ResetPositionButton:SetPoint("TOPLEFT", Config.Frame.Title, "BOTTOMLEFT", -2, -16)
 	Config.Frame.ResetPositionButton:SetText("Reset Position")
 	Config.Frame.ResetPositionButton:FitToText()
+	Config.Frame.ResetPositionButton:FitToText()
+	Config.Frame.ResetPositionButton:SetScript("OnClick", function()
+		addon.UI.ResetPosition()
+	end)
 end
 
 local function CreateResetSizeButton()
 	Config.Frame.ResetSizeButton =
 		CreateFrame("Button", addonName .. "_Config.Frame.ResetSizeButton", Config.Frame, "UIPanelButtonTemplate")
-	Config.Frame.ResetSizeButton:SetPoint("TOP", Config.Frame.ResetPositionButton, "BOTTOM", 0, -10)
+	Config.Frame.ResetSizeButton:SetPoint("LEFT", Config.Frame.ResetPositionButton, "RIGHT", 16, 0)
 	Config.Frame.ResetSizeButton:SetText("Reset Size")
 	Config.Frame.ResetSizeButton:FitToText()
+	Config.Frame.ResetSizeButton:SetScript("OnClick", function()
+		addon.UI.ResetSize()
+	end)
 end
 
 local function CreateFontSizeControl()
@@ -100,42 +83,33 @@ local function CreateFontSizeControl()
 end
 
 local function CreateShowMinimapButtonCheckbox()
-	Config.Frame.ShowMinimapButtonLabel =
-		Config.Frame.FontSizeControl:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	Config.Frame.ShowMinimapButtonLabel:SetPoint("TOPLEFT", Config.Frame.FontSizeControl, "BOTTOMLEFT", 0, -10)
-	Config.Frame.ShowMinimapButtonLabel:SetText("Show Minimap Button")
+	local function onClick(_, checked)
+		if checked then
+			addon.MinimapButton:Show()
+		else
+			addon.MinimapButton:Hide()
+		end
+	end
 
-	Config.Frame.ShowMinimapButtonCheckbox = CreateFrame(
-		"CheckButton",
-		addonName .. "_Config.Frame.ShowMinimapButtonCheckbox",
+	Config.Frame.ShowMinimapCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
+		"Show Minimap Button",
+		"Lorem ipsum dolor sit ament.",
+		addonName .. "_Config.Frame.ShowMinimapButtonCheckButton",
 		Config.Frame,
-		"UICheckButtonTemplate"
+		onClick
 	)
-	Config.Frame.ShowMinimapButtonCheckbox:SetPoint("LEFT", Config.Frame.ShowMinimapButtonLabel, "RIGHT", 10, 0)
+	Config.Frame.ShowMinimapCheckButton:SetPoint("TOPLEFT", Config.Frame.ResetPositionButton, "BOTTOMLEFT", 0, -16)
+	Config.Frame.ShowMinimapCheckButton:SetChecked(addon.MinimapButton:GetShown())
 end
 
 function Config:Initialize()
 	CreateRootFrame()
-	MakeFrameMoveable()
 	CreateResetPositionButton()
 	CreateResetSizeButton()
-	CreateFontSizeControl()
+	-- CreateFontSizeControl()
 	CreateShowMinimapButtonCheckbox()
 end
 
-function Config:Toggle()
-	if Config.Frame == nil then
-		self:Initialize()
-		PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
-	else
-		Config.Frame:Hide()
-		Config.Frame = nil
-		PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
-	end
-end
-
-function Config:ResetSizeAndPosition()
-	Config.Frame:SetSize(338, 424)
-	Config.Frame:ClearAllPoints()
-	Config.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+function Config:Open()
+	InterfaceOptionsFrame_OpenToCategory(addonName)
 end
