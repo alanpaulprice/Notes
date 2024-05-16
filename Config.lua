@@ -13,21 +13,47 @@ local function CreateRootFrame()
 	Config.Frame.TitleText:SetPoint("TOPLEFT", Config.Frame.TopBorder, "TOPLEFT", 0, 0)
 	Config.Frame.TitleText:SetPoint("BOTTOMRIGHT", Config.Frame.TopBorder, "BOTTOMRIGHT", 0, 3)
 	Config.Frame.TitleText:SetTextColor(1, 1, 1)
+end
 
+local function MakeFrameMoveable()
+	Config.Frame:SetMovable(true)
+
+	Config.Frame.TitleBg:SetScript("OnMouseDown", function(_, button)
+		if button == "LeftButton" then
+			Config.Frame:StartMoving()
+		end
+	end)
+
+	Config.Frame.TitleBg:SetScript("OnMouseUp", function(_, button)
+		if button == "LeftButton" then
+			Config.Frame:StopMovingOrSizing()
+		end
+	end)
+
+	Config.Frame.TitleBg:SetScript("OnEnter", function()
+		SetCursor("Interface\\CURSOR\\OPENHAND.blp")
+	end)
+
+	Config.Frame.TitleBg:SetScript("OnLeave", ResetCursor)
+end
+
+local function CreateResetPositionButton()
 	Config.Frame.ResetPositionButton =
 		CreateFrame("Button", addonName .. "_Config.Frame.ResetPositionButton", Config.Frame, "UIPanelButtonTemplate")
 	Config.Frame.ResetPositionButton:SetPoint("TOP", Config.Frame.Bg, "TOP", 0, -20)
 	Config.Frame.ResetPositionButton:SetText("Reset Position")
 	Config.Frame.ResetPositionButton:FitToText()
+end
 
+local function CreateResetSizeButton()
 	Config.Frame.ResetSizeButton =
 		CreateFrame("Button", addonName .. "_Config.Frame.ResetSizeButton", Config.Frame, "UIPanelButtonTemplate")
 	Config.Frame.ResetSizeButton:SetPoint("TOP", Config.Frame.ResetPositionButton, "BOTTOM", 0, -10)
 	Config.Frame.ResetSizeButton:SetText("Reset Size")
 	Config.Frame.ResetSizeButton:FitToText()
+end
 
-	-----
-
+local function CreateFontSizeControl()
 	Config.Frame.FontSizeControl = CreateFrame("frame", addonName .. "_Config.Frame.FontSizeControl", Config.Frame)
 	Config.Frame.FontSizeControl:SetPoint("TOP", Config.Frame.ResetSizeButton, "BOTTOM", 0, -10)
 	Config.Frame.FontSizeControl:SetPoint("LEFT", Config.Frame.Bg, "LEFT", 10, 0)
@@ -97,6 +123,9 @@ end
 function Config:Initialize()
 	CreateRootFrame()
 	MakeFrameMoveable()
+	CreateResetPositionButton()
+	CreateResetSizeButton()
+	CreateFontSizeControl()
 end
 
 function Config:Toggle()
