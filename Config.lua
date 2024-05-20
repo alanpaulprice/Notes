@@ -99,7 +99,7 @@ local function CreateShowMinimapButtonCheckbox()
 		onClick
 	)
 	Config.Frame.ShowMinimapCheckButton:SetPoint("TOPLEFT", Config.Frame.ResetPositionButton, "BOTTOMLEFT", 0, -16)
-	Config.Frame.ShowMinimapCheckButton:SetChecked(addon.MinimapButton:GetShown())
+	Config.Frame.ShowMinimapCheckButton:SetChecked(not addon.Database:GetMinimapButtonHidden())
 end
 
 function Config:Initialize()

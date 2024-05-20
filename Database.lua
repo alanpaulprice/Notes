@@ -10,14 +10,21 @@ function Database:Initialize()
 			note = "note was empty",
 		}
 	end
+
+	if not NotesLDBIconDB then
+		NotesLDBIconDB = { hide = false }
+	end
 end
 
 function Database:GetNote()
 	return NotesDB.note
 end
 
-function Database:SetNote(string)
-	if type(string) == "string" then
-		NotesDB.note = string
-	end
+function Database:SetMinimapButtonHidden(input)
+	addon.Utilities:CheckType(input, "boolean")
+	NotesLDBIconDB.hide = input
+end
+
+function Database:GetMinimapButtonHidden()
+	return NotesLDBIconDB.hide
 end

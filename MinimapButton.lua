@@ -3,17 +3,13 @@ addon.MinimapButton = {}
 local MinimapButton = addon.MinimapButton
 
 function MinimapButton:Show()
-	NotesLDBIconDB.hide = false
+	addon.Database:SetMinimapButtonHidden(false)
 	MinimapButton.Icon:Show(addonName)
 end
 
 function MinimapButton:Hide()
-	NotesLDBIconDB.hide = true
+	addon.Database:SetMinimapButtonHidden(true)
 	MinimapButton.Icon:Hide(addonName)
-end
-
-function MinimapButton:GetShown()
-	return not NotesLDBIconDB.hide
 end
 
 function MinimapButton:Initialize()
@@ -36,10 +32,6 @@ function MinimapButton:Initialize()
 			tooltip:AddLine(addonName)
 		end,
 	})
-
-	if not NotesLDBIconDB then
-		NotesLDBIconDB = { hide = false }
-	end
 
 	MinimapButton.Icon = LibStub("LibDBIcon-1.0", true)
 	MinimapButton.Icon:Register(addonName, MinimapButton.Button, NotesLDBIconDB)
