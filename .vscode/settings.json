@@ -16,5 +16,10 @@
 		"CreateMinimalSliderFormatter",
 		"MinimalSliderWithSteppersMixin",
 		"InterfaceOptionsFrame_OpenToCategory",
-	]
+		"UIDropDownMenu_AddButton",
+		"UIDropDownMenu_CreateInfo",
+		"UIDropDownMenu_Initialize",
+		"UIDropDownMenu_SetSelectedID",
+		"UIDropDownMenu_JustifyText",
+	],
 }
