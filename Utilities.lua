@@ -2,14 +2,14 @@ local addonName, addon = ...
 addon.Utilities = {}
 local Utilities = addon.Utilities
 
-function Utilities:CheckIsTable(input)
-	if type(input) ~= "table" then
-		error("Table expected, received " .. tostring(input) .. " (type: " .. type(input) .. ").")
+function Utilities:CheckType(input, expectedType)
+	if type(input) ~= expectedType then
+		error("Expected," .. expectedType .. ", received " .. tostring(input) .. " (type: " .. type(input) .. ").")
 	end
 end
 
 function Utilities:GetTableLength(input)
-	Utilities:CheckIsTable(input)
+	Utilities:CheckType(input, "table")
 
 	local count = 0
 
@@ -21,7 +21,7 @@ function Utilities:GetTableLength(input)
 end
 
 function Utilities:GetTableKeys(input)
-	Utilities:CheckIsTable(input)
+	Utilities:CheckType(input, "table")
 
 	local keys = {}
 
@@ -33,7 +33,7 @@ function Utilities:GetTableKeys(input)
 end
 
 function Utilities:PrintMetaTableKeys(input, sorted)
-	Utilities:CheckIsTable(input)
+	Utilities:CheckType(input, "table")
 
 	local metatable = getmetatable(input)
 
@@ -45,7 +45,7 @@ function Utilities:PrintMetaTableKeys(input, sorted)
 end
 
 function Utilities:PrintTableKeys(input, sorted, printMetatable)
-	Utilities:CheckIsTable(input)
+	Utilities:CheckType(input, "table")
 
 	if Utilities:GetTableLength(input) > 0 then
 		local keys = { Utilities:GetTableKeys(input) }
@@ -81,7 +81,6 @@ function Utilities:CreateInterfaceOptionsCheckButton(label, description, name, p
 	checkButton.label = _G[checkButton:GetName() .. "Text"]
 	checkButton.label:SetText(label)
 	checkButton.label:SetPoint("LEFT", checkButton, "RIGHT", 4, 0)
-	-- checkButton.label:SetPoint("LEFT", 8, 0)
 	checkButton.tooltipText = label
 	checkButton.tooltipRequirement = description
 	return checkButton
