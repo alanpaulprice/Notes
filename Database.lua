@@ -7,7 +7,7 @@ function Database:Initialize()
 	if NotesDB == nil then
 		NotesDB = {
 			config = {},
-			note = "note was empty",
+			note = "",
 		}
 	end
 
@@ -18,6 +18,11 @@ end
 
 function Database:GetNote()
 	return NotesDB.note
+end
+
+function Database:SetNote(input)
+	addon.Utilities:CheckType(input, "string")
+	NotesDB.note = input
 end
 
 function Database:SetMinimapButtonHidden(input)
