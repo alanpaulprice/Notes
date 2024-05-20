@@ -82,6 +82,22 @@ local function CreateFontSizeControl()
 	)
 end
 
+local function CreateShowAtLoginButtonCheckbox()
+	local function onClick(_, checked)
+		--TODO - store in db
+	end
+
+	Config.Frame.ShowAtLoginCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
+		"Show at Login",
+		"Determines if the main window is shown at login.",
+		addonName .. "_Config.Frame.ShowAtLoginCheckButton",
+		Config.Frame,
+		onClick
+	)
+	Config.Frame.ShowAtLoginCheckButton:SetPoint("TOPLEFT", Config.Frame.ResetPositionButton, "BOTTOMLEFT", 0, -16)
+	-- Config.Frame.ShowAtLoginCheckButton:SetChecked(not addon.Database:GetMinimapButtonHidden()) -- TODO - pull from db
+end
+
 local function CreateShowMinimapButtonCheckbox()
 	local function onClick(_, checked)
 		if checked then
@@ -106,7 +122,7 @@ function Config:Initialize()
 	CreateRootFrame()
 	CreateResetPositionButton()
 	CreateResetSizeButton()
-	-- CreateFontSizeControl()
+	CreateShowAtLoginButtonCheckbox()
 	CreateShowMinimapButtonCheckbox()
 end
 
