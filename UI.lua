@@ -3,9 +3,11 @@ addon.UI = {}
 local UI = addon.UI
 
 local function CreateRootFrame()
-	UI.Frame = CreateFrame("Frame", addonName .. "_UI", UIParent, "BasicFrameTemplate")
-	UI.Frame:SetSize(338, 424)
-	UI.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	UI.Frame = CreateFrame("Frame", addonName .. "_UI.Frame", UIParent, "BasicFrameTemplate")
+	local size = addon.Database:GetSize()
+	UI.Frame:SetSize(size.width, size.height)
+	local point = addon.Database:GetPoint()
+	UI.Frame:SetPoint(point.anchorPoint, point.relativeTo, point.relativePoint, point.xOffset, point.yOffset)
 	UI.Frame:SetClipsChildren(true)
 	UI.Frame:EnableMouse(true)
 
@@ -15,18 +17,40 @@ local function CreateRootFrame()
 	UI.Frame.TitleText:SetTextColor(1, 1, 1)
 end
 
+local function UpdateSavedSize()
+	addon.Database:SetSize({
+		width = UI.Frame:GetWidth(),
+		height = UI.Frame:GetHeight(),
+	})
+end
+
+local function UpdateSavedPoint()
+	local anchorPoint, relativeTo, relativePoint, xOffset, yOffset = UI.Frame:GetPoint()
+	addon.Database:SetPoint({
+		anchorPoint = anchorPoint,
+		relativeTo = relativeTo,
+		relativePoint = relativePoint,
+		xOffset = xOffset,
+		yOffset = yOffset,
+	})
+end
+
 local function MakeFrameMoveable()
+	local isMoving = false
 	UI.Frame:SetMovable(true)
 
 	UI.Frame.TitleBg:SetScript("OnMouseDown", function(_, button)
 		if button == "LeftButton" then
 			UI.Frame:StartMoving()
+			isMoving = true
 		end
 	end)
 
 	UI.Frame.TitleBg:SetScript("OnMouseUp", function(_, button)
-		if button == "LeftButton" then
+		if button == "LeftButton" and isMoving then
 			UI.Frame:StopMovingOrSizing()
+			UpdateSavedPoint()
+			isMoving = false
 		end
 	end)
 
@@ -38,18 +62,23 @@ local function MakeFrameMoveable()
 end
 
 local function MakeFrameResizable()
+	local isSizing = false
 	UI.Frame:SetResizable(true)
 	UI.Frame:SetResizeBounds(100, 100)
 
 	local function onBorderOrCornerMouseDown(button, framePoint)
 		if button == "LeftButton" then
 			UI.Frame:StartSizing(framePoint)
+			isSizing = true
 		end
 	end
 
 	local function onBorderOrCornerMouseUp(_, button)
-		if button == "LeftButton" then
+		if button == "LeftButton" and isSizing then
 			UI.Frame:StopMovingOrSizing()
+			UpdateSavedSize()
+			UpdateSavedPoint()
+			isSizing = false
 		end
 	end
 
@@ -156,11 +185,14 @@ end
 
 function UI:ResetSize()
 	UI.Frame:SetSize(338, 424)
+	UpdateSavedSize()
+	UpdateSavedPoint()
 end
 
 function UI:ResetPosition()
 	UI.Frame:ClearAllPoints()
-	UI.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	UI.Frame:SetPoint("CENTER", nil, "CENTER", 0, 0)
+	UpdateSavedPoint()
 end
 
 function UI:SetFont(font)
