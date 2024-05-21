@@ -98,6 +98,7 @@ local function CreateScrollingEditBox()
 		CreateFrame("Frame", addonName .. "_ScrollingEditBox", UI.Frame, "ScrollingEditBoxTemplate")
 	UI.Frame.ScrollingEditBox:SetPoint("TOPLEFT", UI.Frame.Bg, "TOPLEFT", 4, -2)
 	UI.Frame.ScrollingEditBox:SetPoint("BOTTOMRIGHT", UI.Frame.Bg, "BOTTOMRIGHT", -26, 2)
+	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
 	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(addon.Database:GetNote())
 end
 
@@ -160,4 +161,8 @@ end
 function UI:ResetPosition()
 	UI.Frame:ClearAllPoints()
 	UI.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+end
+
+function UI:SetFont(font)
+	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(font)
 end

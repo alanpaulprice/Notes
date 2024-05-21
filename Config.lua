@@ -2,6 +2,25 @@ local addonName, addon = ...
 addon.Config = {}
 local Config = addon.Config
 
+local fontOptions = {
+	{
+		text = "Small",
+		value = "GameFontHighlightSmall",
+	},
+	{
+		text = "Medium",
+		value = "GameFontHighlight",
+	},
+	{
+		text = "Large",
+		value = "GameFontHighlightMedium",
+	},
+	{
+		text = "Extra Large",
+		value = "GameFontHighlightLarge",
+	},
+}
+
 local function CreateRootFrame()
 	Config.Frame = CreateFrame("Frame", addonName .. "_Config.Frame", nil, nil)
 	Config.Frame:Hide()
@@ -36,58 +55,9 @@ local function CreateResetSizeButton()
 	end)
 end
 
---TODO - probably remove, replaced by dropdown
---[[
-local function CreateFontSizeControl()
-	Config.Frame.FontSizeControl = CreateFrame("frame", addonName .. "_Config.Frame.FontSizeControl", Config.Frame)
-	Config.Frame.FontSizeControl:SetPoint("TOP", Config.Frame.ResetSizeButton, "BOTTOM", 0, -10)
-	Config.Frame.FontSizeControl:SetPoint("LEFT", Config.Frame.Bg, "LEFT", 10, 0)
-	Config.Frame.FontSizeControl:SetPoint("RIGHT", Config.Frame.Bg, "RIGHT", -10, 0)
-	Config.Frame.FontSizeControl:SetHeight(52)
-
-	Config.Frame.FontSizeLabel = Config.Frame.FontSizeControl:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	Config.Frame.FontSizeLabel:SetPoint("TOPLEFT", Config.Frame.FontSizeControl, "TOPLEFT", 0, -19)
-	Config.Frame.FontSizeLabel:SetText("Font Size")
-
-	Config.Frame.FontSizeSlider = CreateFrame(
-		"Frame",
-		addonName .. "_Config.Frame.FontSizeSlider",
-		Config.Frame.FontSizeControl,
-		"MinimalSliderWithSteppersTemplate"
-	)
-	Config.Frame.FontSizeSlider:SetPoint("CENTER", Config.Frame.FontSizeLabel, "CENTER", 10, 0)
-	Config.Frame.FontSizeSlider:SetPoint("LEFT", Config.Frame.FontSizeLabel, "RIGHT", 10, 0)
-	Config.Frame.FontSizeSlider:SetPoint("RIGHT", Config.Frame.FontSizeControl, "RIGHT", 0, 0)
-	local minFontSize = 10
-	local maxFontSize = 20
-	local fontSizeStepSize = 1
-	local numberOfSteps = (maxFontSize - minFontSize) / fontSizeStepSize
-	Config.Frame.FontSizeSlider.formatters = {
-		[MinimalSliderWithSteppersMixin.Label.Min] = CreateMinimalSliderFormatter(
-			MinimalSliderWithSteppersMixin.Label.Min,
-			minFontSize
-		),
-		[MinimalSliderWithSteppersMixin.Label.Max] = CreateMinimalSliderFormatter(
-			MinimalSliderWithSteppersMixin.Label.Max,
-			maxFontSize
-		),
-		[MinimalSliderWithSteppersMixin.Label.Top] = CreateMinimalSliderFormatter(
-			MinimalSliderWithSteppersMixin.Label.Top
-		),
-	}
-	Config.Frame.FontSizeSlider:Init(
-		12,
-		minFontSize,
-		maxFontSize,
-		numberOfSteps,
-		Config.Frame.FontSizeSlider.formatters
-	)
-end
-]]
-
 local function CreateShowAtLoginButtonCheckbox()
 	local function onClick(_, checked)
-		--TODO - store in db
+		addon.Database:SetShowAtLogin(checked)
 	end
 
 	Config.Frame.ShowAtLoginCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
@@ -98,7 +68,7 @@ local function CreateShowAtLoginButtonCheckbox()
 		onClick
 	)
 	Config.Frame.ShowAtLoginCheckButton:SetPoint("TOPLEFT", Config.Frame.ResetPositionButton, "BOTTOMLEFT", 0, -16)
-	-- Config.Frame.ShowAtLoginCheckButton:SetChecked(not addon.Database:GetMinimapButtonHidden()) -- TODO - pull from db
+	Config.Frame.ShowAtLoginCheckButton:SetChecked(addon.Database:GetShowAtLogin())
 end
 
 local function CreateShowMinimapButtonCheckbox()
@@ -125,50 +95,40 @@ local function CreateFontSizeDropDownMenu()
 	Config.Frame.FontSizeLabel =
 		Config.Frame:CreateFontString(addonName .. "_Config.Frame.FontSizeLabel", "OVERLAY", "GameFontNormalSmall")
 	Config.Frame.FontSizeLabel:SetPoint("TOPLEFT", Config.Frame.ShowMinimapCheckButton, "BOTTOMLEFT", 4, -16)
-	Config.Frame.FontSizeLabel:SetText("Size")
+	Config.Frame.FontSizeLabel:SetText("Font Size")
 
 	Config.Frame.FontSizeDropDownMenu =
 		CreateFrame("Frame", addonName .. "_Config.Frame.FontSizeDropDownMenu", Config.Frame, "UIDropDownMenuTemplate")
 	Config.Frame.FontSizeDropDownMenu:SetPoint("TOPLEFT", Config.Frame.FontSizeLabel, "BOTTOMLEFT", -20, -4)
 
-	local options = {
-		{
-			text = "Small",
-			value = "GameFontHighlightSmall",
-		},
-		{
-			text = "Medium",
-			value = "GameFontHighlight",
-		},
-		{
-			text = "Large",
-			value = "GameFontHighlightMedium",
-		},
-		{
-			text = "Extra Large",
-			value = "GameFontHighlightLarge",
-		},
-	}
-
 	local function OnDropdownMenuOptionClick(self)
 		UIDropDownMenu_SetSelectedID(Config.Frame.FontSizeDropDownMenu, self:GetID())
-		print("Font Size: " .. options[Config.Frame.FontSizeDropDownMenu.selectedID].value) --TODO - save to db
+		local font = fontOptions[Config.Frame.FontSizeDropDownMenu.selectedID].value
+		addon.Database:SetFont(font)
+		addon.UI:SetFont(font)
 	end
+
+	local selectedOptionId = nil
 
 	local function Initialize()
 		local info = UIDropDownMenu_CreateInfo()
+		local currentFont = addon.Database:GetFont()
 
-		for _, option in ipairs(options) do
+		for index, option in ipairs(fontOptions) do
 			info.text = option.text
 			info.func = OnDropdownMenuOptionClick
-			info.checked = nil --TODO - if db value = this value then true
+			info.checked = nil
 			UIDropDownMenu_AddButton(info)
+
+			if option.value == currentFont then
+				selectedOptionId = index
+			end
 		end
 	end
 
 	UIDropDownMenu_Initialize(Config.Frame.FontSizeDropDownMenu, Initialize)
-	UIDropDownMenu_SetSelectedID(Config.Frame.FontSizeDropDownMenu, 1) --TODO - pull value from db
-	UIDropDownMenu_JustifyText(Config.Frame.FontSizeDropDownMenu, "CENTER")
+	UIDropDownMenu_SetSelectedID(Config.Frame.FontSizeDropDownMenu, selectedOptionId)
+	UIDropDownMenu_JustifyText(Config.Frame.FontSizeDropDownMenu, "LEFT")
 end
 
 function Config:Initialize()
@@ -177,7 +137,6 @@ function Config:Initialize()
 	CreateResetSizeButton()
 	CreateShowAtLoginButtonCheckbox()
 	CreateShowMinimapButtonCheckbox()
-	-- CreateFontSizeControl()
 	CreateFontSizeDropDownMenu()
 end
 

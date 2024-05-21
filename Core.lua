@@ -22,6 +22,9 @@ function addon:Initialize()
 	addon.MinimapButton:Initialize()
 	addon.Config:Initialize()
 	addon:ConfigureSlashCommands()
+	if addon.Database:GetShowAtLogin() then
+		addon.UI:Initialize()
+	end
 end
 
 function addon:OnAddonLoaded(_, name)
