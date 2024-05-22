@@ -35,6 +35,14 @@ function Database:Initialize()
 	end
 end
 
+function Database:GetInitialSize()
+	return initialDatabaseState.config.size
+end
+
+function Database:GetInitialPoint()
+	return initialDatabaseState.config.point
+end
+
 function Database:GetSize()
 	return NotesDB.config.size
 end
