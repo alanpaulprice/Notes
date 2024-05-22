@@ -13,8 +13,8 @@ local initialDatabaseState = {
 			anchorPoint = "CENTER",
 			relativeTo = nil,
 			relativePoint = "CENTER",
-			x = 0,
-			y = 0,
+			xOffset = 0,
+			yOffset = 0,
 		},
 		font = "GameFontHighlight",
 		minimapButton = {
