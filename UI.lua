@@ -184,14 +184,16 @@ function UI:Toggle()
 end
 
 function UI:ResetSize()
-	UI.Frame:SetSize(338, 424)
+	local size = addon.Database:GetInitialSize()
+	UI.Frame:SetSize(size.width, size.height)
 	UpdateSavedSize()
 	UpdateSavedPoint()
 end
 
 function UI:ResetPosition()
+	local point = addon.Database:GetInitialPoint()
 	UI.Frame:ClearAllPoints()
-	UI.Frame:SetPoint("CENTER", nil, "CENTER", 0, 0)
+	UI.Frame:SetPoint(point.anchorPoint, point.relativeTo, point.relativePoint, point.xOffset, point.yOffset)
 	UpdateSavedPoint()
 end
 
