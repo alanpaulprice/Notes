@@ -2,19 +2,28 @@ local addonName, addon = ...
 addon.UI = {}
 local UI = addon.UI
 
+local isSizing = false
+
 local function CreateRootFrame()
-	UI.Frame = CreateFrame("Frame", addonName .. "_UI.Frame", UIParent, "BasicFrameTemplate")
+	UI.Frame = CreateFrame("Frame", addonName .. "_UI.Frame", UIParent, "ButtonFrameTemplate")
+
 	local size = addon.Database:GetSize()
 	UI.Frame:SetSize(size.width, size.height)
 	local point = addon.Database:GetPoint()
 	UI.Frame:SetPoint(point.anchorPoint, point.relativeTo, point.relativePoint, point.xOffset, point.yOffset)
-	UI.Frame:SetClipsChildren(true)
 	UI.Frame:EnableMouse(true)
 
-	UI.Frame.TitleText:SetText(addonName)
-	UI.Frame.TitleText:SetPoint("TOPLEFT", UI.Frame.TopBorder, "TOPLEFT", 0, 0)
-	UI.Frame.TitleText:SetPoint("BOTTOMRIGHT", UI.Frame.TopBorder, "BOTTOMRIGHT", 0, 3)
-	UI.Frame.TitleText:SetTextColor(1, 1, 1)
+	ButtonFrameTemplate_HidePortrait(UI.Frame)
+	UI.Frame.TopTileStreaks:Hide()
+	UI.Frame.Inset:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 9, -26)
+
+	UI.Frame.TitleContainer.TitleText:SetText(addonName .. " - Lorem Ipsum Dolor Sit")
+
+	UI.Frame.ManageButton =
+		CreateFrame("Button", addonName .. "_UI.Frame.ManageButton", UI.Frame, "UIPanelButtonTemplate")
+	UI.Frame.ManageButton:SetPoint("BOTTOM", UI.Frame, "BOTTOM", 0, 4)
+	UI.Frame.ManageButton:SetText("Manage Notes")
+	UI.Frame.ManageButton:FitToText()
 end
 
 local function UpdateSavedSize()
@@ -39,14 +48,14 @@ local function MakeFrameMoveable()
 	local isMoving = false
 	UI.Frame:SetMovable(true)
 
-	UI.Frame.TitleBg:SetScript("OnMouseDown", function(_, button)
+	UI.Frame.TitleContainer:SetScript("OnMouseDown", function(_, button)
 		if button == "LeftButton" then
 			UI.Frame:StartMoving()
 			isMoving = true
 		end
 	end)
 
-	UI.Frame.TitleBg:SetScript("OnMouseUp", function(_, button)
+	UI.Frame.TitleContainer:SetScript("OnMouseUp", function(_, button)
 		if button == "LeftButton" and isMoving then
 			UI.Frame:StopMovingOrSizing()
 			UpdateSavedPoint()
@@ -54,89 +63,93 @@ local function MakeFrameMoveable()
 		end
 	end)
 
-	UI.Frame.TitleBg:SetScript("OnEnter", function()
-		SetCursor("Interface\\CURSOR\\OPENHAND.blp")
-	end)
+	-- UI.Frame.TitleContainer:SetScript("OnEnter", function()
+	-- 	SetCursor("Interface\\CURSOR\\OPENHAND.blp")
+	-- end)
 
-	UI.Frame.TitleBg:SetScript("OnLeave", ResetCursor)
+	-- UI.Frame.TitleContainer:SetScript("OnLeave", ResetCursor)
+end
+
+local function StartSizing(self, button)
+	if button == "LeftButton" then
+		UI.Frame:StartSizing(self.sizingDirection)
+		isSizing = true
+	end
+end
+
+local function StopSizing(_, button)
+	if button == "LeftButton" and isSizing then
+		UI.Frame:StopMovingOrSizing()
+		UpdateSavedSize()
+		UpdateSavedPoint()
+		isSizing = false
+	end
+end
+
+local function CreateResizeHandleBottomLeft()
+	UI.Frame.ResizeHandleBottomLeft = CreateFrame("Button", addonName .. "_UI.Frame.ResizeHandleBottomLeft", UI.Frame)
+	UI.Frame.ResizeHandleBottomLeft:SetSize(16, 16)
+	UI.Frame.ResizeHandleBottomLeft:SetPoint("BOTTOMLEFT", UI.Frame, "BOTTOMLEFT", 7, 4)
+
+	local resizeHandleBottomLeftUpTexture = UI.Frame.ResizeHandleBottomLeft:CreateTexture()
+	resizeHandleBottomLeftUpTexture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	resizeHandleBottomLeftUpTexture:SetTexCoord(1, 0, 0, 1)
+	resizeHandleBottomLeftUpTexture:SetAllPoints(UI.Frame.ResizeHandleBottomLeft)
+	UI.Frame.ResizeHandleBottomLeft:SetNormalTexture(resizeHandleBottomLeftUpTexture)
+
+	local resizeHandleBottomLeftHighlightTexture = UI.Frame.ResizeHandleBottomLeft:CreateTexture()
+	resizeHandleBottomLeftHighlightTexture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	resizeHandleBottomLeftHighlightTexture:SetTexCoord(1, 0, 0, 1)
+	resizeHandleBottomLeftHighlightTexture:SetAllPoints(UI.Frame.ResizeHandleBottomLeft)
+	UI.Frame.ResizeHandleBottomLeft:SetHighlightTexture(resizeHandleBottomLeftHighlightTexture)
+
+	local resizeHandleBottomLeftDownTexture = UI.Frame.ResizeHandleBottomLeft:CreateTexture()
+	resizeHandleBottomLeftDownTexture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	resizeHandleBottomLeftDownTexture:SetTexCoord(1, 0, 0, 1)
+	resizeHandleBottomLeftDownTexture:SetAllPoints(UI.Frame.ResizeHandleBottomLeft)
+	UI.Frame.ResizeHandleBottomLeft:SetPushedTexture(resizeHandleBottomLeftDownTexture)
+
+	UI.Frame.ResizeHandleBottomLeft.sizingDirection = "BOTTOMLEFT"
+	UI.Frame.ResizeHandleBottomLeft:SetScript("OnMouseDown", StartSizing)
+	UI.Frame.ResizeHandleBottomLeft:SetScript("OnMouseUp", StopSizing)
+end
+
+local function CreateResizeHandleBottomRight()
+	UI.Frame.ResizeHandleBottomRight = CreateFrame("Button", addonName .. "_UI.Frame.ResizeHandleBottomRight", UI.Frame)
+	UI.Frame.ResizeHandleBottomRight:SetSize(16, 16)
+	UI.Frame.ResizeHandleBottomRight:SetPoint("BOTTOMRIGHT", UI.Frame, "BOTTOMRIGHT", -4, 4)
+	UI.Frame.ResizeHandleBottomRight:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	UI.Frame.ResizeHandleBottomRight:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	UI.Frame.ResizeHandleBottomRight:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	UI.Frame.ResizeHandleBottomRight.sizingDirection = "BOTTOMRIGHT"
+	UI.Frame.ResizeHandleBottomRight:SetScript("OnMouseDown", StartSizing)
+	UI.Frame.ResizeHandleBottomRight:SetScript("OnMouseUp", StopSizing)
 end
 
 local function MakeFrameResizable()
-	local isSizing = false
 	UI.Frame:SetResizable(true)
-	UI.Frame:SetResizeBounds(100, 100)
-
-	local function onBorderOrCornerMouseDown(button, framePoint)
-		if button == "LeftButton" then
-			UI.Frame:StartSizing(framePoint)
-			isSizing = true
-		end
-	end
-
-	local function onBorderOrCornerMouseUp(_, button)
-		if button == "LeftButton" and isSizing then
-			UI.Frame:StopMovingOrSizing()
-			UpdateSavedSize()
-			UpdateSavedPoint()
-			isSizing = false
-		end
-	end
-
-	local function SetSizeCursor()
-		SetCursor("Interface\\CURSOR\\UI-Cursor-Size.blp")
-	end
-
-	UI.Frame.RightBorder:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "RIGHT")
-	end)
-	UI.Frame.RightBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-	UI.Frame.RightBorder:SetScript("OnEnter", SetSizeCursor)
-	UI.Frame.RightBorder:SetScript("OnLeave", ResetCursor)
-
-	UI.Frame.BotRightCorner:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "BOTTOMRIGHT")
-	end)
-	UI.Frame.BotRightCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-	UI.Frame.BotRightCorner:SetScript("OnEnter", SetSizeCursor)
-	UI.Frame.BotRightCorner:SetScript("OnLeave", ResetCursor)
-
-	UI.Frame.BottomBorder:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "BOTTOM")
-	end)
-	UI.Frame.BottomBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-	UI.Frame.BottomBorder:SetScript("OnEnter", SetSizeCursor)
-	UI.Frame.BottomBorder:SetScript("OnLeave", ResetCursor)
-
-	UI.Frame.BotLeftCorner:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "BOTTOMLEFT")
-	end)
-	UI.Frame.BotLeftCorner:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-	UI.Frame.BotLeftCorner:SetScript("OnEnter", SetSizeCursor)
-	UI.Frame.BotLeftCorner:SetScript("OnLeave", ResetCursor)
-
-	UI.Frame.LeftBorder:SetScript("OnMouseDown", function(_, button)
-		onBorderOrCornerMouseDown(button, "LEFT")
-	end)
-	UI.Frame.LeftBorder:SetScript("OnMouseUp", onBorderOrCornerMouseUp)
-	UI.Frame.LeftBorder:SetScript("OnEnter", SetSizeCursor)
-	UI.Frame.LeftBorder:SetScript("OnLeave", ResetCursor)
+	UI.Frame:SetResizeBounds(200, 200)
+	CreateResizeHandleBottomLeft()
+	CreateResizeHandleBottomRight()
 end
 
 local function CreateScrollingEditBox()
 	UI.Frame.ScrollingEditBox =
 		CreateFrame("Frame", addonName .. "_ScrollingEditBox", UI.Frame, "ScrollingEditBoxTemplate")
-	UI.Frame.ScrollingEditBox:SetPoint("TOPLEFT", UI.Frame.Bg, "TOPLEFT", 4, -2)
-	UI.Frame.ScrollingEditBox:SetPoint("BOTTOMRIGHT", UI.Frame.Bg, "BOTTOMRIGHT", -26, 2)
+	UI.Frame.ScrollingEditBox:SetPoint("TOPLEFT", UI.Frame.Inset.Bg, "TOPLEFT", 2, -2)
+	UI.Frame.ScrollingEditBox:SetPoint("BOTTOMRIGHT", UI.Frame.Inset.Bg, "BOTTOMRIGHT", -19, 2)
 	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
 	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(addon.Database:GetNote())
+	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
 end
 
 local function CreateScrollBar()
-	UI.Frame.ScrollingEditBox.ScrollBar =
-		CreateFrame("EventFrame", addonName .. "_ScrollingEditBox_ScrollBar", UI.Frame, "WowTrimScrollBar")
-	UI.Frame.ScrollingEditBox.ScrollBar:SetPoint("TOPLEFT", UI.Frame.Bg, "TOPRIGHT", -24, 0)
-	UI.Frame.ScrollingEditBox.ScrollBar:SetPoint("BOTTOMRIGHT", UI.Frame.Bg, "BOTTOMRIGHT", 0, 0)
-	ScrollUtil.RegisterScrollBoxWithScrollBar(UI.Frame.ScrollingEditBox.ScrollBox, UI.Frame.ScrollingEditBox.ScrollBar)
+	UI.Frame.ScrollBar =
+		CreateFrame("EventFrame", addonName .. "_ScrollingEditBox_ScrollBar", UI.Frame, "MinimalScrollBar")
+	UI.Frame.ScrollBar:SetPoint("TOPLEFT", UI.Frame.ScrollingEditBox, "TOPRIGHT", 0, -4)
+	UI.Frame.ScrollBar:SetPoint("BOTTOMLEFT", UI.Frame.ScrollingEditBox, "BOTTOMRIGHT", 0, 4)
+
+	ScrollUtil.RegisterScrollBoxWithScrollBar(UI.Frame.ScrollingEditBox.ScrollBox, UI.Frame.ScrollBar)
 end
 
 local function ConfigureOnTextChangeHandling()
