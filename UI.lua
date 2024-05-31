@@ -3,9 +3,14 @@ addon.UI = {}
 local UI = addon.UI
 
 local isSizing = false
+local ViewEnum = {
+	Edit = 1,
+	Manage = 2,
+}
+local currentView = ViewEnum.Edit
 
 local function CreateRootFrame()
-	UI.Frame = CreateFrame("Frame", addonName .. "_UI.Frame", UIParent, "ButtonFrameTemplate")
+	UI.Frame = CreateFrame("Frame", nil, UIParent, "ButtonFrameTemplate")
 
 	local size = addon.Database:GetSize()
 	UI.Frame:SetSize(size.width, size.height)
@@ -19,11 +24,11 @@ local function CreateRootFrame()
 
 	UI.Frame.TitleContainer.TitleText:SetText(addonName .. " - Lorem Ipsum Dolor Sit")
 
-	UI.Frame.ManageButton =
-		CreateFrame("Button", addonName .. "_UI.Frame.ManageButton", UI.Frame, "UIPanelButtonTemplate")
+	UI.Frame.ManageButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
 	UI.Frame.ManageButton:SetPoint("BOTTOM", UI.Frame, "BOTTOM", 0, 4)
 	UI.Frame.ManageButton:SetText("Manage Notes")
 	UI.Frame.ManageButton:FitToText()
+	UI.Frame.ManageButton:SetScript("OnClick", UI.ToggleView)
 end
 
 local function UpdateSavedSize()
@@ -87,7 +92,7 @@ local function StopSizing(_, button)
 end
 
 local function CreateResizeHandleBottomLeft()
-	UI.Frame.ResizeHandleBottomLeft = CreateFrame("Button", addonName .. "_UI.Frame.ResizeHandleBottomLeft", UI.Frame)
+	UI.Frame.ResizeHandleBottomLeft = CreateFrame("Button", nil, UI.Frame)
 	UI.Frame.ResizeHandleBottomLeft:SetSize(16, 16)
 	UI.Frame.ResizeHandleBottomLeft:SetPoint("BOTTOMLEFT", UI.Frame, "BOTTOMLEFT", 7, 4)
 
@@ -115,7 +120,7 @@ local function CreateResizeHandleBottomLeft()
 end
 
 local function CreateResizeHandleBottomRight()
-	UI.Frame.ResizeHandleBottomRight = CreateFrame("Button", addonName .. "_UI.Frame.ResizeHandleBottomRight", UI.Frame)
+	UI.Frame.ResizeHandleBottomRight = CreateFrame("Button", nil, UI.Frame)
 	UI.Frame.ResizeHandleBottomRight:SetSize(16, 16)
 	UI.Frame.ResizeHandleBottomRight:SetPoint("BOTTOMRIGHT", UI.Frame, "BOTTOMRIGHT", -4, 4)
 	UI.Frame.ResizeHandleBottomRight:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
@@ -133,40 +138,63 @@ local function MakeFrameResizable()
 	CreateResizeHandleBottomRight()
 end
 
-local function CreateScrollingEditBox()
-	UI.Frame.ScrollingEditBox =
-		CreateFrame("Frame", addonName .. "_ScrollingEditBox", UI.Frame, "ScrollingEditBoxTemplate")
-	UI.Frame.ScrollingEditBox:SetPoint("TOPLEFT", UI.Frame.Inset.Bg, "TOPLEFT", 2, -2)
-	UI.Frame.ScrollingEditBox:SetPoint("BOTTOMRIGHT", UI.Frame.Inset.Bg, "BOTTOMRIGHT", -19, 2)
-	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
-	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(addon.Database:GetNote())
-	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
+local function CreateViewContainer()
+	UI.Frame.ViewContainer = CreateFrame("Frame", nil, UI.Frame, nil)
+	UI.Frame.ViewContainer:SetPoint("TOPLEFT", UI.Frame.Inset, "TOPLEFT", 2, -2)
+	UI.Frame.ViewContainer:SetPoint("BOTTOMRIGHT", UI.Frame.Inset, "BOTTOMRIGHT", -2, 2)
 end
 
-local function CreateScrollBar()
-	UI.Frame.ScrollBar =
-		CreateFrame("EventFrame", addonName .. "_ScrollingEditBox_ScrollBar", UI.Frame, "MinimalScrollBar")
-	UI.Frame.ScrollBar:SetPoint("TOPLEFT", UI.Frame.ScrollingEditBox, "TOPRIGHT", 0, -4)
-	UI.Frame.ScrollBar:SetPoint("BOTTOMLEFT", UI.Frame.ScrollingEditBox, "BOTTOMRIGHT", 0, 4)
+local function CreateEditView()
+	-- Create the parent frame.
+	UI.Frame.ViewContainer.EditView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
+	UI.Frame.ViewContainer.EditView:SetAllPoints(UI.Frame.ViewContainer)
+	--TODO - if current ~= this view, hide
 
-	ScrollUtil.RegisterScrollBoxWithScrollBar(UI.Frame.ScrollingEditBox.ScrollBox, UI.Frame.ScrollBar)
-end
+	local EditView = UI.Frame.ViewContainer.EditView
 
-local function ConfigureOnTextChangeHandling()
+	-- Create the scrolling edit box.
+	EditView.ScrollingEditBox = CreateFrame("Frame", nil, EditView, "ScrollingEditBoxTemplate")
+	EditView.ScrollingEditBox:SetPoint("TOPLEFT", EditView, "TOPLEFT", 0, 0)
+	EditView.ScrollingEditBox:SetPoint("BOTTOMRIGHT", EditView, "BOTTOMRIGHT", -17, 0)
+	EditView.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
+	EditView.ScrollingEditBox.ScrollBox.EditBox:SetText(addon.Database:GetNote())
+	EditView.ScrollingEditBox.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
+
+	-- Configure handling of text changes for the scrolling edit box.
 	local function OnTextChange(owner, editBox, userChanged)
 		addon.Database:SetNote(editBox:GetInputText())
 	end
+	EditView.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, self)
 
-	UI.Frame.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, self)
+	-- Create and configure the scroll bar.
+	EditView.ScrollBar = CreateFrame("EventFrame", nil, EditView, "MinimalScrollBar")
+	EditView.ScrollBar:SetPoint("TOPLEFT", EditView.ScrollingEditBox, "TOPRIGHT", 0, -4)
+	EditView.ScrollBar:SetPoint("BOTTOMLEFT", EditView.ScrollingEditBox, "BOTTOMRIGHT", 0, 4)
+
+	ScrollUtil.RegisterScrollBoxWithScrollBar(EditView.ScrollingEditBox.ScrollBox, EditView.ScrollBar)
+end
+
+local function CreateManageView()
+	-- Create the parent frame.
+	UI.Frame.ViewContainer.ManageView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
+	UI.Frame.ViewContainer.ManageView:SetAllPoints(UI.Frame.ViewContainer)
+	UI.Frame.ViewContainer.ManageView:Hide() --! TEMP
+	--TODO - if current ~= this view, hide
+
+	local ManageView = UI.Frame.ViewContainer.ManageView
+
+	ManageView.Placeholder = ManageView:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	ManageView.Placeholder:SetPoint("CENTER")
+	ManageView.Placeholder:SetText("Manage View")
 end
 
 function UI:Initialize()
 	CreateRootFrame()
 	MakeFrameMoveable()
 	MakeFrameResizable()
-	CreateScrollingEditBox()
-	CreateScrollBar()
-	ConfigureOnTextChangeHandling()
+	CreateViewContainer()
+	CreateEditView()
+	CreateManageView()
 end
 
 function UI:Toggle()
@@ -177,6 +205,18 @@ function UI:Toggle()
 		UI.Frame:Hide()
 		UI.Frame = nil
 		PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
+	end
+end
+
+function UI:ToggleView()
+	if currentView == ViewEnum.Edit then
+		currentView = ViewEnum.Manage
+		UI.Frame.ViewContainer.EditView:Hide()
+		UI.Frame.ViewContainer.ManageView:Show()
+	else
+		currentView = ViewEnum.Edit
+		UI.Frame.ViewContainer.ManageView:Hide()
+		UI.Frame.ViewContainer.EditView:Show()
 	end
 end
 

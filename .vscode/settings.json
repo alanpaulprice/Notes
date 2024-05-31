@@ -21,5 +21,6 @@
 		"UIDropDownMenu_Initialize",
 		"UIDropDownMenu_SetSelectedID",
 		"UIDropDownMenu_JustifyText",
+		"ButtonFrameTemplate_HidePortrait"
 	],
 }
