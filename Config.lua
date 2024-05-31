@@ -57,13 +57,8 @@ local function CreateShowAtLoginButtonCheckbox()
 		addon.Database:SetShowAtLogin(checked)
 	end
 
-	Config.Frame.ShowAtLoginCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
-		"Show at Login",
-		"Determines if the main window is shown at login.",
-		nil,
-		Config.Frame,
-		onClick
-	)
+	Config.Frame.ShowAtLoginCheckButton =
+		addon.Utilities:CreateInterfaceOptionsCheckButton("Show at Login", Config.Frame, onClick)
 	Config.Frame.ShowAtLoginCheckButton:SetPoint("TOPLEFT", Config.Frame.ResetPositionButton, "BOTTOMLEFT", 0, -16)
 	Config.Frame.ShowAtLoginCheckButton:SetChecked(addon.Database:GetShowAtLogin())
 end
@@ -77,13 +72,8 @@ local function CreateShowMinimapButtonCheckbox()
 		end
 	end
 
-	Config.Frame.ShowMinimapCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
-		"Show Minimap Button",
-		"Specifies whether or not the minimap button should be visible.",
-		nil,
-		Config.Frame,
-		onClick
-	)
+	Config.Frame.ShowMinimapCheckButton =
+		addon.Utilities:CreateInterfaceOptionsCheckButton("Show Minimap Button", Config.Frame, onClick)
 	Config.Frame.ShowMinimapCheckButton:SetPoint("TOPLEFT", Config.Frame.ShowAtLoginCheckButton, "BOTTOMLEFT", 0, -16)
 	Config.Frame.ShowMinimapCheckButton:SetChecked(not addon.Database:GetMinimapButtonHidden())
 end

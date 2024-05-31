@@ -67,8 +67,10 @@ function Utilities:PrintTableKeys(input, sorted, printMetatable)
 	end
 end
 
-function Utilities:CreateInterfaceOptionsCheckButton(label, description, name, parent, onClick)
-	local checkButton = CreateFrame("CheckButton", name, parent, "InterfaceOptionsCheckButtonTemplate")
+function Utilities:CreateInterfaceOptionsCheckButton(label, parent, onClick)
+	local checkButton = CreateFrame("CheckButton", nil, parent, "InterfaceOptionsCheckButtonTemplate")
+	checkButton:SetFrameStrata("MEDIUM")
+
 	checkButton:SetScript("OnClick", function(self)
 		local checked = self:GetChecked()
 		onClick(self, checked and true or false)
@@ -78,10 +80,9 @@ function Utilities:CreateInterfaceOptionsCheckButton(label, description, name, p
 			PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 		end
 	end)
-	checkButton.label = _G[checkButton:GetName() .. "Text"]
-	checkButton.label:SetText(label)
-	checkButton.label:SetPoint("LEFT", checkButton, "RIGHT", 4, 0)
-	checkButton.tooltipText = label
-	checkButton.tooltipRequirement = description
+
+	checkButton.Text:SetText(label)
+	checkButton.Text:SetPoint("LEFT", checkButton, "RIGHT", 4, 0)
+
 	return checkButton
 end
