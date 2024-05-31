@@ -22,7 +22,7 @@ local fontOptions = {
 }
 
 local function CreateRootFrame()
-	Config.Frame = CreateFrame("Frame", addonName .. "_Config.Frame", nil, nil)
+	Config.Frame = CreateFrame("Frame", nil, nil, nil)
 	Config.Frame:Hide()
 	Config.Frame.name = addonName
 	InterfaceOptions_AddCategory(Config.Frame)
@@ -33,8 +33,7 @@ local function CreateRootFrame()
 end
 
 local function CreateResetPositionButton()
-	Config.Frame.ResetPositionButton =
-		CreateFrame("Button", addonName .. "_Config.Frame.ResetPositionButton", Config.Frame, "UIPanelButtonTemplate")
+	Config.Frame.ResetPositionButton = CreateFrame("Button", nil, Config.Frame, "UIPanelButtonTemplate")
 	Config.Frame.ResetPositionButton:SetPoint("TOPLEFT", Config.Frame.Title, "BOTTOMLEFT", -2, -16)
 	Config.Frame.ResetPositionButton:SetText("Reset Position")
 	Config.Frame.ResetPositionButton:FitToText()
@@ -44,8 +43,7 @@ local function CreateResetPositionButton()
 end
 
 local function CreateResetSizeButton()
-	Config.Frame.ResetSizeButton =
-		CreateFrame("Button", addonName .. "_Config.Frame.ResetSizeButton", Config.Frame, "UIPanelButtonTemplate")
+	Config.Frame.ResetSizeButton = CreateFrame("Button", nil, Config.Frame, "UIPanelButtonTemplate")
 	Config.Frame.ResetSizeButton:SetPoint("LEFT", Config.Frame.ResetPositionButton, "RIGHT", 16, 0)
 	Config.Frame.ResetSizeButton:SetText("Reset Size")
 	Config.Frame.ResetSizeButton:FitToText()
@@ -62,7 +60,7 @@ local function CreateShowAtLoginButtonCheckbox()
 	Config.Frame.ShowAtLoginCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
 		"Show at Login",
 		"Determines if the main window is shown at login.",
-		addonName .. "_Config.Frame.ShowAtLoginCheckButton",
+		nil,
 		Config.Frame,
 		onClick
 	)
@@ -82,7 +80,7 @@ local function CreateShowMinimapButtonCheckbox()
 	Config.Frame.ShowMinimapCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
 		"Show Minimap Button",
 		"Specifies whether or not the minimap button should be visible.",
-		addonName .. "_Config.Frame.ShowMinimapButtonCheckButton",
+		nil,
 		Config.Frame,
 		onClick
 	)
@@ -91,13 +89,11 @@ local function CreateShowMinimapButtonCheckbox()
 end
 
 local function CreateFontSizeDropDownMenu()
-	Config.Frame.FontSizeLabel =
-		Config.Frame:CreateFontString(addonName .. "_Config.Frame.FontSizeLabel", "OVERLAY", "GameFontNormalSmall")
+	Config.Frame.FontSizeLabel = Config.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	Config.Frame.FontSizeLabel:SetPoint("TOPLEFT", Config.Frame.ShowMinimapCheckButton, "BOTTOMLEFT", 4, -16)
 	Config.Frame.FontSizeLabel:SetText("Font Size")
 
-	Config.Frame.FontSizeDropDownMenu =
-		CreateFrame("Frame", addonName .. "_Config.Frame.FontSizeDropDownMenu", Config.Frame, "UIDropDownMenuTemplate")
+	Config.Frame.FontSizeDropDownMenu = CreateFrame("Frame", nil, Config.Frame, "UIDropDownMenuTemplate")
 	Config.Frame.FontSizeDropDownMenu:SetPoint("TOPLEFT", Config.Frame.FontSizeLabel, "BOTTOMLEFT", -20, -4)
 
 	local function OnDropdownMenuOptionClick(self)
