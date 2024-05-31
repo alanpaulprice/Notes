@@ -2,9 +2,28 @@ local addonName, addon = ...
 addon.Utilities = {}
 local Utilities = addon.Utilities
 
-function Utilities:CheckType(input, expectedType)
-	if type(input) ~= expectedType then
-		error("Expected," .. expectedType .. ", received " .. tostring(input) .. " (type: " .. type(input) .. ").")
+function Utilities:CheckType(input, ...)
+	local inputType = type(input)
+	local expectedTypes = { ... }
+	local typeIsExpected = false
+
+	for _, expectedType in ipairs(expectedTypes) do
+		if inputType == expectedType then
+			typeIsExpected = true
+		end
+	end
+
+	if not typeIsExpected then
+		local expectedTypesString = table.concat(expectedTypes, "|")
+		error(
+			"Expected type: "
+				.. expectedTypesString
+				.. ", received "
+				.. tostring(input)
+				.. " (type: "
+				.. type(input)
+				.. ")."
+		)
 	end
 end
 
