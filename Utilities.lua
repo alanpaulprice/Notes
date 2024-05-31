@@ -3,8 +3,29 @@ addon.Utilities = {}
 local Utilities = addon.Utilities
 
 function Utilities:CheckType(input, ...)
-	local inputType = type(input)
 	local expectedTypes = { ... }
+
+	if #expectedTypes == 0 then
+		error("No expected types received. One or more must be provided.")
+	end
+
+	local validTypes = { "nil", "boolean", "number", "string", "function", "userdata", "thread", "table" }
+
+	for _, expectedType in ipairs(expectedTypes) do
+		local expectedTypeIsValid = false
+
+		for _, validType in ipairs(validTypes) do
+			if expectedType == validType then
+				expectedTypeIsValid = true
+			end
+		end
+
+		if not expectedTypeIsValid then
+			error("Invalid expected type `" .. expectedType("` received."))
+		end
+	end
+
+	local inputType = type(input)
 	local typeIsExpected = false
 
 	for _, expectedType in ipairs(expectedTypes) do
@@ -14,15 +35,19 @@ function Utilities:CheckType(input, ...)
 	end
 
 	if not typeIsExpected then
-		local expectedTypesString = table.concat(expectedTypes, "|")
+		local quotedExpectedTypes = {}
+		for _, str in ipairs(expectedTypes) do
+			table.insert(quotedExpectedTypes, "`" .. str .. "`")
+		end
+		local expectedTypesString = table.concat(quotedExpectedTypes, " or ")
 		error(
 			"Expected type: "
 				.. expectedTypesString
-				.. ", received "
+				.. ", received `"
 				.. tostring(input)
-				.. " (type: "
+				.. "` (type: `"
 				.. type(input)
-				.. ")."
+				.. "`)."
 		)
 	end
 end
