@@ -3,11 +3,6 @@ addon.UI = {}
 local UI = addon.UI
 
 local isSizing = false
-local ViewEnum = {
-	Edit = 1,
-	Manage = 2,
-}
-local currentView = ViewEnum.Edit
 
 local function CreateRootFrame()
 	UI.Frame = CreateFrame("Frame", nil, UIParent, "ButtonFrameTemplate")
@@ -148,7 +143,10 @@ local function CreateEditView()
 	-- Create the parent frame.
 	UI.Frame.ViewContainer.EditView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
 	UI.Frame.ViewContainer.EditView:SetAllPoints(UI.Frame.ViewContainer)
-	--TODO - if current ~= this view, hide
+
+	if addon.Database.GetCurrentNote() == nil then
+		UI.Frame.ViewContainer.EditView:Hide()
+	end
 
 	local EditView = UI.Frame.ViewContainer.EditView
 
@@ -178,8 +176,10 @@ local function CreateManageView()
 	-- Create the parent frame.
 	UI.Frame.ViewContainer.ManageView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
 	UI.Frame.ViewContainer.ManageView:SetAllPoints(UI.Frame.ViewContainer)
-	UI.Frame.ViewContainer.ManageView:Hide() --! TEMP
-	--TODO - if current ~= this view, hide
+
+	if addon.Database.GetCurrentNote() ~= nil then
+		UI.Frame.ViewContainer.ManageView:Hide()
+	end
 
 	local ManageView = UI.Frame.ViewContainer.ManageView
 
@@ -208,16 +208,14 @@ function UI:Toggle()
 	end
 end
 
-function UI:ToggleView()
-	if currentView == ViewEnum.Edit then
-		currentView = ViewEnum.Manage
-		UI.Frame.ViewContainer.EditView:Hide()
-		UI.Frame.ViewContainer.ManageView:Show()
-	else
-		currentView = ViewEnum.Edit
-		UI.Frame.ViewContainer.ManageView:Hide()
-		UI.Frame.ViewContainer.EditView:Show()
-	end
+function UI:ShowManageView()
+	addon.Database.SetCurrentNote(nil)
+	UI.Frame.ViewContainer.EditView:Hide()
+	UI.Frame.ViewContainer.ManageView:Show()
+end
+
+function UI:ShowEditView(noteId)
+	--TODO
 end
 
 function UI:ResetSize()
