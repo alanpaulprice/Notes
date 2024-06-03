@@ -22,6 +22,7 @@ local initialDatabaseState = {
 		},
 		showAtLogin = false,
 	},
+	currentNote = nil,
 	note = "",
 }
 
@@ -104,6 +105,15 @@ end
 function Database:SetShowAtLogin(input)
 	addon.Utilities:CheckType(input, "boolean")
 	NotesDB.config.showAtLogin = input
+end
+
+function Database:GetCurrentNote()
+	return NotesDB.currentNote
+end
+
+function Database:SetCurrentNote(input)
+	addon.Utilities:CheckType(input, "string", "nil")
+	NotesDB.currentNote = input
 end
 
 function Database:GetNote()
