@@ -4,6 +4,16 @@ local UI = addon.UI
 
 local isSizing = false
 
+local function UpdateTitleText()
+	local currentNote = addon.Database:GetCurrentNote()
+	local prefix = addonName .. " - "
+	if currentNote == nil then
+		UI.Frame.TitleContainer.TitleText:SetText(prefix .. "Manage")
+	else
+		UI.Frame.TitleContainer.TitleText:SetText(prefix .. currentNote.title)
+	end
+end
+
 local function CreateRootFrame()
 	UI.Frame = CreateFrame("Frame", addonName .. "_UI", UIParent, "ButtonFrameTemplate")
 
@@ -17,13 +27,15 @@ local function CreateRootFrame()
 	UI.Frame.TopTileStreaks:Hide()
 	UI.Frame.Inset:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 9, -26)
 
-	UI.Frame.TitleContainer.TitleText:SetText(addonName .. " - Lorem Ipsum Dolor Sit")
+	UpdateTitleText()
 
 	UI.Frame.ManageButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
 	UI.Frame.ManageButton:SetPoint("BOTTOM", UI.Frame, "BOTTOM", 0, 4)
 	UI.Frame.ManageButton:SetText("Manage Notes")
 	UI.Frame.ManageButton:FitToText()
-	UI.Frame.ManageButton:SetScript("OnClick", UI.ToggleView)
+	UI.Frame.ManageButton:SetScript("OnClick", function()
+		UI:ChangeView(addon.Constants.UI_VIEW_ENUM.MANAGE)
+	end)
 end
 
 local function UpdateSavedSize()
@@ -139,42 +151,10 @@ local function CreateViewContainer()
 	UI.Frame.ViewContainer:SetPoint("BOTTOMRIGHT", UI.Frame.Inset, "BOTTOMRIGHT", -2, 2)
 end
 
-local function CreateEditView()
-	local currentNote = addon.Database.GetCurrentNote()
-
-	-- Create the parent frame.
-	UI.Frame.ViewContainer.EditView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
-	UI.Frame.ViewContainer.EditView:SetAllPoints(UI.Frame.ViewContainer)
-
-	if currentNote == nil then
-		UI.Frame.ViewContainer.EditView:Hide()
-	end
-
-	local EditView = UI.Frame.ViewContainer.EditView
-
-	-- Create the scrolling edit box.
-	EditView.ScrollingEditBox = CreateFrame("Frame", nil, EditView, "ScrollingEditBoxTemplate")
-	EditView.ScrollingEditBox:SetPoint("TOPLEFT", EditView, "TOPLEFT", 0, 0)
-	EditView.ScrollingEditBox:SetPoint("BOTTOMRIGHT", EditView, "BOTTOMRIGHT", -17, 0)
-	EditView.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
-	EditView.ScrollingEditBox.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
-
-	if currentNote ~= nil then
-		EditView.ScrollingEditBox.ScrollBox.EditBox:SetText(currentNote.body)
-	end
-
-	-- Configure handling of text changes for the scrolling edit box.
-	local function OnTextChange(owner, editBox, userChanged)
-		addon.Database:SetNote(editBox:GetInputText())
-	end
-	EditView.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, self)
-
-	-- Create and configure the scroll bar.
-	EditView.ScrollBar = CreateFrame("EventFrame", nil, EditView, "MinimalScrollBar")
-	EditView.ScrollBar:SetPoint("TOPLEFT", EditView.ScrollingEditBox, "TOPRIGHT", 0, -4)
-	EditView.ScrollBar:SetPoint("BOTTOMLEFT", EditView.ScrollingEditBox, "BOTTOMRIGHT", 0, 4)
-
-	ScrollUtil.RegisterScrollBoxWithScrollBar(EditView.ScrollingEditBox.ScrollBox, EditView.ScrollBar)
+function UI:ShowManageView()
+	addon.Database.SetCurrentNote(nil)
+	UI.Frame.ViewContainer.EditView:Hide()
+	UI.Frame.ViewContainer.ManageView:Show()
 end
 
 function UI:Initialize()
@@ -182,7 +162,7 @@ function UI:Initialize()
 	MakeFrameMoveable()
 	MakeFrameResizable()
 	CreateViewContainer()
-	CreateEditView()
+	addon.EditView:Initialize()
 	addon.ManageView:Initialize()
 end
 
@@ -197,15 +177,23 @@ function UI:Toggle()
 	end
 end
 
-function UI:ShowManageView()
-	addon.Database.SetCurrentNote(nil)
-	UI.Frame.ViewContainer.EditView:Hide()
-	UI.Frame.ViewContainer.ManageView:Show()
-end
+function UI:ChangeView(newView, noteId)
+	addon.Utilities:CheckIsEnumMember(newView, addon.Constants.UI_VIEW_ENUM)
 
-function UI:ShowEditView(noteId)
-	local note = addon.Database.GetNote(noteId)
-	--TODO
+	if newView == addon.Constants.UI_VIEW_ENUM.EDIT then
+		addon.Utilities:CheckType(noteId, "number")
+		addon.Database:SetCurrentNoteId(noteId)
+		addon.ManageView:Hide()
+		addon.EditView:Show()
+	end
+
+	if newView == addon.Constants.UI_VIEW_ENUM.MANAGE then
+		addon.Database:SetCurrentNoteId(nil)
+		addon.EditView:Hide()
+		addon.ManageView:Show()
+	end
+
+	UpdateTitleText()
 end
 
 function UI:ResetSize()

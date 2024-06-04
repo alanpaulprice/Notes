@@ -2,6 +2,16 @@ local addonName, addon = ...
 addon.Utilities = {}
 local Utilities = addon.Utilities
 
+function Utilities:CheckIsEnumMember(input, enum)
+	for _, value in pairs(enum) do
+		if input == value then
+			return true
+		end
+	end
+
+	error("Invalid enum member " .. tostring(input) .. " received")
+end
+
 function Utilities:CheckType(input, ...)
 	local expectedTypes = { ... }
 
@@ -21,7 +31,7 @@ function Utilities:CheckType(input, ...)
 		end
 
 		if not expectedTypeIsValid then
-			error("Invalid expected type `" .. expectedType("` received."))
+			error("Invalid expected type `" .. expectedType .. "` received.")
 		end
 	end
 

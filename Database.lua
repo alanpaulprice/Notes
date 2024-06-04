@@ -25,15 +25,18 @@ local initialDatabaseState = {
 	currentNoteId = nil,
 	note = "",
 	notes = {
-		[1] = {
+		{
+			id = 1,
 			title = "Lorem Ipsum Dolor",
 			body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum accumsan mattis nibh, eget imperdiet odio vulputate sit amet. Maecenas vel elit pharetra nisi vulputate semper non vitae sapien. Nulla facilisi. Curabitur sapien libero, rutrum non justo sit amet, ultricies facilisis purus. Suspendisse commodo diam vitae nulla lobortis, sit amet pharetra libero mollis. Sed dapibus suscipit neque, in ultrices turpis suscipit in. Etiam sodales, risus eget rutrum scelerisque, enim odio gravida ipsum, ut molestie nibh dolor nec purus. Nunc eros ligula, faucibus nec dolor vel, porttitor mollis arcu.",
 		},
-		[2] = {
+		{
+			id = 2,
 			title = "Sit Amet Consectetur",
 			body = "In porta ante elementum ipsum volutpat, a auctor risus tempus. Maecenas vel rhoncus dolor. Phasellus odio tellus, finibus nec augue eget, vestibulum euismod felis. Sed consequat leo ut bibendum gravida. Fusce mollis posuere erat, ac mollis sapien malesuada nec. Donec lobortis ante sed interdum ullamcorper. Praesent non ante porta quam imperdiet consequat. Sed in congue nisi, a interdum magna.",
 		},
-		[3] = {
+		{
+			id = 3,
 			title = "Adipiscing Elit Vestibulum",
 			body = "Aliquam sagittis interdum lacus vel rhoncus. Sed risus sapien, facilisis sit amet varius vitae, gravida in dolor. Praesent eu nunc at massa sollicitudin condimentum. Nulla non elit eget nisi faucibus mollis vel non nunc. Cras porttitor, dolor non maximus interdum, ex libero malesuada velit, nec luctus nunc nunc at massa. Etiam velit est, cursus ut hendrerit ac, efficitur vitae risus. Donec nulla diam, consequat eu magna ut, gravida pellentesque sem. Donec in imperdiet orci. Suspendisse eget arcu vitae elit luctus rhoncus quis vitae urna. Vestibulum in suscipit justo, non porta ex. Phasellus scelerisque eros et placerat gravida. Aliquam sapien dolor, dignissim in tristique eget, fringilla et justo.",
 		},
@@ -135,10 +138,32 @@ function Database:GetNotes()
 	return NotesDB.notes
 end
 
-function Database:GetNote(noteId)
+function Database:GetNoteById(noteId)
 	addon.Utilities:CheckType(noteId, "number")
-	CheckNoteWithIdExists(noteId)
-	return NotesDB.notes[noteId]
+
+	for _, note in ipairs(NotesDB.notes) do
+		if note.id == noteId then
+			return note
+		end
+	end
+
+	error("A note with the ID `" .. noteId .. "` does not exist.")
+end
+
+-- function Database:GetNote(noteId)
+-- 	addon.Utilities:CheckType(noteId, "number")
+-- 	CheckNoteWithIdExists(noteId)
+-- 	return NotesDB.notes[noteId]
+-- end
+
+function Database:SetCurrentNoteId(noteId)
+	addon.Utilities:CheckType(noteId, "number", "nil")
+
+	if noteId ~= nil then
+		CheckNoteWithIdExists(noteId)
+	end
+
+	NotesDB.currentNoteId = noteId
 end
 
 function Database:SetNoteTitle(noteId, newTitle)
@@ -150,7 +175,7 @@ end
 
 function Database:SetNoteBody(noteId, newBody)
 	addon.Utilities:CheckType(noteId, "number")
-	addon.Utilities:CheckType(newTitle, "string")
+	addon.Utilities:CheckType(newBody, "string")
 	CheckNoteWithIdExists(noteId)
 	NotesDB.notes[noteId].body = newBody
 end

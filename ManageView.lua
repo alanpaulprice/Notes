@@ -16,6 +16,7 @@ local function CreateScrollBoxList()
 	ManageView.Frame.ScrollBoxList = CreateFrame("Frame", nil, ManageView.Frame, "WowScrollBoxList")
 	ManageView.Frame.ScrollBoxList:SetPoint("TOPLEFT", ManageView.Frame, "TOPLEFT", 0, 0)
 	ManageView.Frame.ScrollBoxList:SetPoint("BOTTOMRIGHT", ManageView.Frame, "BOTTOMRIGHT", -17, 0)
+	-- ManageView.Frame.ScrollBoxList.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
 end
 
 local function CreateScrollBar()
@@ -27,14 +28,21 @@ end
 local function ConfigureScrollBoxList()
 	local function InitButton(button, elementData)
 		button.name:SetText(elementData.title)
+		button:SetScript("OnClick", function()
+			print(elementData.id)
+			addon.UI:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT, elementData.id)
+		end)
 	end
 
 	local function Update()
 		local dataProvider = CreateDataProvider()
 		local notes = addon.Database:GetNotes()
 
-		for id, note in pairs(notes) do
-			dataProvider:Insert({ id = id, title = note.title })
+		--TODO - would need to insert an item with header or w/e here to add 'create new' button
+
+		for _, note in ipairs(notes) do
+			print(note.id)
+			dataProvider:Insert({ id = note.id, title = note.title })
 		end
 
 		ManageView.Frame.ScrollBoxList:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
@@ -46,6 +54,7 @@ local function ConfigureScrollBoxList()
 			factory(elementData.header) --TODO - could modify for 'create new' button?
 		else
 			factory("IgnoreListButtonTemplate", InitButton)
+			-- factory(nil, InitButton) --TODO - replace above line, create custom frame inside initbutton
 		end
 	end)
 
@@ -58,4 +67,12 @@ function ManageView:Initialize()
 	CreateScrollBoxList()
 	CreateScrollBar()
 	ConfigureScrollBoxList()
+end
+
+function ManageView:Show()
+	ManageView.Frame:Show()
+end
+
+function ManageView:Hide()
+	ManageView.Frame:Hide()
 end

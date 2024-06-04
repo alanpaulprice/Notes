@@ -13,6 +13,7 @@ Utilities.lua
 Core.lua
 Database.lua
 UI.lua
+EditView.lua
 ManageView.lua
 MinimapButton.lua
 Config.lua
