@@ -21,6 +21,18 @@
 		"UIDropDownMenu_Initialize",
 		"UIDropDownMenu_SetSelectedID",
 		"UIDropDownMenu_JustifyText",
-		"ButtonFrameTemplate_HidePortrait"
+		"ButtonFrameTemplate_HidePortrait",
+		"CreateScrollBoxListLinearView",
+		"FriendsFriendsFrame",
+		"FriendsFriends_InitButton",
+		"IgnoreList_InitButton",
+		"IgnoreList_SetButtonSelected",
+		"SQUELCH_TYPE_IGNORE",
+		"SQUELCH_TYPE_BLOCK_INVITE",
+		"IgnoreList_GetSelected",
+		"UNKNOWN",
+		"IgnoreListFrame",
+		"ScrollBoxConstants",
+		"CreateDataProvider"
 	],
 }

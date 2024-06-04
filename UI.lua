@@ -140,11 +140,13 @@ local function CreateViewContainer()
 end
 
 local function CreateEditView()
+	local currentNote = addon.Database.GetCurrentNote()
+
 	-- Create the parent frame.
 	UI.Frame.ViewContainer.EditView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
 	UI.Frame.ViewContainer.EditView:SetAllPoints(UI.Frame.ViewContainer)
 
-	if addon.Database.GetCurrentNote() == nil then
+	if currentNote == nil then
 		UI.Frame.ViewContainer.EditView:Hide()
 	end
 
@@ -155,8 +157,11 @@ local function CreateEditView()
 	EditView.ScrollingEditBox:SetPoint("TOPLEFT", EditView, "TOPLEFT", 0, 0)
 	EditView.ScrollingEditBox:SetPoint("BOTTOMRIGHT", EditView, "BOTTOMRIGHT", -17, 0)
 	EditView.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
-	EditView.ScrollingEditBox.ScrollBox.EditBox:SetText(addon.Database:GetNote())
 	EditView.ScrollingEditBox.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
+
+	if currentNote ~= nil then
+		EditView.ScrollingEditBox.ScrollBox.EditBox:SetText(currentNote.body)
+	end
 
 	-- Configure handling of text changes for the scrolling edit box.
 	local function OnTextChange(owner, editBox, userChanged)
@@ -183,9 +188,70 @@ local function CreateManageView()
 
 	local ManageView = UI.Frame.ViewContainer.ManageView
 
-	ManageView.Placeholder = ManageView:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	ManageView.Placeholder:SetPoint("CENTER")
-	ManageView.Placeholder:SetText("Manage View")
+	-- Create the scroll box.
+	ManageView.ScrollBox = CreateFrame("Frame", nil, ManageView, "WowScrollBoxList")
+	ManageView.ScrollBox:SetPoint("TOPLEFT", ManageView, "TOPLEFT", 0, 0)
+	ManageView.ScrollBox:SetPoint("BOTTOMRIGHT", ManageView, "BOTTOMRIGHT", -17, 0)
+
+	-- Create and configure the scroll bar.
+	ManageView.ScrollBar = CreateFrame("EventFrame", nil, ManageView, "MinimalScrollBar")
+	ManageView.ScrollBar:SetPoint("TOPLEFT", ManageView.ScrollBox, "TOPRIGHT", 0, -4)
+	ManageView.ScrollBar:SetPoint("BOTTOMLEFT", ManageView.ScrollBox, "BOTTOMRIGHT", 0, 4)
+
+	--TODO
+	-- view:SetElementInitializer("FriendsFriendsButtonTemplate", function(button, elementData)
+	-- 	FriendsFriends_InitButton(button, elementData)
+	-- end)
+
+	local function InitButton(button, elementData)
+		-- print(addon.Utilities:PrintTableKeys(elementData.title))
+		-- print(addon.Utilities:PrintTableKeys(elementData))`
+		button.name:SetText(elementData.title)
+
+		----------------------------------------------------------------------------------------------------------------
+		-- button.index = elementData.index
+
+		-- if elementData.squelchType == SQUELCH_TYPE_IGNORE then
+		-- 	local name = C_FriendList.GetIgnoreName(button.index)
+		-- 	if not name then
+		-- 		button.name:SetText(UNKNOWN)
+		-- 	else
+		-- 		button.name:SetText(name)
+		-- 		button.type = SQUELCH_TYPE_IGNORE
+		-- 	end
+		-- elseif elementData.squelchType == SQUELCH_TYPE_BLOCK_INVITE then
+		-- 	local blockID, blockName = BNGetBlockedInfo(button.index)
+		-- 	button.name:SetText(blockName)
+		-- 	button.type = SQUELCH_TYPE_BLOCK_INVITE
+		-- end
+
+		-- local selectedSquelchType, selectedSquelchIndex = IgnoreList_GetSelected()
+		-- local selected = (selectedSquelchType == button.type) and (selectedSquelchIndex == button.index)
+		-- IgnoreList_SetButtonSelected(button, selected)
+	end
+
+	local function Update()
+		local dataProvider = CreateDataProvider()
+		local notes = addon.Database:GetNotes()
+
+		for id, note in pairs(notes) do
+			dataProvider:Insert({ id = id, title = note.title })
+		end
+
+		ManageView.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+	end
+
+	local view = CreateScrollBoxListLinearView()
+	view:SetElementFactory(function(factory, elementData)
+		if elementData.header then
+			factory(elementData.header)
+		else
+			factory("IgnoreListButtonTemplate", InitButton)
+		end
+	end)
+
+	ScrollUtil.InitScrollBoxListWithScrollBar(ManageView.ScrollBox, ManageView.ScrollBar, view)
+	Update()
 end
 
 function UI:Initialize()
@@ -215,6 +281,7 @@ function UI:ShowManageView()
 end
 
 function UI:ShowEditView(noteId)
+	local note = addon.Database.GetNote(noteId)
 	--TODO
 end
 
