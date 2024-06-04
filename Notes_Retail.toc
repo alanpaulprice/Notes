@@ -8,6 +8,7 @@
 
 LibDBIcon-1.0\embeds.xml
 
+Constants.lua
 Utilities.lua
 Core.lua
 Database.lua
