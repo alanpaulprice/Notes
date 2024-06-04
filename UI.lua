@@ -5,7 +5,7 @@ local UI = addon.UI
 local isSizing = false
 
 local function CreateRootFrame()
-	UI.Frame = CreateFrame("Frame", nil, UIParent, "ButtonFrameTemplate")
+	UI.Frame = CreateFrame("Frame", addonName .. "_UI", UIParent, "ButtonFrameTemplate")
 
 	local size = addon.Database:GetSize()
 	UI.Frame:SetSize(size.width, size.height)
@@ -177,90 +177,13 @@ local function CreateEditView()
 	ScrollUtil.RegisterScrollBoxWithScrollBar(EditView.ScrollingEditBox.ScrollBox, EditView.ScrollBar)
 end
 
-local function CreateManageView()
-	-- Create the parent frame.
-	UI.Frame.ViewContainer.ManageView = CreateFrame("Frame", nil, UI.Frame.ViewContainer, nil)
-	UI.Frame.ViewContainer.ManageView:SetAllPoints(UI.Frame.ViewContainer)
-
-	if addon.Database.GetCurrentNote() ~= nil then
-		UI.Frame.ViewContainer.ManageView:Hide()
-	end
-
-	local ManageView = UI.Frame.ViewContainer.ManageView
-
-	-- Create the scroll box.
-	ManageView.ScrollBox = CreateFrame("Frame", nil, ManageView, "WowScrollBoxList")
-	ManageView.ScrollBox:SetPoint("TOPLEFT", ManageView, "TOPLEFT", 0, 0)
-	ManageView.ScrollBox:SetPoint("BOTTOMRIGHT", ManageView, "BOTTOMRIGHT", -17, 0)
-
-	-- Create and configure the scroll bar.
-	ManageView.ScrollBar = CreateFrame("EventFrame", nil, ManageView, "MinimalScrollBar")
-	ManageView.ScrollBar:SetPoint("TOPLEFT", ManageView.ScrollBox, "TOPRIGHT", 0, -4)
-	ManageView.ScrollBar:SetPoint("BOTTOMLEFT", ManageView.ScrollBox, "BOTTOMRIGHT", 0, 4)
-
-	--TODO
-	-- view:SetElementInitializer("FriendsFriendsButtonTemplate", function(button, elementData)
-	-- 	FriendsFriends_InitButton(button, elementData)
-	-- end)
-
-	local function InitButton(button, elementData)
-		-- print(addon.Utilities:PrintTableKeys(elementData.title))
-		-- print(addon.Utilities:PrintTableKeys(elementData))`
-		button.name:SetText(elementData.title)
-
-		----------------------------------------------------------------------------------------------------------------
-		-- button.index = elementData.index
-
-		-- if elementData.squelchType == SQUELCH_TYPE_IGNORE then
-		-- 	local name = C_FriendList.GetIgnoreName(button.index)
-		-- 	if not name then
-		-- 		button.name:SetText(UNKNOWN)
-		-- 	else
-		-- 		button.name:SetText(name)
-		-- 		button.type = SQUELCH_TYPE_IGNORE
-		-- 	end
-		-- elseif elementData.squelchType == SQUELCH_TYPE_BLOCK_INVITE then
-		-- 	local blockID, blockName = BNGetBlockedInfo(button.index)
-		-- 	button.name:SetText(blockName)
-		-- 	button.type = SQUELCH_TYPE_BLOCK_INVITE
-		-- end
-
-		-- local selectedSquelchType, selectedSquelchIndex = IgnoreList_GetSelected()
-		-- local selected = (selectedSquelchType == button.type) and (selectedSquelchIndex == button.index)
-		-- IgnoreList_SetButtonSelected(button, selected)
-	end
-
-	local function Update()
-		local dataProvider = CreateDataProvider()
-		local notes = addon.Database:GetNotes()
-
-		for id, note in pairs(notes) do
-			dataProvider:Insert({ id = id, title = note.title })
-		end
-
-		ManageView.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
-	end
-
-	local view = CreateScrollBoxListLinearView()
-	view:SetElementFactory(function(factory, elementData)
-		if elementData.header then
-			factory(elementData.header)
-		else
-			factory("IgnoreListButtonTemplate", InitButton)
-		end
-	end)
-
-	ScrollUtil.InitScrollBoxListWithScrollBar(ManageView.ScrollBox, ManageView.ScrollBar, view)
-	Update()
-end
-
 function UI:Initialize()
 	CreateRootFrame()
 	MakeFrameMoveable()
 	MakeFrameResizable()
 	CreateViewContainer()
 	CreateEditView()
-	CreateManageView()
+	addon.ManageView:Initialize()
 end
 
 function UI:Toggle()
