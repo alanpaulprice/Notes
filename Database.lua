@@ -22,9 +22,29 @@ local initialDatabaseState = {
 		},
 		showAtLogin = false,
 	},
-	currentNote = nil,
+	currentNoteId = nil,
 	note = "",
+	notes = {
+		[1] = {
+			title = "Lorem Ipsum Dolor",
+			body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum accumsan mattis nibh, eget imperdiet odio vulputate sit amet. Maecenas vel elit pharetra nisi vulputate semper non vitae sapien. Nulla facilisi. Curabitur sapien libero, rutrum non justo sit amet, ultricies facilisis purus. Suspendisse commodo diam vitae nulla lobortis, sit amet pharetra libero mollis. Sed dapibus suscipit neque, in ultrices turpis suscipit in. Etiam sodales, risus eget rutrum scelerisque, enim odio gravida ipsum, ut molestie nibh dolor nec purus. Nunc eros ligula, faucibus nec dolor vel, porttitor mollis arcu.",
+		},
+		[2] = {
+			title = "Sit Amet Consectetur",
+			body = "In porta ante elementum ipsum volutpat, a auctor risus tempus. Maecenas vel rhoncus dolor. Phasellus odio tellus, finibus nec augue eget, vestibulum euismod felis. Sed consequat leo ut bibendum gravida. Fusce mollis posuere erat, ac mollis sapien malesuada nec. Donec lobortis ante sed interdum ullamcorper. Praesent non ante porta quam imperdiet consequat. Sed in congue nisi, a interdum magna.",
+		},
+		[3] = {
+			title = "Adipiscing Elit Vestibulum",
+			body = "Aliquam sagittis interdum lacus vel rhoncus. Sed risus sapien, facilisis sit amet varius vitae, gravida in dolor. Praesent eu nunc at massa sollicitudin condimentum. Nulla non elit eget nisi faucibus mollis vel non nunc. Cras porttitor, dolor non maximus interdum, ex libero malesuada velit, nec luctus nunc nunc at massa. Etiam velit est, cursus ut hendrerit ac, efficitur vitae risus. Donec nulla diam, consequat eu magna ut, gravida pellentesque sem. Donec in imperdiet orci. Suspendisse eget arcu vitae elit luctus rhoncus quis vitae urna. Vestibulum in suscipit justo, non porta ex. Phasellus scelerisque eros et placerat gravida. Aliquam sapien dolor, dignissim in tristique eget, fringilla et justo.",
+		},
+	},
 }
+
+local function CheckNoteWithIdExists(id)
+	if NotesDB.notes[id] == nil then
+		error("A note with an ID of `" .. id .. "` does not exist.")
+	end
+end
 
 function Database:Initialize()
 	if NotesDB == nil then
@@ -48,14 +68,14 @@ function Database:GetSize()
 	return NotesDB.config.size
 end
 
-function Database:SetSize(input)
-	addon.Utilities:CheckType(input, "table")
-	addon.Utilities:CheckType(input.width, "number")
-	addon.Utilities:CheckType(input.height, "number")
+function Database:SetSize(size)
+	addon.Utilities:CheckType(size, "table")
+	addon.Utilities:CheckType(size.width, "number")
+	addon.Utilities:CheckType(size.height, "number")
 
 	NotesDB.config.size = {
-		width = input.width,
-		height = input.height,
+		width = size.width,
+		height = size.height,
 	}
 end
 
@@ -63,20 +83,20 @@ function Database:GetPoint()
 	return NotesDB.config.point
 end
 
-function Database:SetPoint(input)
-	addon.Utilities:CheckType(input, "table")
-	addon.Utilities:CheckType(input.anchorPoint, "string")
-	addon.Utilities:CheckType(input.relativeTo, "nil")
-	addon.Utilities:CheckType(input.relativePoint, "string")
-	addon.Utilities:CheckType(input.xOffset, "number")
-	addon.Utilities:CheckType(input.yOffset, "number")
+function Database:SetPoint(point)
+	addon.Utilities:CheckType(point, "table")
+	addon.Utilities:CheckType(point.anchorPoint, "string")
+	addon.Utilities:CheckType(point.relativeTo, "nil")
+	addon.Utilities:CheckType(point.relativePoint, "string")
+	addon.Utilities:CheckType(point.xOffset, "number")
+	addon.Utilities:CheckType(point.yOffset, "number")
 
 	NotesDB.config.point = {
-		anchorPoint = input.anchorPoint,
-		relativeTo = input.relativeTo,
-		relativePoint = input.relativePoint,
-		xOffset = input.xOffset,
-		yOffset = input.yOffset,
+		anchorPoint = point.anchorPoint,
+		relativeTo = point.relativeTo,
+		relativePoint = point.relativePoint,
+		xOffset = point.xOffset,
+		yOffset = point.yOffset,
 	}
 end
 
@@ -84,9 +104,9 @@ function Database:GetFont()
 	return NotesDB.config.font
 end
 
-function Database:SetFont(input)
-	addon.Utilities:CheckType(input, "string")
-	NotesDB.config.font = input
+function Database:SetFont(font)
+	addon.Utilities:CheckType(font, "string")
+	NotesDB.config.font = font
 end
 
 function Database:GetMinimapButtonHidden()
@@ -108,19 +128,29 @@ function Database:SetShowAtLogin(input)
 end
 
 function Database:GetCurrentNote()
-	return NotesDB.currentNote
+	return NotesDB.notes[NotesDB.currentNoteId]
 end
 
-function Database:SetCurrentNote(input)
-	addon.Utilities:CheckType(input, "string", "nil")
-	NotesDB.currentNote = input
+function Database:GetNotes()
+	return NotesDB.notes
 end
 
-function Database:GetNote()
-	return NotesDB.note
+function Database:GetNote(noteId)
+	addon.Utilities:CheckType(noteId, "number")
+	CheckNoteWithIdExists(noteId)
+	return NotesDB.notes[noteId]
 end
 
-function Database:SetNote(input)
-	addon.Utilities:CheckType(input, "string")
-	NotesDB.note = input
+function Database:SetNoteTitle(noteId, newTitle)
+	addon.Utilities:CheckType(noteId, "number")
+	addon.Utilities:CheckType(newTitle, "string")
+	CheckNoteWithIdExists(noteId)
+	NotesDB.notes[noteId].title = newTitle
+end
+
+function Database:SetNoteBody(noteId, newBody)
+	addon.Utilities:CheckType(noteId, "number")
+	addon.Utilities:CheckType(newTitle, "string")
+	CheckNoteWithIdExists(noteId)
+	NotesDB.notes[noteId].body = newBody
 end
