@@ -12,11 +12,9 @@ local function CreateRootFrame()
 end
 
 local function CreateScrollBoxList()
-	-- Create the scroll box list.
 	ManageView.Frame.ScrollBoxList = CreateFrame("Frame", nil, ManageView.Frame, "WowScrollBoxList")
 	ManageView.Frame.ScrollBoxList:SetPoint("TOPLEFT", ManageView.Frame, "TOPLEFT", 0, 0)
 	ManageView.Frame.ScrollBoxList:SetPoint("BOTTOMRIGHT", ManageView.Frame, "BOTTOMRIGHT", -17, 0)
-	-- ManageView.Frame.ScrollBoxList.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
 end
 
 local function CreateScrollBar()
