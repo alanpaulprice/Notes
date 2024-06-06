@@ -143,7 +143,7 @@ local function CreateViewContainer()
 	UI.Frame.ViewContainer:SetPoint("BOTTOMRIGHT", UI.Frame.Inset, "BOTTOMRIGHT", -2, 2)
 end
 
-local function CreateButtonBarButtons()
+local function CreateManageButton()
 	UI.Frame.ManageButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
 
 	if addon.Database:GetCurrentNote() == nil then
@@ -156,7 +156,9 @@ local function CreateButtonBarButtons()
 	UI.Frame.ManageButton:SetScript("OnClick", function()
 		UI:ChangeView(addon.Constants.UI_VIEW_ENUM.MANAGE)
 	end)
+end
 
+local function CreateCreateButton()
 	UI.Frame.CreateButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
 
 	if addon.Database:GetCurrentNote() ~= nil then
@@ -167,8 +169,16 @@ local function CreateButtonBarButtons()
 	UI.Frame.CreateButton:SetText("Create Note")
 	UI.Frame.CreateButton:FitToText()
 	UI.Frame.CreateButton:SetScript("OnClick", function()
-		--TODO
-		print("TODO")
+		StaticPopup_ShowCustomGenericInputBox({
+			text = "Note Title",
+			callback = function(noteTitle)
+				local newNote = addon.Database:CreateNote(noteTitle)
+				UI:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT, newNote.id)
+			end,
+			acceptText = "Create",
+			maxLetters = addon.Constants.NOTE_TITLE_MAX_LENGTH,
+			countInvisibleLetters = true,
+		})
 	end)
 end
 
@@ -183,7 +193,8 @@ function UI:Initialize()
 	MakeFrameMoveable()
 	MakeFrameResizable()
 	CreateViewContainer()
-	CreateButtonBarButtons()
+	CreateManageButton()
+	CreateCreateButton()
 	addon.EditView:Initialize()
 	addon.ManageView:Initialize()
 end

@@ -33,6 +33,7 @@
 		"UNKNOWN",
 		"IgnoreListFrame",
 		"ScrollBoxConstants",
-		"CreateDataProvider"
+		"CreateDataProvider",
+		"StaticPopup_ShowCustomGenericInputBox"
 	],
 }
