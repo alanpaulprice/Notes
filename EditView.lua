@@ -2,8 +2,9 @@ local addonName, addon = ...
 addon.EditView = {}
 local EditView = addon.EditView
 
-local function SetText(text)
-	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(text)
+local function UpdateText()
+	local note = addon.Database.GetCurrentNote()
+	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(note.body)
 end
 
 local function CreateRootFrame()
@@ -25,7 +26,7 @@ local function CreateScrollingEditBox()
 	local currentNote = addon.Database:GetCurrentNote()
 
 	if currentNote ~= nil then
-		SetText(currentNote.body)
+		UpdateText(currentNote.body)
 	end
 
 	local function OnTextChange(owner, editBox, userChanged)
@@ -50,8 +51,7 @@ function EditView:Initialize()
 end
 
 function EditView:Show()
-	local note = addon.Database.GetCurrentNote()
-	SetText(note.body)
+	UpdateText()
 	EditView.Frame:Show()
 end
 
