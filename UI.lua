@@ -28,14 +28,6 @@ local function CreateRootFrame()
 	UI.Frame.Inset:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 9, -26)
 
 	UpdateTitleText()
-
-	UI.Frame.ManageButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
-	UI.Frame.ManageButton:SetPoint("BOTTOM", UI.Frame, "BOTTOM", 0, 4)
-	UI.Frame.ManageButton:SetText("Manage Notes")
-	UI.Frame.ManageButton:FitToText()
-	UI.Frame.ManageButton:SetScript("OnClick", function()
-		UI:ChangeView(addon.Constants.UI_VIEW_ENUM.MANAGE)
-	end)
 end
 
 local function UpdateSavedSize()
@@ -151,6 +143,35 @@ local function CreateViewContainer()
 	UI.Frame.ViewContainer:SetPoint("BOTTOMRIGHT", UI.Frame.Inset, "BOTTOMRIGHT", -2, 2)
 end
 
+local function CreateButtonBarButtons()
+	UI.Frame.ManageButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
+
+	if addon.Database:GetCurrentNote() == nil then
+		UI.Frame.ManageButton:Hide()
+	end
+
+	UI.Frame.ManageButton:SetPoint("BOTTOM", UI.Frame, "BOTTOM", 0, 4)
+	UI.Frame.ManageButton:SetText("Manage Notes")
+	UI.Frame.ManageButton:FitToText()
+	UI.Frame.ManageButton:SetScript("OnClick", function()
+		UI:ChangeView(addon.Constants.UI_VIEW_ENUM.MANAGE)
+	end)
+
+	UI.Frame.CreateButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
+
+	if addon.Database:GetCurrentNote() ~= nil then
+		UI.Frame.CreateButton:Hide()
+	end
+
+	UI.Frame.CreateButton:SetPoint("BOTTOM", UI.Frame, "BOTTOM", 0, 4)
+	UI.Frame.CreateButton:SetText("Create Note")
+	UI.Frame.CreateButton:FitToText()
+	UI.Frame.CreateButton:SetScript("OnClick", function()
+		--TODO
+		print("TODO")
+	end)
+end
+
 function UI:ShowManageView()
 	addon.Database.SetCurrentNote(nil)
 	UI.Frame.ViewContainer.EditView:Hide()
@@ -162,6 +183,7 @@ function UI:Initialize()
 	MakeFrameMoveable()
 	MakeFrameResizable()
 	CreateViewContainer()
+	CreateButtonBarButtons()
 	addon.EditView:Initialize()
 	addon.ManageView:Initialize()
 end
@@ -184,13 +206,17 @@ function UI:ChangeView(newView, noteId)
 		addon.Utilities:CheckType(noteId, "number")
 		addon.Database:SetCurrentNoteId(noteId)
 		addon.ManageView:Hide()
+		UI.Frame.CreateButton:Hide()
 		addon.EditView:Show()
+		UI.Frame.ManageButton:Show()
 	end
 
 	if newView == addon.Constants.UI_VIEW_ENUM.MANAGE then
 		addon.Database:SetCurrentNoteId(nil)
 		addon.EditView:Hide()
+		UI.Frame.ManageButton:Hide()
 		addon.ManageView:Show()
+		UI.Frame.CreateButton:Show()
 	end
 
 	UpdateTitleText()
