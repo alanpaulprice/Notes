@@ -2,6 +2,19 @@ local addonName, addon = ...
 addon.ManageView = {}
 local ManageView = addon.ManageView
 
+local function UpdateScrollBoxList()
+	local dataProvider = CreateDataProvider()
+	local notes = addon.Database:GetNotes()
+
+	--TODO - would need to insert an item with header or w/e here to add 'create new' button
+
+	for _, note in ipairs(notes) do
+		dataProvider:Insert({ id = note.id, title = note.title })
+	end
+
+	ManageView.Frame.ScrollBoxList:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+end
+
 local function CreateRootFrame()
 	ManageView.Frame = CreateFrame("Frame", addonName .. "_ManageView", addon.UI.Frame.ViewContainer, nil)
 	ManageView.Frame:SetAllPoints(addon.UI.Frame.ViewContainer)
@@ -27,23 +40,8 @@ local function ConfigureScrollBoxList()
 	local function InitButton(button, elementData)
 		button.name:SetText(elementData.title)
 		button:SetScript("OnClick", function()
-			print(elementData.id)
 			addon.UI:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT, elementData.id)
 		end)
-	end
-
-	local function Update()
-		local dataProvider = CreateDataProvider()
-		local notes = addon.Database:GetNotes()
-
-		--TODO - would need to insert an item with header or w/e here to add 'create new' button
-
-		for _, note in ipairs(notes) do
-			print(note.id)
-			dataProvider:Insert({ id = note.id, title = note.title })
-		end
-
-		ManageView.Frame.ScrollBoxList:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 	end
 
 	local view = CreateScrollBoxListLinearView()
@@ -57,7 +55,7 @@ local function ConfigureScrollBoxList()
 	end)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(ManageView.Frame.ScrollBoxList, ManageView.Frame.ScrollBar, view)
-	Update()
+	UpdateScrollBoxList()
 end
 
 function ManageView:Initialize()
@@ -68,6 +66,7 @@ function ManageView:Initialize()
 end
 
 function ManageView:Show()
+	UpdateScrollBoxList()
 	ManageView.Frame:Show()
 end
 
