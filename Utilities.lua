@@ -62,6 +62,16 @@ function Utilities:CheckType(input, ...)
 	end
 end
 
+function Utilities:TableContainsValue(table, value)
+	for _, tableValue in pairs(table) do
+		if tableValue == value then
+			return true
+		end
+	end
+
+	return false
+end
+
 function Utilities:GetTableLength(input)
 	Utilities:CheckType(input, "table")
 
