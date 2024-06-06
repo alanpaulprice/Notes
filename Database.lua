@@ -49,6 +49,16 @@ local function CheckNoteWithIdExists(id)
 	end
 end
 
+local function GetNoteIds()
+	local ids = {}
+
+	for _, note in ipairs(NotesDB.notes) do
+		table.insert(ids, note.id)
+	end
+
+	return ids
+end
+
 function Database:Initialize()
 	if NotesDB == nil then
 		NotesDB = initialDatabaseState
@@ -130,6 +140,31 @@ function Database:SetShowAtLogin(input)
 	NotesDB.config.showAtLogin = input
 end
 
+function Database:CreateNote(title)
+	addon.Utilities:CheckType(title, "string")
+	if #title > addon.Constants.NOTE_TITLE_MAX_LENGTH then
+		error("A note title must not be longer than " .. addon.Constants.NOTE_TITLE_MAX_LENGTH .. " characters.")
+	end
+
+	local noteIds = GetNoteIds()
+
+	local id = 1
+
+	while addon.Utilities:TableContainsValue(noteIds, id) do
+		id = id + 1
+	end
+
+	local newNote = {
+		id = id,
+		title = title,
+		body = "",
+	}
+
+	table.insert(NotesDB.notes, newNote)
+
+	return newNote
+end
+
 function Database:GetCurrentNote()
 	return NotesDB.notes[NotesDB.currentNoteId]
 end
@@ -149,12 +184,6 @@ function Database:GetNoteById(noteId)
 
 	error("A note with the ID `" .. noteId .. "` does not exist.")
 end
-
--- function Database:GetNote(noteId)
--- 	addon.Utilities:CheckType(noteId, "number")
--- 	CheckNoteWithIdExists(noteId)
--- 	return NotesDB.notes[noteId]
--- end
 
 function Database:SetCurrentNoteId(noteId)
 	addon.Utilities:CheckType(noteId, "number", "nil")
