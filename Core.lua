@@ -36,9 +36,3 @@ end
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 events:SetScript("OnEvent", addon.OnAddonLoaded)
-
-function addon:PrintKeys(tbl)
-	for key, _ in pairs(tbl) do
-		print(key)
-	end
-end
