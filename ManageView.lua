@@ -100,7 +100,9 @@ local function ConfigureScrollBoxList()
 			end
 		end)
 	end
-	local view = CreateScrollBoxListLinearView()
+
+	local top, bottom, left, right, spacing = 2, 2, 0, 0, 0
+	local view = CreateScrollBoxListLinearView(top, bottom, left, right, spacing)
 	view:SetElementInitializer("IgnoreListButtonTemplate", Initializer)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(ManageView.Frame.ScrollBoxList, ManageView.Frame.ScrollBar, view)
