@@ -22,23 +22,30 @@ local initialDatabaseState = {
 		},
 		showAtLogin = false,
 	},
-	currentNoteId = nil,
-	note = "",
+	currentNoteId = 1,
 	notes = {
 		{
 			id = 1,
-			title = "Lorem Ipsum Dolor",
-			body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum accumsan mattis nibh, eget imperdiet odio vulputate sit amet. Maecenas vel elit pharetra nisi vulputate semper non vitae sapien. Nulla facilisi. Curabitur sapien libero, rutrum non justo sit amet, ultricies facilisis purus. Suspendisse commodo diam vitae nulla lobortis, sit amet pharetra libero mollis. Sed dapibus suscipit neque, in ultrices turpis suscipit in. Etiam sodales, risus eget rutrum scelerisque, enim odio gravida ipsum, ut molestie nibh dolor nec purus. Nunc eros ligula, faucibus nec dolor vel, porttitor mollis arcu.",
-		},
-		{
-			id = 2,
-			title = "Sit Amet Consectetur",
-			body = "In porta ante elementum ipsum volutpat, a auctor risus tempus. Maecenas vel rhoncus dolor. Phasellus odio tellus, finibus nec augue eget, vestibulum euismod felis. Sed consequat leo ut bibendum gravida. Fusce mollis posuere erat, ac mollis sapien malesuada nec. Donec lobortis ante sed interdum ullamcorper. Praesent non ante porta quam imperdiet consequat. Sed in congue nisi, a interdum magna.",
-		},
-		{
-			id = 3,
-			title = "Adipiscing Elit Vestibulum",
-			body = "Aliquam sagittis interdum lacus vel rhoncus. Sed risus sapien, facilisis sit amet varius vitae, gravida in dolor. Praesent eu nunc at massa sollicitudin condimentum. Nulla non elit eget nisi faucibus mollis vel non nunc. Cras porttitor, dolor non maximus interdum, ex libero malesuada velit, nec luctus nunc nunc at massa. Etiam velit est, cursus ut hendrerit ac, efficitur vitae risus. Donec nulla diam, consequat eu magna ut, gravida pellentesque sem. Donec in imperdiet orci. Suspendisse eget arcu vitae elit luctus rhoncus quis vitae urna. Vestibulum in suscipit justo, non porta ex. Phasellus scelerisque eros et placerat gravida. Aliquam sapien dolor, dignissim in tristique eget, fringilla et justo.",
+			title = "Getting Started",
+			body = "Thank you for installing "
+				.. addonName
+				.. "."
+				.. "\n\n"
+				.. "All text entered here will be saved automatically."
+				.. "\n\n"
+				.. " You can access the 'Manage' view by clicking the 'Manage Notes' button below."
+				.. " From there, you can:"
+				.. "\n"
+				.. "- View all existing notes."
+				.. "\n"
+				.. "- Create a new note."
+				.. "\n"
+				.. "- Edit the title of a note."
+				.. "\n"
+				.. "- Delete a note."
+				.. "\n\n"
+				.. "You can resize this window using the handles in the bottom corners,"
+				.. " and move it by clicking and dragging on the title bar at the top.",
 		},
 	},
 }
