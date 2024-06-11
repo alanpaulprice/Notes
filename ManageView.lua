@@ -2,11 +2,11 @@ local addonName, addon = ...
 addon.ManageView = {}
 local ManageView = addon.ManageView
 
+local dropDownMenuTarget = nil
+
 local function UpdateScrollBoxList()
 	local dataProvider = CreateDataProvider()
 	local notes = addon.Database:GetNotes()
-
-	--TODO - would need to insert an item with header or w/e here to add 'create new' button
 
 	for _, note in ipairs(notes) do
 		dataProvider:Insert({ id = note.id, title = note.title })
@@ -36,23 +36,72 @@ local function CreateScrollBar()
 	ManageView.Frame.ScrollBar:SetPoint("BOTTOMLEFT", ManageView.Frame.ScrollBoxList, "BOTTOMRIGHT", 0, 4)
 end
 
-local function ConfigureScrollBoxList()
-	local function InitButton(button, elementData)
-		button.name:SetText(elementData.title)
-		button:SetScript("OnClick", function()
-			addon.UI:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT, elementData.id)
-		end)
+local function CreateDropDownMenu()
+	local function Initialize()
+		local titleButtonInfo = UIDropDownMenu_CreateInfo()
+		titleButtonInfo.isTitle = 1
+		titleButtonInfo.notCheckable = 1
+		if dropDownMenuTarget then
+			titleButtonInfo.text = dropDownMenuTarget.title
+		end
+		UIDropDownMenu_AddButton(titleButtonInfo)
+
+		local renameButtonInfo = UIDropDownMenu_CreateInfo()
+		renameButtonInfo.text = "Rename"
+		renameButtonInfo.notCheckable = 1
+		renameButtonInfo.arg1 = dropDownMenuTarget
+		renameButtonInfo.func = function(_, target)
+			StaticPopup_ShowCustomGenericInputBox({
+				text = "Rename '" .. target.title .. "'",
+				callback = function(newNoteTitle)
+					addon.Database:SetNoteTitle(target.id, newNoteTitle)
+					UpdateScrollBoxList()
+				end,
+				acceptText = "Save",
+				maxLetters = addon.Constants.NOTE_TITLE_MAX_LENGTH,
+				countInvisibleLetters = true,
+			})
+		end
+		UIDropDownMenu_AddButton(renameButtonInfo)
+
+		local deleteButtonInfo = UIDropDownMenu_CreateInfo()
+		deleteButtonInfo.text = "Delete"
+		deleteButtonInfo.notCheckable = 1
+		deleteButtonInfo.arg1 = dropDownMenuTarget
+		deleteButtonInfo.func = function(_, target)
+			StaticPopup_ShowCustomGenericConfirmation({
+				text = "Confirm deletion of '" .. target.title .. "'",
+				callback = function()
+					addon.Database:DeleteNote(target.id)
+					UpdateScrollBoxList()
+				end,
+				acceptText = "Delete",
+				cancelText = "Cancel",
+			})
+		end
+		UIDropDownMenu_AddButton(deleteButtonInfo)
 	end
 
+	ManageView.Frame.DropDownMenu = CreateFrame("Frame", nil, ManageView.Frame, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(ManageView.Frame.DropDownMenu, Initialize, "MENU")
+	ManageView.Frame.DropDownMenu.noResize = true
+end
+
+local function ConfigureScrollBoxList()
+	local function Initializer(button, elementData)
+		button.name:SetText(elementData.title)
+		button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+		button:SetScript("OnClick", function(_, clickedButton)
+			if clickedButton == "LeftButton" then
+				addon.UI:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT, elementData.id)
+			elseif clickedButton == "RightButton" then
+				dropDownMenuTarget = { id = elementData.id, title = elementData.title }
+				ToggleDropDownMenu(1, nil, ManageView.Frame.DropDownMenu, "cursor", 0, 0)
+			end
+		end)
+	end
 	local view = CreateScrollBoxListLinearView()
-	view:SetElementFactory(function(factory, elementData)
-		if elementData.header then
-			factory(elementData.header) --TODO - could modify for 'create new' button?
-		else
-			factory("IgnoreListButtonTemplate", InitButton)
-			-- factory(nil, InitButton) --TODO - replace above line, create custom frame inside initbutton
-		end
-	end)
+	view:SetElementInitializer("IgnoreListButtonTemplate", Initializer)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(ManageView.Frame.ScrollBoxList, ManageView.Frame.ScrollBar, view)
 	UpdateScrollBoxList()
@@ -62,6 +111,7 @@ function ManageView:Initialize()
 	CreateRootFrame()
 	CreateScrollBoxList()
 	CreateScrollBar()
+	CreateDropDownMenu()
 	ConfigureScrollBoxList()
 end
 
