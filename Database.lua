@@ -198,13 +198,27 @@ end
 function Database:SetNoteTitle(noteId, newTitle)
 	addon.Utilities:CheckType(noteId, "number")
 	addon.Utilities:CheckType(newTitle, "string")
-	CheckNoteWithIdExists(noteId)
-	NotesDB.notes[noteId].title = newTitle
+
+	local note = self:GetNoteById(noteId)
+	note.title = newTitle
 end
 
 function Database:SetNoteBody(noteId, newBody)
 	addon.Utilities:CheckType(noteId, "number")
 	addon.Utilities:CheckType(newBody, "string")
+
+	local note = self:GetNoteById(noteId)
+	note.body = newBody
+end
+
+function Database:DeleteNote(noteId)
+	addon.Utilities:CheckType(noteId, "number")
 	CheckNoteWithIdExists(noteId)
-	NotesDB.notes[noteId].body = newBody
+
+	for index, note in ipairs(NotesDB.notes) do
+		if note.id == noteId then
+			table.remove(NotesDB.notes, index)
+			break
+		end
+	end
 end
