@@ -66,6 +66,12 @@ local function GetNoteIds()
 	return ids
 end
 
+local function sortNotesByTitleAscending()
+	table.sort(NotesDB.notes, function(a, b)
+		return a.title < b.title
+	end)
+end
+
 function Database:Initialize()
 	if NotesDB == nil then
 		NotesDB = initialDatabaseState
@@ -169,6 +175,8 @@ function Database:CreateNote(title)
 
 	table.insert(NotesDB.notes, newNote)
 
+	sortNotesByTitleAscending()
+
 	return newNote
 end
 
@@ -208,6 +216,8 @@ function Database:SetNoteTitle(noteId, newTitle)
 
 	local note = self:GetNoteById(noteId)
 	note.title = newTitle
+
+	sortNotesByTitleAscending()
 end
 
 function Database:SetNoteBody(noteId, newBody)
