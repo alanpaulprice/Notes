@@ -139,9 +139,9 @@ function Utilities:CreateInterfaceOptionsCheckButton(label, parent, onClick)
 		local checked = self:GetChecked()
 		onClick(self, checked and true or false)
 		if checked then
-			PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		else
-			PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
 		end
 	end)
 
