@@ -150,3 +150,25 @@ function Utilities:CreateInterfaceOptionsCheckButton(label, parent, onClick)
 
 	return checkButton
 end
+
+function Utilities:AddToInspector(data, strName)
+	if DevTool and addon.DEBUG then
+		DevTool:AddData(data, strName)
+	end
+end
+
+function Utilities:CloneTable(original)
+	local clone
+
+	if type(original) == "table" then
+		clone = {}
+		for orig_key, originalValue in next, original, nil do
+			clone[self:CloneTable(orig_key)] = self:CloneTable(originalValue)
+		end
+		setmetatable(clone, self:CloneTable(getmetatable(original)))
+	else
+		clone = original
+	end
+
+	return clone
+end
