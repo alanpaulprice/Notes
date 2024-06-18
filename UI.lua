@@ -146,7 +146,7 @@ end
 local function CreateManageButton()
 	UI.Frame.ManageButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
 
-	if addon.Database:GetCurrentNote() == nil then
+	if addon.Database:GetCurrentNoteId() == nil then
 		UI.Frame.ManageButton:Hide()
 	end
 
@@ -161,7 +161,7 @@ end
 local function CreateCreateButton()
 	UI.Frame.CreateButton = CreateFrame("Button", nil, UI.Frame, "UIPanelButtonTemplate")
 
-	if addon.Database:GetCurrentNote() ~= nil then
+	if addon.Database:GetCurrentNoteId() ~= nil then
 		UI.Frame.CreateButton:Hide()
 	end
 

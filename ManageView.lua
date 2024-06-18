@@ -19,7 +19,7 @@ local function CreateRootFrame()
 	ManageView.Frame = CreateFrame("Frame", addonName .. "_ManageView", addon.UI.Frame.ViewContainer, nil)
 	ManageView.Frame:SetAllPoints(addon.UI.Frame.ViewContainer)
 
-	if addon.Database.GetCurrentNote() ~= nil then
+	if addon.Database.GetCurrentNoteId() ~= nil then
 		ManageView.Frame:Hide()
 	end
 end

@@ -156,6 +156,24 @@ function Database:SetShowAtLogin(input)
 	NotesDB.options.showAtLogin = input
 end
 
+function Database:GetCurrentNoteId()
+	return NotesDB.currentNoteId
+end
+
+function Database:SetCurrentNoteId(noteId)
+	addon.Utilities:CheckType(noteId, "number", "nil")
+
+	if noteId ~= nil then
+		CheckNoteWithIdExists(noteId)
+	end
+
+	NotesDB.currentNoteId = noteId
+end
+
+function Database:GetCurrentNote()
+	return addon.Utilities:CloneTable(NotesDB.notes[NotesDB.currentNoteId])
+end
+
 function Database:CreateNote(title)
 	addon.Utilities:CheckType(title, "string")
 	if #title > addon.Constants.NOTE_TITLE_MAX_LENGTH then
@@ -183,22 +201,8 @@ function Database:CreateNote(title)
 	return addon.Utilities:CloneTable(newNote)
 end
 
-function Database:GetCurrentNote()
-	return addon.Utilities:CloneTable(NotesDB.notes[NotesDB.currentNoteId])
-end
-
 function Database:GetNotes()
 	return addon.Utilities:CloneTable(NotesDB.notes)
-end
-
-function Database:SetCurrentNoteId(noteId)
-	addon.Utilities:CheckType(noteId, "number", "nil")
-
-	if noteId ~= nil then
-		CheckNoteWithIdExists(noteId)
-	end
-
-	NotesDB.currentNoteId = noteId
 end
 
 function Database:SetNoteTitle(noteId, newTitle)

@@ -11,7 +11,7 @@ local function CreateRootFrame()
 	EditView.Frame = CreateFrame("Frame", addonName .. "_EditView", addon.UI.Frame.ViewContainer, nil)
 	EditView.Frame:SetAllPoints(addon.UI.Frame.ViewContainer)
 
-	if addon.Database:GetCurrentNote() == nil then
+	if addon.Database:GetCurrentNoteId() == nil then
 		EditView.Frame:Hide()
 	end
 end
@@ -30,10 +30,9 @@ local function CreateScrollingEditBox()
 	end
 
 	local function OnTextChange(owner, editBox, userChanged)
-		addon.Database:SetNoteBody(addon.Database:GetCurrentNote().id, editBox:GetInputText())
+		addon.Database:SetNoteBody(addon.Database:GetCurrentNoteId(), editBox:GetInputText())
 	end
-	-- EditView.Frame.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, self)
-	EditView.Frame.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, EditView.ScrollingEditBox)
+	EditView.Frame.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, self)
 end
 
 local function CreateScrollBar()
