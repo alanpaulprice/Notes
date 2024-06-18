@@ -90,7 +90,7 @@ local function CreateFontSizeDropDownMenu()
 		UIDropDownMenu_SetSelectedID(Options.Frame.FontSizeDropDownMenu, self:GetID())
 		local font = fontOptions[Options.Frame.FontSizeDropDownMenu.selectedID].value
 		addon.Database:SetFont(font)
-		addon.UI:SetFont(font)
+		addon.EditView:SetFont(font)
 	end
 
 	local selectedOptionId = nil

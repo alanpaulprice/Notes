@@ -58,3 +58,7 @@ end
 function EditView:Hide()
 	EditView.Frame:Hide()
 end
+
+function EditView:SetFont(font)
+	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(font)
+end

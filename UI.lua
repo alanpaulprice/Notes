@@ -244,7 +244,3 @@ function UI:ResetPosition()
 	UI.Frame:SetPoint("CENTER", nil, "CENTER", 0, 0)
 	UpdateSavedPoint()
 end
-
-function UI:SetFont(font)
-	UI.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(font)
-end
