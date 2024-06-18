@@ -6,11 +6,11 @@ local isSizing = false
 
 local function UpdateTitleText()
 	local currentNote = addon.Database:GetCurrentNote()
-	local prefix = addonName .. " - "
+
 	if currentNote == nil then
-		UI.Frame.TitleContainer.TitleText:SetText(prefix .. "Manage")
+		UI.Frame.TitleContainer.TitleText:SetText(addonName)
 	else
-		UI.Frame.TitleContainer.TitleText:SetText(prefix .. currentNote.title)
+		UI.Frame.TitleContainer.TitleText:SetText(currentNote.title)
 	end
 end
 
