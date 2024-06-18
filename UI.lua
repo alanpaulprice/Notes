@@ -234,16 +234,14 @@ function UI:ChangeView(newView, noteId)
 end
 
 function UI:ResetSize()
-	local size = addon.Database:GetInitialSize()
-	UI.Frame:SetSize(size.width, size.height)
+	UI.Frame:SetSize(addon.Constants.DEFAULT_UI_WIDTH, addon.Constants.DEFAULT_UI_HEIGHT)
 	UpdateSavedSize()
 	UpdateSavedPoint()
 end
 
 function UI:ResetPosition()
-	local point = addon.Database:GetInitialPoint()
 	UI.Frame:ClearAllPoints()
-	UI.Frame:SetPoint(point.anchorPoint, point.relativeTo, point.relativePoint, point.xOffset, point.yOffset)
+	UI.Frame:SetPoint("CENTER", nil, "CENTER", 0, 0)
 	UpdateSavedPoint()
 end
 

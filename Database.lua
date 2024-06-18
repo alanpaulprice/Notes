@@ -3,11 +3,46 @@ local addonName, addon = ...
 addon.Database = {}
 local Database = addon.Database
 
+local function CheckNoteWithIdExists(id)
+	if NotesDB.notes[id] == nil then
+		error("A note with an ID of `" .. id .. "` does not exist.")
+	end
+end
+
+local function GetNoteIds()
+	local ids = {}
+
+	for _, note in ipairs(NotesDB.notes) do
+		table.insert(ids, note.id)
+	end
+
+	return ids
+end
+
+-- Returns the original/reference, only intended for use in 'update' database functions.
+local function GetNoteById(noteId)
+	addon.Utilities:CheckType(noteId, "number")
+
+	for _, note in ipairs(NotesDB.notes) do
+		if note.id == noteId then
+			return note
+		end
+	end
+
+	error("A note with the ID `" .. noteId .. "` does not exist.")
+end
+
+local function sortNotesByTitleAscending()
+	table.sort(NotesDB.notes, function(a, b)
+		return a.title < b.title
+	end)
+end
+
 local initialDatabaseState = {
-	config = {
+	options = {
 		size = {
-			width = 338,
-			height = 424,
+			width = addon.Constants.DEFAULT_UI_WIDTH,
+			height = addon.Constants.DEFAULT_UI_HEIGHT,
 		},
 		point = {
 			anchorPoint = "CENTER",
@@ -50,48 +85,14 @@ local initialDatabaseState = {
 	},
 }
 
-local function CheckNoteWithIdExists(id)
-	if NotesDB.notes[id] == nil then
-		error("A note with an ID of `" .. id .. "` does not exist.")
-	end
-end
-
-local function GetNoteIds()
-	local ids = {}
-
-	for _, note in ipairs(NotesDB.notes) do
-		table.insert(ids, note.id)
-	end
-
-	return ids
-end
-
-local function sortNotesByTitleAscending()
-	table.sort(NotesDB.notes, function(a, b)
-		return a.title < b.title
-	end)
-end
-
 function Database:Initialize()
 	if NotesDB == nil then
 		NotesDB = initialDatabaseState
 	end
-
-	if not NotesLDBIconDB then
-		NotesLDBIconDB = { hide = false }
-	end
-end
-
-function Database:GetInitialSize()
-	return initialDatabaseState.config.size
-end
-
-function Database:GetInitialPoint()
-	return initialDatabaseState.config.point
 end
 
 function Database:GetSize()
-	return NotesDB.config.size
+	return addon.Utilities:CloneTable(NotesDB.options.size)
 end
 
 function Database:SetSize(size)
@@ -99,14 +100,11 @@ function Database:SetSize(size)
 	addon.Utilities:CheckType(size.width, "number")
 	addon.Utilities:CheckType(size.height, "number")
 
-	NotesDB.config.size = {
-		width = size.width,
-		height = size.height,
-	}
+	NotesDB.options.size = size
 end
 
 function Database:GetPoint()
-	return NotesDB.config.point
+	return NotesDB.options.point
 end
 
 function Database:SetPoint(point)
@@ -117,7 +115,7 @@ function Database:SetPoint(point)
 	addon.Utilities:CheckType(point.xOffset, "number")
 	addon.Utilities:CheckType(point.yOffset, "number")
 
-	NotesDB.config.point = {
+	NotesDB.options.point = {
 		anchorPoint = point.anchorPoint,
 		relativeTo = point.relativeTo,
 		relativePoint = point.relativePoint,
@@ -126,31 +124,36 @@ function Database:SetPoint(point)
 	}
 end
 
+-- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
+function Database:GetMinimapButtonForLibDBIcon()
+	return NotesDB.options.minimapButton
+end
+
 function Database:GetFont()
-	return NotesDB.config.font
+	return NotesDB.options.font
 end
 
 function Database:SetFont(font)
 	addon.Utilities:CheckType(font, "string")
-	NotesDB.config.font = font
+	NotesDB.options.font = font
 end
 
 function Database:GetMinimapButtonHidden()
-	return NotesDB.config.minimapButton.hide
+	return NotesDB.options.minimapButton.hide
 end
 
 function Database:SetMinimapButtonHidden(input)
 	addon.Utilities:CheckType(input, "boolean")
-	NotesDB.config.minimapButton.hide = input
+	NotesDB.options.minimapButton.hide = input
 end
 
 function Database:GetShowAtLogin()
-	return NotesDB.config.showAtLogin
+	return NotesDB.options.showAtLogin
 end
 
 function Database:SetShowAtLogin(input)
 	addon.Utilities:CheckType(input, "boolean")
-	NotesDB.config.showAtLogin = input
+	NotesDB.options.showAtLogin = input
 end
 
 function Database:CreateNote(title)
@@ -177,27 +180,15 @@ function Database:CreateNote(title)
 
 	sortNotesByTitleAscending()
 
-	return newNote
+	return addon.Utilities:CloneTable(newNote)
 end
 
 function Database:GetCurrentNote()
-	return NotesDB.notes[NotesDB.currentNoteId]
+	return addon.Utilities:CloneTable(NotesDB.notes[NotesDB.currentNoteId])
 end
 
 function Database:GetNotes()
-	return NotesDB.notes
-end
-
-function Database:GetNoteById(noteId)
-	addon.Utilities:CheckType(noteId, "number")
-
-	for _, note in ipairs(NotesDB.notes) do
-		if note.id == noteId then
-			return note
-		end
-	end
-
-	error("A note with the ID `" .. noteId .. "` does not exist.")
+	return addon.Utilities:CloneTable(NotesDB.notes)
 end
 
 function Database:SetCurrentNoteId(noteId)
@@ -214,7 +205,7 @@ function Database:SetNoteTitle(noteId, newTitle)
 	addon.Utilities:CheckType(noteId, "number")
 	addon.Utilities:CheckType(newTitle, "string")
 
-	local note = self:GetNoteById(noteId)
+	local note = GetNoteById(noteId)
 	note.title = newTitle
 
 	sortNotesByTitleAscending()
@@ -224,7 +215,7 @@ function Database:SetNoteBody(noteId, newBody)
 	addon.Utilities:CheckType(noteId, "number")
 	addon.Utilities:CheckType(newBody, "string")
 
-	local note = self:GetNoteById(noteId)
+	local note = GetNoteById(noteId)
 	note.body = newBody
 end
 

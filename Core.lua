@@ -6,8 +6,8 @@ function addon:ConfigureSlashCommands()
 	SlashCmdList.NOTES = function(message)
 		if message == "" then
 			addon.UI:Toggle()
-		elseif message == "config" then
-			addon.Config:Open()
+		elseif message == "options" then
+			addon.Options:Open()
 		elseif message == "resetsize" then
 			addon.UI:ResetSize()
 		elseif message == "resetposition" then
@@ -21,7 +21,7 @@ end
 function addon:Initialize()
 	addon.Database:Initialize()
 	addon.MinimapButton:Initialize()
-	addon.Config:Initialize()
+	addon.Options:Initialize()
 	addon:ConfigureSlashCommands()
 	if addon.Database:GetShowAtLogin() then
 		addon.UI:Initialize()

@@ -21,7 +21,7 @@ function MinimapButton:Initialize()
 			if button == "LeftButton" then
 				addon.UI:Toggle()
 			elseif button == "RightButton" then
-				addon.Config:Open()
+				addon.Options:Open()
 			end
 		end,
 		OnTooltipShow = function(tooltip)
@@ -36,5 +36,5 @@ function MinimapButton:Initialize()
 	})
 
 	MinimapButton.Icon = LibStub("LibDBIcon-1.0", true)
-	MinimapButton.Icon:Register(addonName, MinimapButton.Button, NotesDB.config.minimapButton)
+	MinimapButton.Icon:Register(addonName, MinimapButton.Button, addon.Database:GetMinimapButtonForLibDBIcon())
 end

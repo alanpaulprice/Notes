@@ -16,4 +16,4 @@ UI.lua
 EditView.lua
 ManageView.lua
 MinimapButton.lua
-Config.lua
+Options.lua

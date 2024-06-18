@@ -39,5 +39,6 @@
 		"ToggleDropDownMenu",
 		"StaticPopup_ShowGenericConfirmation",
 		"StaticPopup_ShowCustomGenericConfirmation",
+		"DevTool",
 	],
 }
