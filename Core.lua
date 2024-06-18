@@ -1,4 +1,5 @@
 local addonName, addon = ...
+addon.DEBUG = false
 
 function addon:ConfigureSlashCommands()
 	SLASH_NOTES1 = "/" .. string.lower(addonName)
