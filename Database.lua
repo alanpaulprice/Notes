@@ -3,6 +3,49 @@ local addonName, addon = ...
 addon.Database = {}
 local Database = addon.Database
 
+local initialDatabaseState = {
+	options = {
+		size = {
+			width = addon.Constants.DEFAULT_UI_WIDTH,
+			height = addon.Constants.DEFAULT_UI_HEIGHT,
+		},
+		point = {
+			anchorPoint = "CENTER",
+			relativeTo = nil,
+			relativePoint = "CENTER",
+			xOffset = 0,
+			yOffset = 0,
+		},
+		font = "GameFontHighlight",
+		minimapButton = {
+			hide = false,
+		},
+		showAtLogin = false,
+	},
+	currentNoteId = 1,
+	notes = {
+		{
+			id = 1,
+			title = "Getting Started",
+			body = " You can navigate to the 'Manage' view via the button below, labeled 'Manage Notes'."
+				.. " From there, you can:"
+				.. "\n"
+				.. "- View all notes."
+				.. "\n"
+				.. "- Create a note."
+				.. "\n"
+				.. "- Edit the title of a note."
+				.. "\n"
+				.. "- Delete a note."
+				.. "\n\n"
+				.. "Right-click a note to open a menu that will enable you to edit it's title or delete it."
+				.. "\n\n"
+				.. "You can resize this window using the handles in the bottom corners,"
+				.. " and move it by clicking and dragging on the title bar at the top.",
+		},
+	},
+}
+
 local function CheckNoteWithIdExists(id)
 	if NotesDB.notes[id] == nil then
 		error("A note with an ID of `" .. id .. "` does not exist.")
@@ -37,53 +80,6 @@ local function sortNotesByTitleAscending()
 		return a.title < b.title
 	end)
 end
-
-local initialDatabaseState = {
-	options = {
-		size = {
-			width = addon.Constants.DEFAULT_UI_WIDTH,
-			height = addon.Constants.DEFAULT_UI_HEIGHT,
-		},
-		point = {
-			anchorPoint = "CENTER",
-			relativeTo = nil,
-			relativePoint = "CENTER",
-			xOffset = 0,
-			yOffset = 0,
-		},
-		font = "GameFontHighlight",
-		minimapButton = {
-			hide = false,
-		},
-		showAtLogin = false,
-	},
-	currentNoteId = 1,
-	notes = {
-		{
-			id = 1,
-			title = "Getting Started",
-			body = "Thank you for installing "
-				.. addonName
-				.. "."
-				.. "\n\n"
-				.. "All text entered here will be saved automatically."
-				.. "\n\n"
-				.. " You can access the 'Manage' view by clicking the 'Manage Notes' button below."
-				.. " From there, you can:"
-				.. "\n"
-				.. "- View all existing notes."
-				.. "\n"
-				.. "- Create a new note."
-				.. "\n"
-				.. "- Edit the title of a note."
-				.. "\n"
-				.. "- Delete a note."
-				.. "\n\n"
-				.. "You can resize this window using the handles in the bottom corners,"
-				.. " and move it by clicking and dragging on the title bar at the top.",
-		},
-	},
-}
 
 function Database:Initialize()
 	if NotesDB == nil then
