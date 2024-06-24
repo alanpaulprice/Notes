@@ -30,21 +30,21 @@ local function CreateRootFrame()
 	UpdateTitleText()
 end
 
-local function UpdateSavedSize()
-	addon.Database:SetSize({
-		width = UI.Frame:GetWidth(),
-		height = UI.Frame:GetHeight(),
-	})
+local function UpdateSavedWidth(width)
+	addon.Database:SetWidth(width)
 end
 
-local function UpdateSavedPoint()
-	local anchorPoint, relativeTo, relativePoint, xOffset, yOffset = UI.Frame:GetPoint()
+local function UpdateSavedHeight(height)
+	addon.Database:SetHeight(height)
+end
+
+local function UpdateSavedPoint(point)
 	addon.Database:SetPoint({
-		anchorPoint = anchorPoint,
-		relativeTo = relativeTo,
-		relativePoint = relativePoint,
-		xOffset = xOffset,
-		yOffset = yOffset,
+		anchorPoint = point.anchorPoint,
+		relativeTo = point.relativeTo,
+		relativePoint = point.relativePoint,
+		xOffset = point.xOffset,
+		yOffset = point.yOffset,
 	})
 end
 
@@ -62,7 +62,14 @@ local function MakeFrameMoveable()
 	UI.Frame.TitleContainer:SetScript("OnMouseUp", function(_, button)
 		if button == "LeftButton" and isMoving then
 			UI.Frame:StopMovingOrSizing()
-			UpdateSavedPoint()
+			local anchorPoint, relativeTo, relativePoint, xOffset, yOffset = UI.Frame:GetPoint()
+			UpdateSavedPoint({
+				anchorPoint = anchorPoint,
+				relativeTo = relativeTo,
+				relativePoint = relativePoint,
+				xOffset = xOffset,
+				yOffset = yOffset,
+			})
 			isMoving = false
 		end
 	end)
@@ -84,8 +91,8 @@ end
 local function StopSizing(_, button)
 	if button == "LeftButton" and isSizing then
 		UI.Frame:StopMovingOrSizing()
-		UpdateSavedSize()
-		UpdateSavedPoint()
+		UpdateSavedWidth(UI.Frame:GetWidth())
+		UpdateSavedHeight(UI.Frame:GetHeight())
 		isSizing = false
 	end
 end
@@ -132,7 +139,12 @@ end
 
 local function MakeFrameResizable()
 	UI.Frame:SetResizable(true)
-	UI.Frame:SetResizeBounds(200, 200)
+	UI.Frame:SetResizeBounds(
+		addon.Constants.MIN_UI_WIDTH,
+		addon.Constants.MIN_UI_HEIGHT,
+		addon.Constants.MAX_UI_WIDTH,
+		addon.Constants.MAX_UI_HEIGHT
+	)
 	CreateResizeHandleBottomLeft()
 	CreateResizeHandleBottomRight()
 end
@@ -233,14 +245,44 @@ function UI:ChangeView(newView, noteId)
 	UpdateTitleText()
 end
 
+function UI:SetWidth(width)
+	if UI.Frame then
+		UI.Frame:SetWidth(width)
+	end
+
+	UpdateSavedWidth(width)
+end
+
+function UI:SetHeight(height)
+	if UI.Frame then
+		UI.Frame:SetHeight(height)
+	end
+
+	UpdateSavedHeight(height)
+end
+
 function UI:ResetSize()
-	UI.Frame:SetSize(addon.Constants.DEFAULT_UI_WIDTH, addon.Constants.DEFAULT_UI_HEIGHT)
-	UpdateSavedSize()
-	UpdateSavedPoint()
+	if UI.Frame then
+		UI.Frame:SetSize(addon.Constants.DEFAULT_UI_WIDTH, addon.Constants.DEFAULT_UI_HEIGHT)
+	end
+
+	UpdateSavedWidth(addon.Constants.DEFAULT_UI_WIDTH)
+	UpdateSavedHeight(addon.Constants.DEFAULT_UI_HEIGHT)
 end
 
 function UI:ResetPosition()
-	UI.Frame:ClearAllPoints()
-	UI.Frame:SetPoint("CENTER", nil, "CENTER", 0, 0)
-	UpdateSavedPoint()
+	local point = {
+		anchorPoint = "CENTER",
+		relativeTo = nil,
+		relativePoint = "CENTER",
+		xOffset = 0,
+		yOffset = 0,
+	}
+
+	if UI.Frame then
+		UI.Frame:ClearAllPoints()
+		UI.Frame:SetPoint(point.anchorPoint, point.relativeTo, point.relativePoint, point.xOffset, point.yOffset)
+	end
+
+	UpdateSavedPoint(point)
 end
