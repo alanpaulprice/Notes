@@ -29,7 +29,7 @@ local initialDatabaseState = {
 			title = "Getting Started",
 			body = " You can navigate to the 'Manage' view via the button below, labeled 'Manage Notes'."
 				.. " From there, you can:"
-				.. "\n"
+				.. "\n\n"
 				.. "- View all notes."
 				.. "\n"
 				.. "- Create a note."
@@ -91,12 +91,24 @@ function Database:GetSize()
 	return addon.Utilities:CloneTable(NotesDB.options.size)
 end
 
-function Database:SetSize(size)
-	addon.Utilities:CheckType(size, "table")
-	addon.Utilities:CheckType(size.width, "number")
-	addon.Utilities:CheckType(size.height, "number")
+function Database:GetWidth()
+	return NotesDB.options.size.width
+end
 
-	NotesDB.options.size = size
+function Database:SetWidth(width)
+	addon.Utilities:CheckNumberIsWithinBounds(width, addon.Constants.MIN_UI_WIDTH, addon.Constants.MAX_UI_WIDTH)
+
+	NotesDB.options.size.width = width
+end
+
+function Database:GetHeight()
+	return NotesDB.options.size.height
+end
+
+function Database:SetHeight(height)
+	addon.Utilities:CheckNumberIsWithinBounds(height, addon.Constants.MIN_UI_HEIGHT, addon.Constants.MAX_UI_HEIGHT)
+
+	NotesDB.options.size.height = height
 end
 
 function Database:GetPoint()
