@@ -12,6 +12,7 @@ function Utilities:CheckIsEnumMember(input, enum)
 	error("Invalid enum member " .. tostring(input) .. " received")
 end
 
+-- More than two arguments can be provided, to indicate that the value can be one of multiple types.
 function Utilities:CheckType(input, ...)
 	local expectedTypes = { ... }
 
@@ -60,6 +61,40 @@ function Utilities:CheckType(input, ...)
 				.. "`)."
 		)
 	end
+end
+
+function Utilities:CheckNumberIsWithinBounds(number, min, max)
+	self:CheckType(number, "number")
+	self:CheckType(min, "number", "nil")
+	self:CheckType(max, "number", "nil")
+
+	if (min and number < min) or (max and number > max) then
+		error(
+			"Number was not within bounds."
+				.. " Number: "
+				.. tostring(number)
+				.. ", Minimum: "
+				.. tostring(min)
+				.. ", Maximum: "
+				.. tostring(max)
+		)
+	end
+end
+
+function Utilities:ClampNumber(number, min, max)
+	self:CheckType(number, "number")
+	self:CheckType(min, "number", "nil")
+	self:CheckType(max, "number", "nil")
+
+	local result = number
+
+	if min and (number < min) then
+		result = min
+	elseif max and (number > max) then
+		number = max
+	end
+
+	return result
 end
 
 function Utilities:TableContainsValue(table, value)
