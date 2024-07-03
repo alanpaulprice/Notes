@@ -97,7 +97,7 @@ end
 
 function Database:SetWidth(width)
 	addon.Utilities:CheckNumberIsWithinBounds(width, addon.Constants.MIN_UI_WIDTH, addon.Constants.MAX_UI_WIDTH)
-
+	width = addon.Utilities:RoundNumberDecimal(width, 10, true) -- A frame width has a maximum of 10 decimal places.
 	NotesDB.options.size.width = width
 end
 
@@ -107,7 +107,7 @@ end
 
 function Database:SetHeight(height)
 	addon.Utilities:CheckNumberIsWithinBounds(height, addon.Constants.MIN_UI_HEIGHT, addon.Constants.MAX_UI_HEIGHT)
-
+	height = addon.Utilities:RoundNumberDecimal(height, 10, true) -- A frame height has a maximum of 10 decimal places.
 	NotesDB.options.size.height = height
 end
 
@@ -127,8 +127,8 @@ function Database:SetPoint(point)
 		anchorPoint = point.anchorPoint,
 		relativeTo = point.relativeTo,
 		relativePoint = point.relativePoint,
-		xOffset = point.xOffset,
-		yOffset = point.yOffset,
+		xOffset = addon.Utilities:RoundNumberDecimal(point.xOffset, 12, true), -- Frame point offset values have a
+		yOffset = addon.Utilities:RoundNumberDecimal(point.yOffset, 12, true), -- maximum of 12 decimal places.
 	}
 end
 
