@@ -317,6 +317,20 @@ local function CreatePointControls()
 	end)
 end
 
+local function CreateLockedButtonCheckbox()
+	local function onClick(_, checked)
+		addon.Database:SetLocked(checked)
+	end
+
+	Options.Frame.LockedCheckButton = addon.Utilities:CreateInterfaceOptionsCheckButton(
+		"Lock Resizing and Repositioning via Dragging",
+		Options.Frame,
+		onClick
+	)
+	Options.Frame.LockedCheckButton:SetPoint("TOPLEFT", Options.Frame.AnchorPointDropDownMenu, "BOTTOMLEFT", 18.5, -16)
+	Options.Frame.LockedCheckButton:SetChecked(addon.Database:GetLocked())
+end
+
 function Options:Initialize()
 	CreateRootFrame()
 	CreateShowAtLoginButtonCheckbox()
@@ -324,6 +338,7 @@ function Options:Initialize()
 	CreateFontSizeDropDownMenu()
 	CreateSizeControls()
 	CreatePointControls()
+	CreateLockedButtonCheckbox()
 end
 
 function Options:Open()
