@@ -16,6 +16,7 @@ local initialDatabaseState = {
 			xOffset = 0,
 			yOffset = 0,
 		},
+		locked = false,
 		font = "GameFontHighlight",
 		minimapButton = {
 			hide = false,
@@ -130,6 +131,15 @@ function Database:SetPoint(point)
 		xOffset = addon.Utilities:RoundNumberDecimal(point.xOffset, 12, true), -- Frame point offset values have a
 		yOffset = addon.Utilities:RoundNumberDecimal(point.yOffset, 12, true), -- maximum of 12 decimal places.
 	}
+end
+
+function Database:GetLocked()
+	return NotesDB.options.locked
+end
+
+function Database:SetLocked(locked)
+	addon.Utilities:CheckType(locked, "boolean")
+	NotesDB.options.locked = locked
 end
 
 -- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
