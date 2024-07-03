@@ -53,7 +53,9 @@ local function MakeFrameMoveable()
 	UI.Frame:SetMovable(true)
 
 	UI.Frame.TitleContainer:SetScript("OnMouseDown", function(_, button)
-		if button == "LeftButton" then
+		local locked = addon.Database:GetLocked()
+
+		if button == "LeftButton" and locked == false then
 			UI.Frame:StartMoving()
 			isMoving = true
 		end
@@ -83,7 +85,9 @@ local function MakeFrameMoveable()
 end
 
 local function StartSizing(self, button)
-	if button == "LeftButton" then
+	local locked = addon.Database:GetLocked()
+
+	if button == "LeftButton" and locked == false then
 		UI.Frame:StartSizing(self.sizingDirection)
 		isSizing = true
 	end
