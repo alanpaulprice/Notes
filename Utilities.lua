@@ -97,6 +97,75 @@ function Utilities:ClampNumber(number, min, max)
 	return result
 end
 
+function Utilities:FilterNonNumericCharactersFromString(input)
+	self:CheckType(input, "string")
+
+	local result = ""
+
+	for i = 1, #input do
+		local character = string.sub(input, i, i)
+		if (i == 1 and character == "-") or (tonumber(character) ~= nil) then
+			result = result .. character
+		end
+	end
+
+	return result
+end
+
+function Utilities:RoundNumberDecimal(number, numberOfPlaces, roundUpHalves)
+	self:CheckType(number, "number")
+	self:CheckType(numberOfPlaces, "number")
+	self:CheckType(roundUpHalves, "boolean", "nil")
+
+	if numberOfPlaces < 1 then
+		error("`numberOfPlaces` must be `1` or greater.")
+	end
+
+	local numberAsString = tostring(number)
+	local decimalPosition = string.find(numberAsString, "%.")
+	local numberOfPlacesNotExceeded = (#numberAsString - decimalPosition) < numberOfPlaces
+
+	if decimalPosition == nil or numberOfPlacesNotExceeded then
+		return number
+	end
+
+	-- An excess decimal has a place that is higher than the maximum allowed (determined by `numberOfPlaces`).
+	local excessDecimals = string.sub(numberAsString, decimalPosition + 1 + numberOfPlaces, nil)
+
+	local roundUp = nil
+
+	-- Determines whether rounding up is necessary, by looping over the excess decimals characters.
+	for character in excessDecimals:gmatch(".") do
+		-- If the character isn't "5", rounding up is temporarily assumed, in case it is the last character.
+		if character == "5" then
+			-- If `roundUpHalves` isn't passed, `roundUp` will be set to `true`.
+			if roundUpHalves ~= nil then
+				roundUp = roundUpHalves
+			else
+				roundUp = true
+			end
+		-- If the charcter isn't "5", it can be used to determine if rounding up is necessary.
+		-- The loop is broken, as there is no need to continue.
+		else
+			roundUp = tonumber(character) > 5
+			break
+		end
+	end
+
+	local stringPreceedingFinalDigit = string.sub(numberAsString, 1, decimalPosition + numberOfPlaces - 1)
+	local finalDigit = string.sub(numberAsString, decimalPosition + numberOfPlaces, decimalPosition + numberOfPlaces)
+
+	-- Round up the last digit if necessary.
+	if roundUp then
+		finalDigit = tostring(tonumber(finalDigit) + 1)
+	end
+
+	-- Join the part of the string preceeding the final digit with the final digit.
+	local result = tonumber(stringPreceedingFinalDigit .. finalDigit)
+
+	return result
+end
+
 function Utilities:TableContainsValue(table, value)
 	for _, tableValue in pairs(table) do
 		if tableValue == value then
