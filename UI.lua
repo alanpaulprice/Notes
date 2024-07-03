@@ -270,19 +270,21 @@ function UI:ResetSize()
 	UpdateSavedHeight(addon.Constants.DEFAULT_UI_HEIGHT)
 end
 
-function UI:ResetPosition()
-	local point = {
-		anchorPoint = "CENTER",
-		relativeTo = nil,
-		relativePoint = "CENTER",
-		xOffset = 0,
-		yOffset = 0,
-	}
-
+function UI:SetPoint(point)
 	if UI.Frame then
 		UI.Frame:ClearAllPoints()
 		UI.Frame:SetPoint(point.anchorPoint, point.relativeTo, point.relativePoint, point.xOffset, point.yOffset)
 	end
 
 	UpdateSavedPoint(point)
+end
+
+function UI:ResetPoint()
+	self:SetPoint({
+		anchorPoint = "CENTER",
+		relativeTo = nil,
+		relativePoint = "CENTER",
+		xOffset = 0,
+		yOffset = 0,
+	})
 end
