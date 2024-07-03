@@ -11,7 +11,7 @@ function addon:ConfigureSlashCommands()
 		elseif message == "resetsize" then
 			addon.UI:ResetSize()
 		elseif message == "resetposition" then
-			addon.UI:ResetPosition()
+			addon.UI:ResetPoint()
 		else
 			print(addonName .. ": Unknown argument '" .. message .. "' received.")
 		end
