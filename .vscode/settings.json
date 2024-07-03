@@ -40,5 +40,7 @@
 		"StaticPopup_ShowGenericConfirmation",
 		"StaticPopup_ShowCustomGenericConfirmation",
 		"DevTool",
+		"EditBox_HighlightText",
+		"UIDropDownMenu_SetText"
 	],
 }
