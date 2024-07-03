@@ -100,7 +100,7 @@ end
 local function CreateFontSizeDropDownMenu()
 	Options.Frame.FontSizeLabel = Options.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	Options.Frame.FontSizeLabel:SetPoint("TOPLEFT", Options.Frame.ShowMinimapCheckButton, "BOTTOMLEFT", 2.5, -16)
-	Options.Frame.FontSizeLabel:SetText("Font Size")
+	Options.Frame.FontSizeLabel:SetText("Note Font Size")
 
 	Options.Frame.FontSizeDropDownMenu = CreateFrame("Frame", nil, Options.Frame, "UIDropDownMenuTemplate")
 	Options.Frame.FontSizeDropDownMenu:SetPoint("TOPLEFT", Options.Frame.FontSizeLabel, "BOTTOMLEFT", -18, -4)
