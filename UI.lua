@@ -70,6 +70,7 @@ local function MakeFrameMoveable()
 				xOffset = xOffset,
 				yOffset = yOffset,
 			})
+			addon.Options:UpdatePointControls()
 			isMoving = false
 		end
 	end)
@@ -93,6 +94,7 @@ local function StopSizing(_, button)
 		UI.Frame:StopMovingOrSizing()
 		UpdateSavedWidth(UI.Frame:GetWidth())
 		UpdateSavedHeight(UI.Frame:GetHeight())
+		addon.Options:UpdateSizeControls()
 		isSizing = false
 	end
 end
@@ -259,6 +261,7 @@ function UI:SetHeight(height)
 	end
 
 	UpdateSavedHeight(height)
+	addon.Options:UpdateSizeControls()
 end
 
 function UI:ResetSize()
@@ -277,6 +280,7 @@ function UI:SetPoint(point)
 	end
 
 	UpdateSavedPoint(point)
+	addon.Options:UpdatePointControls()
 end
 
 function UI:ResetPoint()
