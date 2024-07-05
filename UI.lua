@@ -27,6 +27,8 @@ local function CreateRootFrame()
 	UI.Frame.TopTileStreaks:Hide()
 	UI.Frame.Inset:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 9, -26)
 
+	UI.Frame.CloseButton:SetScript("OnClick", UI.Toggle)
+
 	UpdateTitleText()
 end
 
