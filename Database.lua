@@ -189,7 +189,7 @@ function Database:SetCurrentNoteId(noteId)
 end
 
 function Database:GetCurrentNote()
-	return addon.Utilities:CloneTable(NotesDB.notes[NotesDB.currentNoteId])
+	return addon.Utilities:CloneTable(GetNoteById(NotesDB.currentNoteId))
 end
 
 function Database:CreateNote(title)
