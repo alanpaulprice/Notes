@@ -47,10 +47,16 @@ local initialDatabaseState = {
 	},
 }
 
-local function CheckNoteWithIdExists(id)
-	if NotesDB.notes[id] == nil then
-		error("A note with an ID of `" .. id .. "` does not exist.")
+local function CheckNoteWithIdExists(noteId)
+	addon.Utilities:CheckType(noteId, "number")
+
+	for _, note in ipairs(NotesDB.notes) do
+		if note.id == noteId then
+			return
+		end
 	end
+
+	error("A note with an ID of `" .. noteId .. "` does not exist.")
 end
 
 local function GetNoteIds()
