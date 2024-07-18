@@ -3,7 +3,7 @@ addon.EditView = {}
 local EditView = addon.EditView
 
 local function UpdateText()
-	local note = addon.Database.GetCurrentNote()
+	local note = addon.Database:GetCurrentNote()
 	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(note.body)
 end
 
