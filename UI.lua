@@ -6,12 +6,16 @@ local isSizing = false
 
 local function UpdateTitleText()
 	local currentNote = addon.Database:GetCurrentNote()
+	local text = (currentNote == nil) and addonName or currentNote.title
 
-	if currentNote == nil then
-		UI.Frame.TitleContainer.TitleText:SetText(addonName)
-	else
-		UI.Frame.TitleContainer.TitleText:SetText(currentNote.title)
-	end
+	addon.Utilities:RunCallbackForGameVersion({
+		mainline = function()
+			UI.Frame.TitleContainer.TitleText:SetText(text)
+		end,
+		classic = function()
+			UI.Frame.TitleText:SetText(text)
+		end,
+	})
 end
 
 local function CreateRootFrame()
