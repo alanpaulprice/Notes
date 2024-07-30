@@ -21,7 +21,11 @@ function MinimapButton:Initialize()
 			if button == "LeftButton" then
 				addon.UI:Toggle()
 			elseif button == "RightButton" then
-				addon.Options:Open()
+				if InterfaceOptionsFrame_OpenToCategory then
+					InterfaceOptionsFrame_OpenToCategory(addonName)
+				else
+					Settings.OpenToCategory(addon.Options.category.ID)
+				end
 			end
 		end,
 		OnTooltipShow = function(tooltip)

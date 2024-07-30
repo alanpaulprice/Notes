@@ -64,7 +64,14 @@ local function CreateRootFrame()
 	Options.Frame = CreateFrame("Frame", nil, nil, nil)
 	Options.Frame:Hide()
 	Options.Frame.name = addonName
-	InterfaceOptions_AddCategory(Options.Frame)
+
+	if InterfaceOptions_AddCategory then
+		InterfaceOptions_AddCategory(Options.Frame)
+	else
+		local category = Settings.RegisterCanvasLayoutCategory(Options.Frame, Options.Frame.name)
+		Settings.RegisterAddOnCategory(category)
+		Options.category = category
+	end
 
 	Options.Frame.Title = Options.Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	Options.Frame.Title:SetPoint("TOPLEFT", 16, -16)
