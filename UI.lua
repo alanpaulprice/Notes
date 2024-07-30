@@ -58,7 +58,16 @@ local function MakeFrameMoveable()
 	local isMoving = false
 	UI.Frame:SetMovable(true)
 
-	UI.Frame.TitleContainer:SetScript("OnMouseDown", function(_, button)
+	local moveHandle = addon.Utilities:RunCallbackForGameVersion({
+		mainline = function()
+			return UI.Frame.TitleContainer
+		end,
+		classic = function()
+			return UI.Frame.TitleBg
+		end,
+	})
+
+	moveHandle:SetScript("OnMouseDown", function(_, button)
 		local locked = addon.Database:GetLocked()
 
 		if button == "LeftButton" and locked == false then
@@ -67,7 +76,7 @@ local function MakeFrameMoveable()
 		end
 	end)
 
-	UI.Frame.TitleContainer:SetScript("OnMouseUp", function(_, button)
+	moveHandle:SetScript("OnMouseUp", function(_, button)
 		if button == "LeftButton" and isMoving then
 			UI.Frame:StopMovingOrSizing()
 			local anchorPoint, relativeTo, relativePoint, xOffset, yOffset = UI.Frame:GetPoint()
