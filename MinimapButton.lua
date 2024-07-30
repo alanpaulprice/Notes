@@ -21,11 +21,14 @@ function MinimapButton:Initialize()
 			if button == "LeftButton" then
 				addon.UI:Toggle()
 			elseif button == "RightButton" then
-				if InterfaceOptionsFrame_OpenToCategory then
-					InterfaceOptionsFrame_OpenToCategory(addonName)
-				else
-					Settings.OpenToCategory(addon.Options.category.ID)
-				end
+				addon.Utilities:RunCallbackForGameVersion({
+					mainline = function()
+						Settings.OpenToCategory(addon.Options.category.ID)
+					end,
+					classic = function()
+						InterfaceOptionsFrame_OpenToCategory(addonName)
+					end,
+				})
 			end
 		end,
 		OnTooltipShow = function(tooltip)
