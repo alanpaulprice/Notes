@@ -253,3 +253,34 @@ function Utilities:CloneTable(original)
 
 	return clone
 end
+
+function Utilities:RunCallbackForGameVersion(callbacks)
+	self:CheckType(callbacks, "table")
+	self:CheckType(callbacks.mainline, "function", "nil")
+	self:CheckType(callbacks.classic, "function", "nil")
+	self:CheckType(callbacks.cataclysmClassic, "function", "nil")
+
+	local errorMessage = "No callback was provided for the current game version."
+
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+		if type(callbacks.mainline) == "function" then
+			return callbacks.mainline()
+		else
+			error(errorMessage)
+		end
+	elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		if type(callbacks.classic) == "function" then
+			return callbacks.classic()
+		else
+			error(errorMessage)
+		end
+	elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+		if type(callbacks.cataclysmClassic) == "function" then
+			return callbacks.cataclysmClassic()
+		else
+			error(errorMessage)
+		end
+	else
+		error("Unexpected game version encountered.")
+	end
+end
