@@ -26,7 +26,7 @@ local function CreateScrollingEditBox()
 	local currentNote = addon.Database:GetCurrentNote()
 
 	if currentNote ~= nil then
-		UpdateText(currentNote.body)
+		UpdateText()
 	end
 
 	local function OnTextChange(owner, editBox, userChanged)
