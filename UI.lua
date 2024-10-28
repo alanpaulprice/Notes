@@ -31,9 +31,16 @@ local function CreateRootFrame()
 	UI.Frame.TopTileStreaks:Hide()
 	UI.Frame.Inset:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 9, -26)
 
-	UI.Frame.TitleContainer:ClearAllPoints()
-	UI.Frame.TitleContainer:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 11, 0)
-	UI.Frame.TitleContainer:SetPoint("BOTTOMRIGHT", UI.Frame.CloseButton, "BOTTOMLEFT", -4, 0)
+	addon.Utilities:RunCallbackForGameVersion({
+		mainline = function()
+			UI.Frame.TitleContainer:ClearAllPoints()
+			UI.Frame.TitleContainer:SetPoint("TOPLEFT", UI.Frame, "TOPLEFT", 11, 0)
+			UI.Frame.TitleContainer:SetPoint("BOTTOMRIGHT", UI.Frame.CloseButton, "BOTTOMLEFT", -4, 0)
+
+			UI.Frame.TitleContainer.TitleText:ClearAllPoints()
+			UI.Frame.TitleContainer.TitleText:SetAllPoints(UI.Frame.TitleContainer)
+		end,
+	})
 
 	UI.Frame.CloseButton:SetScript("OnClick", UI.Toggle)
 
