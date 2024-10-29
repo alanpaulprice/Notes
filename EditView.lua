@@ -2,62 +2,47 @@ local addonName, addon = ...
 addon.EditView = {}
 local EditView = addon.EditView
 
-local function UpdateText()
+local AceGUI = LibStub("AceGUI-3.0")
+
+local function UpdateEditBoxText()
 	local note = addon.Database:GetCurrentNote()
-	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetText(note.body)
+	EditView.EditBox:SetText(note.body)
 end
 
-local function CreateRootFrame()
-	EditView.Frame = CreateFrame("Frame", addonName .. "_EditView", addon.UI.Frame.ViewContainer, nil)
-	EditView.Frame:SetAllPoints(addon.UI.Frame.ViewContainer)
+function EditView:Build(container)
+	EditView.EditBox = AceGUI:Create("MultiLineEditBox")
+	EditView.EditBox:SetLabel("")
+	EditView.EditBox:DisableButton(true)
+	EditView.EditBox:SetFullHeight(true)
+	EditView.EditBox:SetFullWidth(true)
+	EditView.EditBox.editBox:SetTextInsets(8, 8, 8, 8)
+	local _, _, fontFlags = EditView.EditBox.editBox:GetFontObject():GetFont()
+	EditView.EditBox.editBox:SetFont(
+		AceGUIWidgetLSMlists.font[addon.Database:GetEditViewFont()],
+		addon.Database:GetEditViewFontSize(),
+		fontFlags
+	)
+	EditView.EditBox:SetCallback("OnTextChanged", function(_, _, text)
+		addon.Database:SetNoteBody(addon.Database:GetCurrentNoteId(), text)
+	end)
+	UpdateEditBoxText()
+	container:AddChild(EditView.EditBox)
+end
 
-	if addon.Database:GetCurrentNoteId() == nil then
-		EditView.Frame:Hide()
+function EditView:UpdateFontSize(fontSize)
+	addon.Database:SetEditViewFontSize(fontSize)
+
+	if self.EditBox and self.EditBox:IsShown() then
+		local fontName, _, fontFlags = EditView.EditBox.editBox:GetFontObject():GetFont()
+		EditView.EditBox.editBox:SetFont(fontName, fontSize, fontFlags)
 	end
 end
 
-local function CreateScrollingEditBox()
-	EditView.Frame.ScrollingEditBox = CreateFrame("Frame", nil, EditView.Frame, "ScrollingEditBoxTemplate")
-	EditView.Frame.ScrollingEditBox:SetPoint("TOPLEFT", EditView.Frame, "TOPLEFT", 0, 0)
-	EditView.Frame.ScrollingEditBox:SetPoint("BOTTOMRIGHT", EditView.Frame, "BOTTOMRIGHT", -17, 0)
-	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(addon.Database:GetFont())
-	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetTextInsets(8, 8, 8, 8)
+function EditView:UpdateFont(font)
+	addon.Database:SetEditViewFont(font)
 
-	local currentNote = addon.Database:GetCurrentNote()
-
-	if currentNote ~= nil then
-		UpdateText()
+	if self.EditBox and self.EditBox:IsShown() then
+		local _, fontSize, fontFlags = EditView.EditBox.editBox:GetFontObject():GetFont()
+		EditView.EditBox.editBox:SetFont(AceGUIWidgetLSMlists.font[font], fontSize, fontFlags)
 	end
-
-	local function OnTextChange(owner, editBox, userChanged)
-		addon.Database:SetNoteBody(addon.Database:GetCurrentNoteId(), editBox:GetInputText())
-	end
-	EditView.Frame.ScrollingEditBox:RegisterCallback("OnTextChanged", OnTextChange, self)
-end
-
-local function CreateScrollBar()
-	EditView.Frame.ScrollBar = CreateFrame("EventFrame", nil, EditView.Frame, "MinimalScrollBar")
-	EditView.Frame.ScrollBar:SetPoint("TOPLEFT", EditView.Frame.ScrollingEditBox, "TOPRIGHT", 0, -4)
-	EditView.Frame.ScrollBar:SetPoint("BOTTOMLEFT", EditView.Frame.ScrollingEditBox, "BOTTOMRIGHT", 0, 4)
-
-	ScrollUtil.RegisterScrollBoxWithScrollBar(EditView.Frame.ScrollingEditBox.ScrollBox, EditView.Frame.ScrollBar)
-end
-
-function EditView:Initialize()
-	CreateRootFrame()
-	CreateScrollingEditBox()
-	CreateScrollBar()
-end
-
-function EditView:Show()
-	UpdateText()
-	EditView.Frame:Show()
-end
-
-function EditView:Hide()
-	EditView.Frame:Hide()
-end
-
-function EditView:SetFont(font)
-	EditView.Frame.ScrollingEditBox.ScrollBox.EditBox:SetFontObject(font)
 end

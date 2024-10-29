@@ -1,13 +1,14 @@
 local addonName, addon = ...
-
 addon.Database = {}
 local Database = addon.Database
 
-local initialDatabaseState = {
-	options = {
+MyAddon = LibStub("AceAddon-3.0"):NewAddon("DBExample")
+
+local defaults = {
+	profile = {
 		size = {
-			width = addon.Constants.DEFAULT_UI_WIDTH,
-			height = addon.Constants.DEFAULT_UI_HEIGHT,
+			width = addon.Constants.DEFAULT_MAIN_UI_WIDTH,
+			height = addon.Constants.DEFAULT_MAIN_UI_HEIGHT,
 		},
 		point = {
 			anchorPoint = "CENTER",
@@ -16,33 +17,39 @@ local initialDatabaseState = {
 			xOffset = 0,
 			yOffset = 0,
 		},
-		locked = false,
-		font = "GameFontHighlight",
 		minimapButton = {
 			hide = false,
 		},
 		showAtLogin = false,
+		resizeEnabled = true,
+		editViewFontSize = 14,
+		editViewFont = "Fonts\\ARIALN.TTF",
 	},
-	currentNoteId = 1,
-	notes = {
-		{
-			id = 1,
-			title = "Getting Started",
-			body = " You can navigate to the 'Manage' view via the button below, labeled 'Manage Notes'."
-				.. " From there, you can:"
-				.. "\n\n"
-				.. "- View all notes."
-				.. "\n"
-				.. "- Create a note."
-				.. "\n"
-				.. "- Edit the title of a note."
-				.. "\n"
-				.. "- Delete a note."
-				.. "\n\n"
-				.. "Right-click a note to open a menu that will enable you to edit it's title or delete it."
-				.. "\n\n"
-				.. "You can resize this window using the handles in the bottom corners,"
-				.. " and move it by clicking and dragging on the title bar at the top.",
+	char = {
+		currentNoteId = 1,
+		currentView = addon.Constants.UI_VIEW_ENUM.EDIT,
+	},
+	global = {
+		notes = {
+			{
+				id = 1,
+				title = "Getting Started",
+				body = "You can navigate to the 'Manage' view via the button below, labeled 'Manage Notes'."
+					.. " From there, you can:"
+					.. "\n\n"
+					.. "- View all notes."
+					.. "\n"
+					.. "- Create a note."
+					.. "\n"
+					.. "- Edit the title of a note."
+					.. "\n"
+					.. "- Delete a note."
+					.. "\n\n"
+					.. "Right-click a note to open a menu that will enable you to edit it's title or delete it."
+					.. "\n\n"
+					.. "You can resize this window using the handles in the bottom corners,"
+					.. " and move it by clicking and dragging on the title bar at the top.",
+			},
 		},
 	},
 }
@@ -50,7 +57,7 @@ local initialDatabaseState = {
 local function CheckNoteWithIdExists(noteId)
 	addon.Utilities:CheckType(noteId, "number")
 
-	for _, note in ipairs(NotesDB.notes) do
+	for _, note in ipairs(addon.Database.data.global.notes) do
 		if note.id == noteId then
 			return
 		end
@@ -62,7 +69,7 @@ end
 local function GetNoteIds()
 	local ids = {}
 
-	for _, note in ipairs(NotesDB.notes) do
+	for _, note in ipairs(addon.Database.data.global.notes) do
 		table.insert(ids, note.id)
 	end
 
@@ -73,7 +80,7 @@ end
 local function GetNoteById(noteId)
 	addon.Utilities:CheckType(noteId, "number")
 
-	for _, note in ipairs(NotesDB.notes) do
+	for _, note in ipairs(Database.data.global.notes) do
 		if note.id == noteId then
 			return note
 		end
@@ -83,105 +90,26 @@ local function GetNoteById(noteId)
 end
 
 local function sortNotesByTitleAscending()
-	table.sort(NotesDB.notes, function(a, b)
+	table.sort(Database.data.global.notes, function(a, b)
 		return a.title < b.title
 	end)
 end
 
 function Database:Initialize()
-	if NotesDB == nil then
-		NotesDB = initialDatabaseState
-	end
+	self.data = LibStub("AceDB-3.0"):New("NotesDB", defaults, true)
 end
 
-function Database:GetSize()
-	return addon.Utilities:CloneTable(NotesDB.options.size)
+function Database:GetCurrentView()
+	return self.data.char.currentView
 end
 
-function Database:GetWidth()
-	return NotesDB.options.size.width
-end
-
-function Database:SetWidth(width)
-	addon.Utilities:CheckNumberIsWithinBounds(width, addon.Constants.MIN_UI_WIDTH, addon.Constants.MAX_UI_WIDTH)
-	width = addon.Utilities:RoundNumberDecimal(width, 10, true) -- A frame width has a maximum of 10 decimal places.
-	NotesDB.options.size.width = width
-end
-
-function Database:GetHeight()
-	return NotesDB.options.size.height
-end
-
-function Database:SetHeight(height)
-	addon.Utilities:CheckNumberIsWithinBounds(height, addon.Constants.MIN_UI_HEIGHT, addon.Constants.MAX_UI_HEIGHT)
-	height = addon.Utilities:RoundNumberDecimal(height, 10, true) -- A frame height has a maximum of 10 decimal places.
-	NotesDB.options.size.height = height
-end
-
-function Database:GetPoint()
-	return NotesDB.options.point
-end
-
-function Database:SetPoint(point)
-	addon.Utilities:CheckType(point, "table")
-	addon.Utilities:CheckType(point.anchorPoint, "string")
-	addon.Utilities:CheckType(point.relativeTo, "nil")
-	addon.Utilities:CheckType(point.relativePoint, "string")
-	addon.Utilities:CheckType(point.xOffset, "number")
-	addon.Utilities:CheckType(point.yOffset, "number")
-
-	NotesDB.options.point = {
-		anchorPoint = point.anchorPoint,
-		relativeTo = point.relativeTo,
-		relativePoint = point.relativePoint,
-		xOffset = addon.Utilities:RoundNumberDecimal(point.xOffset, 12, true), -- Frame point offset values have a
-		yOffset = addon.Utilities:RoundNumberDecimal(point.yOffset, 12, true), -- maximum of 12 decimal places.
-	}
-end
-
-function Database:GetLocked()
-	return NotesDB.options.locked
-end
-
-function Database:SetLocked(locked)
-	addon.Utilities:CheckType(locked, "boolean")
-	NotesDB.options.locked = locked
-end
-
--- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
-function Database:GetMinimapButtonForLibDBIcon()
-	return NotesDB.options.minimapButton
-end
-
-function Database:GetFont()
-	return NotesDB.options.font
-end
-
-function Database:SetFont(font)
-	addon.Utilities:CheckType(font, "string")
-	NotesDB.options.font = font
-end
-
-function Database:GetMinimapButtonHidden()
-	return NotesDB.options.minimapButton.hide
-end
-
-function Database:SetMinimapButtonHidden(input)
-	addon.Utilities:CheckType(input, "boolean")
-	NotesDB.options.minimapButton.hide = input
-end
-
-function Database:GetShowAtLogin()
-	return NotesDB.options.showAtLogin
-end
-
-function Database:SetShowAtLogin(input)
-	addon.Utilities:CheckType(input, "boolean")
-	NotesDB.options.showAtLogin = input
+function Database:SetCurrentView(input)
+	addon.Utilities:CheckIsEnumMember(input, addon.Constants.UI_VIEW_ENUM)
+	self.data.char.currentView = input
 end
 
 function Database:GetCurrentNoteId()
-	return NotesDB.currentNoteId
+	return self.data.char.currentNoteId
 end
 
 function Database:SetCurrentNoteId(noteId)
@@ -191,7 +119,11 @@ function Database:SetCurrentNoteId(noteId)
 		CheckNoteWithIdExists(noteId)
 	end
 
-	NotesDB.currentNoteId = noteId
+	self.data.char.currentNoteId = noteId
+end
+
+function Database:GetNotes()
+	return addon.Utilities:CloneTable(self.data.global.notes)
 end
 
 function Database:GetCurrentNote()
@@ -222,15 +154,23 @@ function Database:CreateNote(title)
 		body = "",
 	}
 
-	table.insert(NotesDB.notes, newNote)
+	table.insert(addon.Database.data.global.notes, newNote)
 
 	sortNotesByTitleAscending()
 
 	return addon.Utilities:CloneTable(newNote)
 end
 
-function Database:GetNotes()
-	return addon.Utilities:CloneTable(NotesDB.notes)
+function Database:DeleteNote(noteId)
+	addon.Utilities:CheckType(noteId, "number")
+	CheckNoteWithIdExists(noteId)
+
+	for index, note in ipairs(self.data.global.notes) do
+		if note.id == noteId then
+			table.remove(self.data.global.notes, index)
+			break
+		end
+	end
 end
 
 function Database:SetNoteTitle(noteId, newTitle)
@@ -251,14 +191,54 @@ function Database:SetNoteBody(noteId, newBody)
 	note.body = newBody
 end
 
-function Database:DeleteNote(noteId)
-	addon.Utilities:CheckType(noteId, "number")
-	CheckNoteWithIdExists(noteId)
+-- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
+function Database:GetMinimapButtonForLibDBIcon()
+	return self.data.profile.minimapButton
+end
 
-	for index, note in ipairs(NotesDB.notes) do
-		if note.id == noteId then
-			table.remove(NotesDB.notes, index)
-			break
-		end
-	end
+-------------------------------------------------------------------------------- OPTIONS
+
+function Database:GetShowAtLogin()
+	return self.data.profile.showAtLogin
+end
+
+function Database:SetShowAtLogin(input)
+	addon.Utilities:CheckType(input, "boolean")
+	self.data.profile.showAtLogin = input
+end
+
+function Database:GetMinimapButtonHidden()
+	return self.data.profile.minimapButton.hide
+end
+
+function Database:SetMinimapButtonHidden(input)
+	addon.Utilities:CheckType(input, "boolean")
+	self.data.profile.minimapButton.hide = input
+end
+
+function Database:GetResizeEnabled()
+	return self.data.profile.resizeEnabled
+end
+
+function Database:SetResizeEnabled(input)
+	addon.Utilities:CheckType(input, "boolean")
+	self.data.profile.resizeEnabled = input
+end
+
+function Database:GetEditViewFont()
+	return self.data.profile.editViewFont
+end
+
+function Database:SetEditViewFont(input)
+	addon.Utilities:CheckType(input, "string")
+	self.data.profile.editViewFont = input
+end
+
+function Database:SetEditViewFontSize(input)
+	addon.Utilities:CheckType(input, "number")
+	self.data.profile.editViewFontSize = input
+end
+
+function Database:GetEditViewFontSize()
+	return self.data.profile.editViewFontSize
 end

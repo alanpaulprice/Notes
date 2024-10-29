@@ -32,7 +32,7 @@ function Utilities:CheckType(input, ...)
 		end
 
 		if not expectedTypeIsValid then
-			error("Invalid expected type `" .. expectedType .. "` received.")
+			error("Invalid type `" .. expectedType .. "` received.")
 		end
 	end
 
@@ -283,4 +283,13 @@ function Utilities:RunCallbackForGameVersion(callbacks)
 	else
 		error("Unexpected game version encountered.")
 	end
+end
+
+function Utilities:AddAceGuiLabelSpacer(container, fontHeight)
+	local AceGUI = LibStub("AceGUI-3.0")
+	local spacer = AceGUI:Create("Label")
+	spacer:SetFullWidth(true)
+	spacer:SetText(" ") -- Empty text creates spacing
+	spacer:SetFont("Fonts\\FRIZQT__.TTF", fontHeight, "OUTLINE")
+	container:AddChild(spacer)
 end

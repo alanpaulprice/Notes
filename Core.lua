@@ -1,39 +1,27 @@
 local addonName, addon = ...
-addon.DEBUG = false
+LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
+addon.DEBUG = true
 
-function addon:ConfigureSlashCommands()
-	SLASH_NOTES1 = "/" .. string.lower(addonName)
-	SlashCmdList.NOTES = function(message)
-		if message == "" then
-			addon.UI:Toggle()
-		elseif message == "options" then
-			addon.Options:Open()
-		elseif message == "resetsize" then
-			addon.UI:ResetSize()
-		elseif message == "resetposition" then
-			addon.UI:ResetPoint()
-		else
-			print(addonName .. ": Unknown argument '" .. message .. "' received.")
-		end
-	end
-end
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
-function addon:Initialize()
+function addon:OnInitialize()
 	addon.Database:Initialize()
 	addon.MinimapButton:Initialize()
-	addon.Options:Initialize()
-	addon:ConfigureSlashCommands()
-	if addon.Database:GetShowAtLogin() then
-		addon.UI:Initialize()
-	end
+	self.MainUi:Initialize()
+
+	self:RegisterChatCommand(string.lower(addonName), "OnChatCommand")
 end
 
-function addon:OnAddonLoaded(_, name)
-	if name == addonName then
-		addon:Initialize()
+function addon:OnEnable() end
+
+function addon:OnDisable() end
+
+function addon:OnChatCommand(input)
+	if not input or input:trim() == "" then
+		addon.MainUi:Toggle()
+	elseif input:trim() == "config" then
+		AceConfigDialog:Open(addonName)
+	else
+		addon:Print("Unrecognized command argument.")
 	end
 end
-
-local events = CreateFrame("Frame")
-events:RegisterEvent("ADDON_LOADED")
-events:SetScript("OnEvent", addon.OnAddonLoaded)

@@ -2,14 +2,16 @@ local addonName, addon = ...
 addon.MinimapButton = {}
 local MinimapButton = addon.MinimapButton
 
-function MinimapButton:Show()
-	addon.Database:SetMinimapButtonHidden(false)
-	MinimapButton.Icon:Show(addonName)
-end
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
-function MinimapButton:Hide()
-	addon.Database:SetMinimapButtonHidden(true)
-	MinimapButton.Icon:Hide(addonName)
+function MinimapButton:SetHidden(hidden)
+	addon.Database:SetMinimapButtonHidden(hidden)
+
+	if hidden then
+		MinimapButton.Icon:Hide(addonName)
+	else
+		MinimapButton.Icon:Show(addonName)
+	end
 end
 
 function MinimapButton:Initialize()
@@ -19,16 +21,9 @@ function MinimapButton:Initialize()
 		icon = "Interface\\ICONS\\INV_Misc_PaperBundle02a.blp", -- "Interface\\ICONS\\INV_Misc_Note_04.blp"
 		OnClick = function(_, button)
 			if button == "LeftButton" then
-				addon.UI:Toggle()
+				addon.MainUi:Toggle()
 			elseif button == "RightButton" then
-				addon.Utilities:RunCallbackForGameVersion({
-					mainline = function()
-						Settings.OpenToCategory(addon.Options.category.ID)
-					end,
-					classic = function()
-						InterfaceOptionsFrame_OpenToCategory(addonName)
-					end,
-				})
+				AceConfigDialog:Open(addonName)
 			end
 		end,
 		OnTooltipShow = function(tooltip)
