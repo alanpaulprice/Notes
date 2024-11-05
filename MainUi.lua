@@ -28,8 +28,8 @@ end
 
 local function BuildFrame()
 	MainUi.frame = AceGUI:Create("Frame")
-	MainUi.frame:SetHeight(400)
-	MainUi.frame:SetWidth(400)
+	MainUi.frame:SetHeight(addon.Database:GetHeight())
+	MainUi.frame:SetWidth(addon.Database:GetWidth())
 	MainUi.frame:EnableResize(addon.Database:GetResizeEnabled())
 	MainUi.frame:SetTitle(addonName)
 	MainUi:UpdateStatusText()
