@@ -191,12 +191,23 @@ function Database:SetNoteBody(noteId, newBody)
 	note.body = newBody
 end
 
--- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
-function Database:GetMinimapButtonForLibDBIcon()
-	return self.data.profile.minimapButton
+function Database:GetWidth()
+	return self.data.profile.size.width
 end
 
--------------------------------------------------------------------------------- OPTIONS
+function Database:SetWidth(width)
+	addon.Utilities:CheckNumberIsWithinBounds(width, addon.Constants.MIN_UI_WIDTH, addon.Constants.MAX_UI_WIDTH)
+	self.data.profile.size.width = width
+end
+
+function Database:GetHeight()
+	return self.data.profile.size.height
+end
+
+function Database:SetHeight(height)
+	addon.Utilities:CheckNumberIsWithinBounds(height, addon.Constants.MIN_UI_HEIGHT, addon.Constants.MAX_UI_HEIGHT)
+	self.data.profile.size.height = height
+end
 
 function Database:GetShowAtLogin()
 	return self.data.profile.showAtLogin
@@ -205,6 +216,11 @@ end
 function Database:SetShowAtLogin(input)
 	addon.Utilities:CheckType(input, "boolean")
 	self.data.profile.showAtLogin = input
+end
+
+-- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
+function Database:GetMinimapButtonForLibDBIcon()
+	return self.data.profile.minimapButton
 end
 
 function Database:GetMinimapButtonHidden()
