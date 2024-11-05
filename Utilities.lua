@@ -112,32 +112,25 @@ function Utilities:FilterNonNumericCharactersFromString(input)
 	return result
 end
 
-function Utilities:RoundNumberDecimal(number, numberOfPlaces, roundUpHalves)
+function Utilities:RoundNumber(number, numberOfPlaces, roundUpHalves)
 	self:CheckType(number, "number")
-	self:CheckType(numberOfPlaces, "number")
+	self:CheckType(numberOfPlaces, "number", "nil")
 	self:CheckType(roundUpHalves, "boolean", "nil")
 
-	if numberOfPlaces < 1 then
-		error("`numberOfPlaces` must be `1` or greater.")
-	end
-
+	numberOfPlaces = numberOfPlaces or 0
 	local factor = 10 ^ numberOfPlaces
-	local roundedNumber = nil
+	local shiftedNumber = number * factor
 
-	-- If roundUpHalves is false, implement round half down logic.
-	if roundUpHalves == false then
-		local shiftedNumber = number * factor
-		local integerPart = math.floor(shiftedNumber)
-		local fractionalPart = shiftedNumber - integerPart
+	-- Calculate the fractional part to check for .5.
+	local fractionalPart = shiftedNumber % 1
+	local roundedNumber
 
-		if fractionalPart == 0.5 then
-			roundedNumber = math.floor(number * factor) / factor
-		else
-			roundedNumber = math.floor(number * factor + 0.5) / factor
-		end
+	if fractionalPart == 0.5 and roundUpHalves then
+		-- If it's exactly .5 and roundUpHalves is true, round up.
+		roundedNumber = math.ceil(shiftedNumber) / factor
 	else
-		-- Default rounding (round half up)
-		roundedNumber = math.floor(number * factor + 0.5) / factor
+		-- Use standard rounding in all other cases.
+		roundedNumber = math.floor(shiftedNumber + 0.5) / factor
 	end
 
 	return roundedNumber
