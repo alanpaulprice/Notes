@@ -139,45 +139,37 @@ local options = {
 			inline = true,
 			name = "Main window size",
 			args = {
-				row1 = {
+
+				width = {
 					order = 1,
-					type = "group",
-					inline = true,
-					name = "",
-					args = {
-						height = {
-							order = 1,
-							type = "range",
-							name = "Height",
-							min = 200,
-							max = 1000,
-							step = 1,
-						},
-						spacer1 = AddHorizontalSpacing(2),
-						YOffset = {
-							order = 3,
-							type = "range",
-							name = "Width",
-							min = 400,
-							max = 1000,
-							step = 1,
-						},
-					},
+					type = "range",
+					name = "Width",
+					min = addon.Constants.MIN_UI_WIDTH,
+					max = nil, -- Set via the `InitializeOptions` function
+					step = 0.01,
+					bigStep = 1,
+					get = function()
+						return addon.Database:GetWidth()
+					end,
+					set = function(_, value)
+						addon.MainUi:UpdateWidth(value)
+					end,
 				},
-				row2 = {
-					order = 2,
-					type = "group",
-					inline = true,
-					name = "",
-					args = {
-						spacer1 = AddVerticalSpacing(1),
-						resetSize = {
-							order = 2,
-							type = "execute",
-							name = "Reset size",
-							func = function() end,
-						},
-					},
+				spacer1 = AddHorizontalSpacing(2),
+				height = {
+					order = 3,
+					type = "range",
+					name = "Height",
+					min = addon.Constants.MIN_UI_HEIGHT,
+					max = nil, -- Set via the `InitializeOptions` function
+					step = 0.01,
+					bigStep = 1,
+					get = function()
+						return addon.Database:GetHeight()
+					end,
+					set = function(_, value)
+						addon.MainUi:UpdateHeight(value)
+					end,
 				},
 			},
 		},
@@ -241,7 +233,14 @@ local options = {
 	},
 }
 
+-- Because the values returned by GetScreenWidth/Height are incorrect when `options` is declared.
+local function InitializeOptions()
+	options.args.sizeGroup.args.width.max = addon.Utilities:RoundNumber(GetScreenWidth(), 0, false)
+	options.args.sizeGroup.args.height.max = addon.Utilities:RoundNumber(GetScreenHeight(), 0, false)
+end
+
 function Config:OnEnable()
+	InitializeOptions()
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
 	self.Frame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName)
 end
