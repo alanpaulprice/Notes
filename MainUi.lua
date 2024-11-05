@@ -89,3 +89,19 @@ function MainUi:UpdateResizeEnabled(input)
 		self.frame:EnableResize(input)
 	end
 end
+
+function MainUi:UpdateWidth(width)
+	addon.Database:SetWidth(width)
+
+	if self.frame and self.frame:IsShown() then
+		self.frame:SetWidth(width)
+	end
+end
+
+function MainUi:UpdateHeight(height)
+	addon.Database:SetHeight(height)
+
+	if self.frame and self.frame:IsShown() then
+		self.frame:SetHeight(height)
+	end
+end
