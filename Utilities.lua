@@ -121,15 +121,13 @@ function Utilities:RoundNumber(number, numberOfPlaces, roundUpHalves)
 	local factor = 10 ^ numberOfPlaces
 	local shiftedNumber = number * factor
 
-	-- Calculate the fractional part to check for .5.
 	local fractionalPart = shiftedNumber % 1
 	local roundedNumber
 
-	if fractionalPart == 0.5 and roundUpHalves then
-		-- If it's exactly .5 and roundUpHalves is true, round up.
+	-- Exact halves (.5) are rounded up by default.
+	if fractionalPart == 0.5 and roundUpHalves ~= false then
 		roundedNumber = math.ceil(shiftedNumber) / factor
 	else
-		-- Use standard rounding in all other cases.
 		roundedNumber = math.floor(shiftedNumber + 0.5) / factor
 	end
 
