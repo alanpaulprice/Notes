@@ -2,6 +2,8 @@ local addonName, addon = ...
 local Config = addon:NewModule("Config", "AceEvent-3.0")
 addon.Config = Config
 
+local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
+
 local function AddVerticalSpacing(order)
 	local verticalSpacing = {
 		type = "description",
@@ -22,30 +24,6 @@ local function AddHorizontalSpacing(order)
 	}
 	return horizontalSpacing
 end
-
-local pointOptions = {
-	BOTTOM = "Bottom",
-	BOTTOMLEFT = "Bottom Left",
-	BOTTOMRIGHT = "Bottom Right",
-	CENTER = "Center",
-	LEFT = "Left",
-	RIGHT = "Right",
-	TOP = "Top",
-	TOPLEFT = "Top Left",
-	TOPRIGHT = "Top Right",
-}
-
-local pointOptionSortOrder = {
-	"BOTTOM",
-	"BOTTOMLEFT",
-	"BOTTOMRIGHT",
-	"CENTER",
-	"LEFT",
-	"RIGHT",
-	"TOP",
-	"TOPLEFT",
-	"TOPRIGHT",
-}
 
 local options = {
 	name = addonName,
@@ -82,22 +60,23 @@ local options = {
 						addon.MinimapButton:SetHidden(value)
 					end,
 				},
-				resizeEnabled = {
+				clampedToScreen = {
 					order = 3,
 					type = "toggle",
-					name = "Resize enabled",
-					desc = "When checked, it will be possible to resize the main window.",
+					name = "Clamped to screen",
+					desc = "When checked, it will not be possible to position the main window off screen, even partially.",
 					get = function()
-						return addon.Database:GetResizeEnabled()
+						return addon.Database:GetClampedToScreen()
 					end,
 					set = function(_, value)
-						addon.MainUi:UpdateResizeEnabled(value)
+						addon.MainUi:UpdateClampedToScreen(value)
 					end,
 				},
 			},
 		},
-		fontGroup = {
-			order = 2,
+		spacer1 = AddVerticalSpacing(2),
+		editViewfontGroup = {
+			order = 3,
 			type = "group",
 			inline = true,
 			name = "Edit view font",
@@ -133,51 +112,12 @@ local options = {
 				},
 			},
 		},
+		spacer2 = AddVerticalSpacing(4),
 		sizeGroup = {
-			order = 3,
+			order = 5,
 			type = "group",
 			inline = true,
-			name = "Main window size",
-			args = {
-
-				width = {
-					order = 1,
-					type = "range",
-					name = "Width",
-					min = addon.Constants.MIN_UI_WIDTH,
-					max = nil, -- Set via the `InitializeOptions` function
-					step = 0.01,
-					bigStep = 1,
-					get = function()
-						return addon.Database:GetWidth()
-					end,
-					set = function(_, value)
-						addon.MainUi:UpdateWidth(value)
-					end,
-				},
-				spacer1 = AddHorizontalSpacing(2),
-				height = {
-					order = 3,
-					type = "range",
-					name = "Height",
-					min = addon.Constants.MIN_UI_HEIGHT,
-					max = nil, -- Set via the `InitializeOptions` function
-					step = 0.01,
-					bigStep = 1,
-					get = function()
-						return addon.Database:GetHeight()
-					end,
-					set = function(_, value)
-						addon.MainUi:UpdateHeight(value)
-					end,
-				},
-			},
-		},
-		pointGroup = {
-			order = 4,
-			type = "group",
-			inline = true,
-			name = "Main window position",
+			name = "Main UI size",
 			args = {
 				row1 = {
 					order = 1,
@@ -185,22 +125,38 @@ local options = {
 					inline = true,
 					name = "",
 					args = {
-						XOffset = {
+						width = {
 							order = 1,
 							type = "range",
-							name = "Offset (X)",
-							min = -1000,
-							max = 1000,
-							step = 1,
+							name = "Width",
+							desc = "Determines the width of the main window.",
+							min = addon.Constants.MIN_UI_WIDTH,
+							max = nil, -- Set via the `InitializeOptions` function
+							step = 0.01,
+							bigStep = 1,
+							get = function()
+								return addon.Utilities:RoundNumber(addon.Database:GetWidth(), 2)
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateWidth(value)
+							end,
 						},
-						spacer2 = AddHorizontalSpacing(2),
-						YOffset = {
+						spacer1 = AddHorizontalSpacing(2),
+						height = {
 							order = 3,
 							type = "range",
-							name = "Offset (Y)",
-							min = -1000,
-							max = 1000,
-							step = 1,
+							name = "Height",
+							desc = "Determines the height of the main window.",
+							min = addon.Constants.MIN_UI_HEIGHT,
+							max = nil, -- Set via the `InitializeOptions` function
+							step = 0.01,
+							bigStep = 1,
+							get = function()
+								return addon.Utilities:RoundNumber(addon.Database:GetHeight(), 2)
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateHeight(value)
+							end,
 						},
 					},
 				},
@@ -211,20 +167,17 @@ local options = {
 					name = "",
 					args = {
 						spacer1 = AddVerticalSpacing(1),
-						relativePoint = {
+						resizeEnabled = {
 							order = 2,
-							type = "select",
-							name = "Relative point",
-							desc = "Determines which side of the screen the " .. addonName .. " frame is anchored to.",
-							values = pointOptions,
-							sorting = pointOptionSortOrder,
-						},
-						spacer2 = AddHorizontalSpacing(3),
-						resetPosition = {
-							order = 4,
-							type = "execute",
-							name = "Reset position",
-							func = function() end,
+							type = "toggle",
+							name = "Resize enabled",
+							desc = "When checked, it will be possible to resize the main window by dragging it's bottom border, right border, or bottom right corner.",
+							get = function()
+								return addon.Database:GetResizeEnabled()
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateResizeEnabled(value)
+							end,
 						},
 					},
 				},
@@ -235,12 +188,16 @@ local options = {
 
 -- Because the values returned by GetScreenWidth/Height are incorrect when `options` is declared.
 local function InitializeOptions()
-	options.args.sizeGroup.args.width.max = addon.Utilities:RoundNumber(GetScreenWidth(), 0, false)
-	options.args.sizeGroup.args.height.max = addon.Utilities:RoundNumber(GetScreenHeight(), 0, false)
+	local roundedScreenWidth = addon.Utilities:RoundNumber(GetScreenWidth(), 0)
+	local roundedScreenHeight = addon.Utilities:RoundNumber(GetScreenHeight(), 0)
+
+	options.args.sizeGroup.args.row1.args.width.max = roundedScreenWidth
+	options.args.sizeGroup.args.row1.args.height.max = roundedScreenHeight
 end
 
 function Config:OnEnable()
 	InitializeOptions()
+	AceConfigRegistry:RegisterOptionsTable(addonName, options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
 	self.Frame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName)
 end

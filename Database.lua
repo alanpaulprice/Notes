@@ -2,58 +2,6 @@ local addonName, addon = ...
 addon.Database = {}
 local Database = addon.Database
 
-MyAddon = LibStub("AceAddon-3.0"):NewAddon("DBExample")
-
-local defaults = {
-	profile = {
-		size = {
-			width = addon.Constants.DEFAULT_MAIN_UI_WIDTH,
-			height = addon.Constants.DEFAULT_MAIN_UI_HEIGHT,
-		},
-		point = {
-			anchorPoint = "CENTER",
-			relativeTo = nil,
-			relativePoint = "CENTER",
-			xOffset = 0,
-			yOffset = 0,
-		},
-		minimapButton = {
-			hide = false,
-		},
-		showAtLogin = false,
-		resizeEnabled = true,
-		editViewFontSize = 14,
-		editViewFont = "Fonts\\ARIALN.TTF",
-	},
-	char = {
-		currentNoteId = 1,
-		currentView = addon.Constants.UI_VIEW_ENUM.EDIT,
-	},
-	global = {
-		notes = {
-			{
-				id = 1,
-				title = "Getting Started",
-				body = "You can navigate to the 'Manage' view via the button below, labeled 'Manage Notes'."
-					.. " From there, you can:"
-					.. "\n\n"
-					.. "- View all notes."
-					.. "\n"
-					.. "- Create a note."
-					.. "\n"
-					.. "- Edit the title of a note."
-					.. "\n"
-					.. "- Delete a note."
-					.. "\n\n"
-					.. "Right-click a note to open a menu that will enable you to edit it's title or delete it."
-					.. "\n\n"
-					.. "You can resize this window using the handles in the bottom corners,"
-					.. " and move it by clicking and dragging on the title bar at the top.",
-			},
-		},
-	},
-}
-
 local function CheckNoteWithIdExists(noteId)
 	addon.Utilities:CheckType(noteId, "number")
 
@@ -96,7 +44,7 @@ local function sortNotesByTitleAscending()
 end
 
 function Database:Initialize()
-	self.data = LibStub("AceDB-3.0"):New("NotesDB", defaults, true)
+	self.data = LibStub("AceDB-3.0"):New(addonName .. "DB", addon.Constants.DEFAULT_DATABASE_DEFAULTS, true)
 end
 
 function Database:GetCurrentView()
@@ -191,22 +139,27 @@ function Database:SetNoteBody(noteId, newBody)
 	note.body = newBody
 end
 
+--* Editing the returned value will affect the value stored in the database.
+function Database:GetUnclonedMainUiStatus()
+	return self.data.profile.mainUiStatus
+end
+
 function Database:GetWidth()
-	return self.data.profile.size.width
+	return self.data.profile.mainUiStatus.width
 end
 
 function Database:SetWidth(width)
-	addon.Utilities:CheckNumberIsWithinBounds(width, addon.Constants.MIN_UI_WIDTH, addon.Constants.MAX_UI_WIDTH)
-	self.data.profile.size.width = width
+	width = addon.Utilities:ClampNumber(width, addon.Constants.MIN_UI_WIDTH, nil)
+	self.data.profile.mainUiStatus.width = width
 end
 
 function Database:GetHeight()
-	return self.data.profile.size.height
+	return self.data.profile.mainUiStatus.height
 end
 
 function Database:SetHeight(height)
-	addon.Utilities:CheckNumberIsWithinBounds(height, addon.Constants.MIN_UI_HEIGHT, addon.Constants.MAX_UI_HEIGHT)
-	self.data.profile.size.height = height
+	height = addon.Utilities:ClampNumber(height, addon.Constants.MIN_UI_HEIGHT, nil)
+	self.data.profile.mainUiStatus.height = height
 end
 
 function Database:GetShowAtLogin()
@@ -239,6 +192,15 @@ end
 function Database:SetResizeEnabled(input)
 	addon.Utilities:CheckType(input, "boolean")
 	self.data.profile.resizeEnabled = input
+end
+
+function Database:GetClampedToScreen()
+	return self.data.profile.clampedToScreen
+end
+
+function Database:SetClampedToScreen(input)
+	addon.Utilities:CheckType(input, "boolean")
+	self.data.profile.clampedToScreen = input
 end
 
 function Database:GetEditViewFont()

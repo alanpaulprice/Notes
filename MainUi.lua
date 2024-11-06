@@ -3,6 +3,7 @@ addon.MainUi = {}
 local MainUi = addon.MainUi
 
 local AceGUI = LibStub("AceGUI-3.0")
+local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
 
 local function BuildTabGroup()
 	local function SelectGroup(container, event, group)
@@ -26,18 +27,53 @@ local function BuildTabGroup()
 	MainUi.frame:AddChild(MainUi.tabGroup)
 end
 
-local function BuildFrame()
-	MainUi.frame = AceGUI:Create("Frame")
-	MainUi.frame:SetHeight(addon.Database:GetHeight())
-	MainUi.frame:SetWidth(addon.Database:GetWidth())
+local function ConfigureFrameResize()
+	local roundedScreenWidth = addon.Utilities:RoundNumber(GetScreenWidth(), 0)
+	local roundedScreenHeight = addon.Utilities:RoundNumber(GetScreenHeight(), 0)
+
 	MainUi.frame:EnableResize(addon.Database:GetResizeEnabled())
-	MainUi.frame:SetTitle(addonName)
-	MainUi:UpdateStatusText()
+	MainUi.frame.frame:SetResizeBounds(
+		addon.Constants.MIN_UI_WIDTH,
+		addon.Constants.MIN_UI_HEIGHT,
+		roundedScreenWidth,
+		roundedScreenHeight
+	)
+end
+
+local function ConfigureFrameSizerScripts()
+	local function onMoverSizerMouseUp()
+		addon.Database:SetWidth(MainUi.frame.status.width)
+		addon.Database:SetHeight(MainUi.frame.status.height)
+		AceConfigRegistry:NotifyChange(addonName)
+	end
+
+	MainUi.frame.sizer_se:HookScript("OnMouseUp", onMoverSizerMouseUp)
+	MainUi.frame.sizer_s:HookScript("OnMouseUp", onMoverSizerMouseUp)
+	MainUi.frame.sizer_e:HookScript("OnMouseUp", onMoverSizerMouseUp)
+	MainUi.frame.titlebg:HookScript("OnMouseUp", onMoverSizerMouseUp)
+end
+
+local function ConfigureFrameOnCloseScript()
 	MainUi.frame:SetCallback("OnClose", function(widget)
 		AceGUI:Release(widget)
 	end)
+end
+
+local function BuildFrame()
+	MainUi.frame = AceGUI:Create("Frame")
+	MainUi.frame:Hide()
 	MainUi.frame:SetLayout("Fill")
+	MainUi.frame:SetStatusTable(addon.Database:GetUnclonedMainUiStatus())
+	MainUi.frame:SetWidth(addon.Database:GetWidth())
+	MainUi.frame:SetHeight(addon.Database:GetHeight())
+	MainUi.frame.frame:SetClampedToScreen(addon.Database:GetClampedToScreen())
+	MainUi.frame:SetTitle(addonName)
+	MainUi:UpdateStatusText()
+	ConfigureFrameResize()
+	ConfigureFrameSizerScripts()
 	BuildTabGroup()
+	ConfigureFrameOnCloseScript()
+	MainUi.frame:Show()
 end
 
 function MainUi:Initialize()
@@ -65,6 +101,7 @@ function MainUi:UpdateTabs()
 	local editTabDisabled = currentNoteId == nil
 
 	MainUi.tabGroup:SetTabs({
+		-- The spaces either side of the `text` values are there to make the tabs wider.
 		{ text = "   Edit   ", value = addon.Constants.UI_VIEW_ENUM.EDIT, disabled = editTabDisabled },
 		{ text = "   List   ", value = addon.Constants.UI_VIEW_ENUM.LIST },
 		{ text = "   Manage   ", value = addon.Constants.UI_VIEW_ENUM.MANAGE },
@@ -87,6 +124,14 @@ function MainUi:UpdateResizeEnabled(input)
 
 	if self.frame and self.frame:IsShown() then
 		self.frame:EnableResize(input)
+	end
+end
+
+function MainUi:UpdateClampedToScreen(input)
+	addon.Database:SetClampedToScreen(input)
+
+	if self.frame and self.frame:IsShown() then
+		self.frame.frame:SetClampedToScreen(input)
 	end
 end
 
