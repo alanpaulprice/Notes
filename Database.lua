@@ -218,8 +218,8 @@ function Database:SetShowAtLogin(input)
 	self.data.profile.showAtLogin = input
 end
 
--- This is intentionally returning the original/reference, which allows LibDBIcon to manipulate it.
-function Database:GetMinimapButtonForLibDBIcon()
+--* Editing the returned value will affect the value stored in the database.
+function Database:GetUnclonedMinimapButton()
 	return self.data.profile.minimapButton
 end
 

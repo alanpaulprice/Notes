@@ -38,5 +38,5 @@ function MinimapButton:Initialize()
 	})
 
 	MinimapButton.Icon = LibStub("LibDBIcon-1.0", true)
-	MinimapButton.Icon:Register(addonName, MinimapButton.Button, addon.Database:GetMinimapButtonForLibDBIcon())
+	MinimapButton.Icon:Register(addonName, MinimapButton.Button, addon.Database:GetUnclonedMinimapButton())
 end
