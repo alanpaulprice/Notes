@@ -1,0 +1,22 @@
+## Interface: 110005
+## Title: Notes
+## Version: 1.0.0
+## Author: alanpaulprice
+## Notes: A simple notepad.
+## SavedVariables: NotesDB
+## SavedVariablesPerCharacter:
+## OptionalDeps: Ace3
+## IconTexture: Interface\ICONS\INV_Misc_PaperBundle02a.blp
+
+embeds.xml
+
+Constants.lua
+Utilities.lua
+Core.lua
+Database.lua
+MainUi.lua
+EditView.lua
+ListView.lua
+ManageView.lua
+MinimapButton.lua
+Config.lua
