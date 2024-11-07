@@ -42,11 +42,13 @@ Constants.DEFAULT_DATABASE_DEFAULTS = {
 			{
 				id = 1,
 				title = "Getting Started",
-				body = "Edit: View and edit the currently selected note."
-					.. "\n\n"
-					.. "List: View all notes and change the currently selected note."
-					.. "\n\n"
-					.. "Manage: Create, rename, and delete a note."
+				body = "Tab Overview:"
+					.. "\n"
+					.. "- Edit: Edit the currently selected note."
+					.. "\n"
+					.. "- List: Change the currently selected note."
+					.. "\n"
+					.. "- Manage: Create, rename, and delete a note."
 					.. "\n\n"
 					.. "The title of the currently selected note is displayed in the status bar at the bottom of the window."
 					.. "\n\n"
