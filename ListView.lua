@@ -10,42 +10,44 @@ local function BuildEmptyMessage(container)
 	local label = AceGUI:Create("Label")
 	label:SetFullWidth(true)
 	label:SetJustifyH("CENTER")
-	label:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
+	local font, _, fontFlags = iLabel.label:GetFontObject():GetFont()
+	label:SetFont(font, 16, fontFlags)
 	label:SetText("You do not have any notes.\n\nCreate one via the 'Manage' tab.")
 	container:AddChild(label)
 end
 
-local function BuildList(container, notes)
+local function BuildListItems()
+	local notes = addon.Database:GetNotes()
 	local currentNoteId = addon.Database:GetCurrentNoteId()
+	local spacing = addon.Database:GetListViewSpacing()
 
-	local simpleGroup = AceGUI:Create("SimpleGroup")
-	simpleGroup:SetFullWidth(true)
-	simpleGroup:SetFullHeight(true)
-	simpleGroup:SetLayout("Fill")
-	container:AddChild(simpleGroup)
+	if spacing > 0 then
+		addon.Utilities:AddAceGuiLabelSpacer(ListView.scrollFrame, spacing / 2)
+	end
 
-	local scrollFrame = AceGUI:Create("ScrollFrame")
-	scrollFrame:SetLayout("List")
-	simpleGroup:AddChild(scrollFrame)
-
-	for _, note in ipairs(notes) do
-		addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, 12)
+	for index, note in ipairs(notes) do
+		if index > 1 and spacing > 0 then
+			addon.Utilities:AddAceGuiLabelSpacer(ListView.scrollFrame, spacing)
+		end
 
 		local iLabel = AceGUI:Create("InteractiveLabel")
 		iLabel:SetFullWidth(true)
-		local fontName, fontHeight, fontFlags = iLabel.label:GetFontObject():GetFont()
-		iLabel:SetFont(fontName, 14, fontFlags)
+		local _, _, fontFlags = iLabel.label:GetFontObject():GetFont()
+		iLabel:SetFont(
+			AceGUIWidgetLSMlists.font[addon.Database:GetListViewFont()],
+			addon.Database:GetListViewFontSize(),
+			fontFlags
+		)
 
 		if note.id == currentNoteId then
 			iLabel:SetColor(GameFontNormalLarge:GetTextColor())
 		end
 
 		iLabel:SetText(note.title)
-		-- iLabel:SetHighlight("interface\\buttons\\ui-listbox-highlight2.blp") -- "interface\\buttons\\ui-listbox-highlight.blp"
 		iLabel:SetHighlight("interface\\buttons\\ui-listbox-highlight.blp") -- "interface\\buttons\\ui-listbox-highlight2.blp"
-		scrollFrame:AddChild(iLabel)
+		ListView.scrollFrame:AddChild(iLabel)
 
-		iLabel:SetCallback("OnClick", function(widget, event, button)
+		iLabel:SetCallback("OnClick", function()
 			addon.Database:SetCurrentNoteId(note.id)
 			addon.MainUi:UpdateTabs()
 			addon.MainUi:UpdateStatusText()
@@ -53,7 +55,30 @@ local function BuildList(container, notes)
 		end)
 	end
 
-	addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, 12)
+	if spacing > 0 then
+		addon.Utilities:AddAceGuiLabelSpacer(ListView.scrollFrame, spacing / 2)
+	end
+end
+
+local function RebuildListItems()
+	if ListView.scrollFrame and ListView.scrollFrame:IsShown() then
+		ListView.scrollFrame:ReleaseChildren()
+		BuildListItems()
+	end
+end
+
+local function BuildList(container)
+	local simpleGroup = AceGUI:Create("SimpleGroup")
+	simpleGroup:SetFullWidth(true)
+	simpleGroup:SetFullHeight(true)
+	simpleGroup:SetLayout("Fill")
+	container:AddChild(simpleGroup)
+
+	ListView.scrollFrame = AceGUI:Create("ScrollFrame")
+	ListView.scrollFrame:SetLayout("List")
+	simpleGroup:AddChild(ListView.scrollFrame)
+
+	BuildListItems()
 end
 
 function ListView:Build(container)
@@ -62,6 +87,21 @@ function ListView:Build(container)
 	if #notes == 0 then
 		BuildEmptyMessage(container)
 	else
-		BuildList(container, notes)
+		BuildList(container)
 	end
+end
+
+function ListView:UpdateFontSize(fontSize)
+	addon.Database:SetListViewFontSize(fontSize)
+	RebuildListItems()
+end
+
+function ListView:UpdateFont(font)
+	addon.Database:SetListViewFont(font)
+	RebuildListItems()
+end
+
+function ListView:UpdateSpacing(spacing)
+	addon.Database:SetListViewSpacing(spacing)
+	RebuildListItems()
 end
