@@ -2,11 +2,6 @@ local addonName, addon = ...
 addon.Constants = {}
 local Constants = addon.Constants
 
-Constants.DEFAULT_EDIT_VIEW_FONT = "Arial Narrow"
-
-Constants.DEFAULT_MAIN_UI_WIDTH = 400
-Constants.DEFAULT_MAIN_UI_HEIGHT = 400
-
 Constants.MIN_UI_WIDTH = 400
 Constants.MIN_UI_HEIGHT = 200
 
@@ -21,10 +16,10 @@ Constants.UI_VIEW_ENUM = {
 Constants.DEFAULT_DATABASE_DEFAULTS = {
 	profile = {
 		mainUiStatus = {
-			height = addon.Constants.DEFAULT_MAIN_UI_HEIGHT,
+			height = 400,
 			top = nil,
 			left = nil,
-			width = addon.Constants.DEFAULT_MAIN_UI_WIDTH,
+			width = 400,
 		},
 		minimapButton = {
 			hide = false,
@@ -33,11 +28,14 @@ Constants.DEFAULT_DATABASE_DEFAULTS = {
 		resizeEnabled = true,
 		clampedToScreen = true,
 		editViewFontSize = 14,
-		editViewFont = addon.Constants.DEFAULT_EDIT_VIEW_FONT,
+		editViewFont = "Arial Narrow",
+		listViewFontSize = 14,
+		listViewFont = "Friz Quadrata TT",
+		listViewSpacing = 12,
 	},
 	char = {
 		currentNoteId = 1,
-		currentView = addon.Constants.UI_VIEW_ENUM.EDIT,
+		currentView = Constants.UI_VIEW_ENUM.EDIT,
 	},
 	global = {
 		notes = {
