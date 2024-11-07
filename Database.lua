@@ -203,6 +203,15 @@ function Database:SetClampedToScreen(input)
 	self.data.profile.clampedToScreen = input
 end
 
+function Database:GetEditViewFontSize()
+	return self.data.profile.editViewFontSize
+end
+
+function Database:SetEditViewFontSize(input)
+	addon.Utilities:CheckType(input, "number")
+	self.data.profile.editViewFontSize = input
+end
+
 function Database:GetEditViewFont()
 	return self.data.profile.editViewFont
 end
@@ -212,11 +221,29 @@ function Database:SetEditViewFont(input)
 	self.data.profile.editViewFont = input
 end
 
-function Database:SetEditViewFontSize(input)
-	addon.Utilities:CheckType(input, "number")
-	self.data.profile.editViewFontSize = input
+function Database:GetListViewFontSize()
+	return self.data.profile.listViewFontSize
 end
 
-function Database:GetEditViewFontSize()
-	return self.data.profile.editViewFontSize
+function Database:SetListViewFontSize(input)
+	addon.Utilities:CheckType(input, "number")
+	self.data.profile.listViewFontSize = input
+end
+
+function Database:GetListViewFont()
+	return self.data.profile.listViewFont
+end
+
+function Database:SetListViewFont(input)
+	addon.Utilities:CheckType(input, "string")
+	self.data.profile.listViewFont = input
+end
+
+function Database:SetListViewSpacing(input)
+	addon.Utilities:CheckType(input, "number")
+	self.data.profile.listViewSpacing = input
+end
+
+function Database:GetListViewSpacing()
+	return self.data.profile.listViewSpacing
 end
