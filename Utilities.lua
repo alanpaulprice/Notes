@@ -280,7 +280,8 @@ function Utilities:AddAceGuiLabelSpacer(container, fontHeight)
 	local AceGUI = LibStub("AceGUI-3.0")
 	local spacer = AceGUI:Create("Label")
 	spacer:SetFullWidth(true)
-	spacer:SetText(" ") -- Empty text creates spacing
-	spacer:SetFont("Fonts\\FRIZQT__.TTF", fontHeight, "OUTLINE")
+	spacer:SetText(" ")
+	spacer:SetFont("Fonts\\FRIZQT__.TTF", fontHeight, "")
 	container:AddChild(spacer)
+	return spacer
 end
