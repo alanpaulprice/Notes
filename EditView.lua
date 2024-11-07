@@ -36,8 +36,6 @@ function EditView:UpdateFontSize(fontSize)
 		local fontName, _, fontFlags = self.editBox.editBox:GetFontObject():GetFont()
 		self.editBox.editBox:SetFont(fontName, fontSize, fontFlags)
 	end
-
-	AceConfigRegistry:NotifyChange(addonName)
 end
 
 function EditView:UpdateFont(font)
