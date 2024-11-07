@@ -1,5 +1,5 @@
 local addonName, addon = ...
-local Config = addon:NewModule("Config", "AceEvent-3.0")
+local Config = addon:NewModule("Config")
 addon.Config = Config
 
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
