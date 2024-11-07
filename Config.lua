@@ -30,7 +30,7 @@ local options = {
 	handler = addon,
 	type = "group",
 	args = {
-		checkboxGroup = {
+		generalGroup = {
 			order = 1,
 			type = "group",
 			inline = true,
@@ -40,7 +40,6 @@ local options = {
 					order = 1,
 					type = "toggle",
 					name = "Show at login",
-					desc = "When checked, " .. addonName .. " will be shown when you log in.",
 					get = function()
 						return addon.Database:GetShowAtLogin()
 					end,
@@ -48,11 +47,11 @@ local options = {
 						addon.Database:SetShowAtLogin(value)
 					end,
 				},
+				spacer1 = AddHorizontalSpacing(2),
 				showMinimapButton = {
-					order = 2,
+					order = 3,
 					type = "toggle",
 					name = "Hide minimap button",
-					desc = "When checked, the " .. addonName .. " minimap button will be hidden.",
 					get = function()
 						return addon.Database:GetMinimapButtonHidden()
 					end,
@@ -60,31 +59,100 @@ local options = {
 						addon.MinimapButton:SetHidden(value)
 					end,
 				},
-				clampedToScreen = {
-					order = 3,
-					type = "toggle",
-					name = "Clamped to screen",
-					desc = "When checked, it will not be possible to position the main window off screen, even partially.",
-					get = function()
-						return addon.Database:GetClampedToScreen()
-					end,
-					set = function(_, value)
-						addon.MainUi:UpdateClampedToScreen(value)
-					end,
-				},
 			},
 		},
 		spacer1 = AddVerticalSpacing(2),
-		editViewfontGroup = {
+		mainWindowGroup = {
 			order = 3,
 			type = "group",
 			inline = true,
-			name = "Edit view font",
+			name = "Main window",
+			args = {
+				row1 = {
+					order = 1,
+					type = "group",
+					inline = true,
+					name = "",
+					args = {
+						width = {
+							order = 1,
+							type = "range",
+							name = "Width",
+							min = addon.Constants.MIN_UI_WIDTH,
+							max = nil, -- Set later via the `InitializeOptions` function
+							step = 0.01,
+							bigStep = 1,
+							get = function()
+								return addon.Utilities:RoundNumber(addon.Database:GetWidth(), 2)
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateWidth(value)
+							end,
+						},
+						spacer1 = AddHorizontalSpacing(2),
+						height = {
+							order = 3,
+							type = "range",
+							name = "Height",
+							min = addon.Constants.MIN_UI_HEIGHT,
+							max = nil, -- Set later via the `InitializeOptions` function
+							step = 0.01,
+							bigStep = 1,
+							get = function()
+								return addon.Utilities:RoundNumber(addon.Database:GetHeight(), 2)
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateHeight(value)
+							end,
+						},
+					},
+				},
+				spacer1 = AddVerticalSpacing(2),
+				row2 = {
+					order = 3,
+					type = "group",
+					inline = true,
+					name = "",
+					args = {
+						resizeEnabled = {
+							order = 1,
+							type = "toggle",
+							name = "Resize via drag enabled",
+							get = function()
+								return addon.Database:GetResizeEnabled()
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateResizeEnabled(value)
+							end,
+						},
+						spacer1 = AddHorizontalSpacing(2),
+						clampToScreen = {
+							order = 3,
+							type = "toggle",
+							name = "Clamp to screen",
+							desc = "When checked, it will not be possible to position the main window off screen, even partially.",
+							get = function()
+								return addon.Database:GetClampedToScreen()
+							end,
+							set = function(_, value)
+								addon.MainUi:UpdateClampedToScreen(value)
+							end,
+						},
+					},
+				},
+			},
+		},
+		spacer3 = AddVerticalSpacing(4),
+		editViewGroup = {
+			order = 5,
+			type = "group",
+			inline = true,
+			name = "Edit view",
 			args = {
 				fontSize = {
 					order = 1,
 					type = "range",
-					name = "Size",
+					name = "Font size",
 					min = 4,
 					max = 32,
 					bigStep = 1,
@@ -100,7 +168,6 @@ local options = {
 					order = 3,
 					type = "select",
 					name = "Font",
-					desc = "Determines the font used for the edit view.",
 					dialogControl = "LSM30_Font",
 					values = AceGUIWidgetLSMlists.font,
 					get = function()
@@ -112,12 +179,12 @@ local options = {
 				},
 			},
 		},
-		spacer2 = AddVerticalSpacing(4),
-		listViewFontGroup = {
-			order = 5,
+		spacer2 = AddVerticalSpacing(6),
+		listViewGroup = {
+			order = 7,
 			type = "group",
 			inline = true,
-			name = "List view font",
+			name = "List view",
 			args = {
 				row1 = {
 					order = 1,
@@ -128,7 +195,7 @@ local options = {
 						fontSize = {
 							order = 1,
 							type = "range",
-							name = "Size",
+							name = "Font size",
 							min = 4,
 							max = 32,
 							bigStep = 1,
@@ -144,7 +211,6 @@ local options = {
 							order = 3,
 							type = "select",
 							name = "Font",
-							desc = "Determines the font used for the list view.",
 							dialogControl = "LSM30_Font",
 							values = AceGUIWidgetLSMlists.font,
 							get = function()
@@ -181,77 +247,6 @@ local options = {
 				},
 			},
 		},
-		spacer3 = AddVerticalSpacing(6),
-		sizeGroup = {
-			order = 7,
-			type = "group",
-			inline = true,
-			name = "Main window size",
-			args = {
-				row1 = {
-					order = 1,
-					type = "group",
-					inline = true,
-					name = "",
-					args = {
-						width = {
-							order = 1,
-							type = "range",
-							name = "Width",
-							desc = "Determines the width of the main window.",
-							min = addon.Constants.MIN_UI_WIDTH,
-							max = nil, -- Set later via the `InitializeOptions` function
-							step = 0.01,
-							bigStep = 1,
-							get = function()
-								return addon.Utilities:RoundNumber(addon.Database:GetWidth(), 2)
-							end,
-							set = function(_, value)
-								addon.MainUi:UpdateWidth(value)
-							end,
-						},
-						spacer1 = AddHorizontalSpacing(2),
-						height = {
-							order = 3,
-							type = "range",
-							name = "Height",
-							desc = "Determines the height of the main window.",
-							min = addon.Constants.MIN_UI_HEIGHT,
-							max = nil, -- Set later via the `InitializeOptions` function
-							step = 0.01,
-							bigStep = 1,
-							get = function()
-								return addon.Utilities:RoundNumber(addon.Database:GetHeight(), 2)
-							end,
-							set = function(_, value)
-								addon.MainUi:UpdateHeight(value)
-							end,
-						},
-					},
-				},
-				spacer1 = AddVerticalSpacing(2),
-				row2 = {
-					order = 3,
-					type = "group",
-					inline = true,
-					name = "",
-					args = {
-						resizeEnabled = {
-							order = 1,
-							type = "toggle",
-							name = "Resize enabled",
-							desc = "When checked, it will be possible to resize the main window by dragging it's bottom border, right border, or bottom right corner.",
-							get = function()
-								return addon.Database:GetResizeEnabled()
-							end,
-							set = function(_, value)
-								addon.MainUi:UpdateResizeEnabled(value)
-							end,
-						},
-					},
-				},
-			},
-		},
 	},
 }
 
@@ -260,8 +255,8 @@ local function InitializeOptions()
 	local roundedScreenWidth = addon.Utilities:RoundNumber(GetScreenWidth(), 0)
 	local roundedScreenHeight = addon.Utilities:RoundNumber(GetScreenHeight(), 0)
 
-	options.args.sizeGroup.args.row1.args.width.max = roundedScreenWidth
-	options.args.sizeGroup.args.row1.args.height.max = roundedScreenHeight
+	options.args.mainWindowGroup.args.row1.args.width.max = roundedScreenWidth
+	options.args.mainWindowGroup.args.row1.args.height.max = roundedScreenHeight
 end
 
 function Config:OnEnable()
