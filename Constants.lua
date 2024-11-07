@@ -44,21 +44,17 @@ Constants.DEFAULT_DATABASE_DEFAULTS = {
 			{
 				id = 1,
 				title = "Getting Started",
-				body = "You can navigate to the 'Manage' view via the button below, labeled 'Manage Notes'."
-					.. " From there, you can:"
+				body = "Edit: View and edit the currently selected note."
 					.. "\n\n"
-					.. "- View all notes."
-					.. "\n"
-					.. "- Create a note."
-					.. "\n"
-					.. "- Edit the title of a note."
-					.. "\n"
-					.. "- Delete a note."
+					.. "List: View all notes and change the currently selected note."
 					.. "\n\n"
-					.. "Right-click a note to open a menu that will enable you to edit it's title or delete it."
+					.. "Manage: Create, rename, and delete a note."
 					.. "\n\n"
-					.. "You can resize this window using the handles in the bottom corners,"
-					.. " and move it by clicking and dragging on the title bar at the top.",
+					.. "The title of the currently selected note is displayed in the status bar at the bottom of the window."
+					.. "\n\n"
+					.. "Move the window by clicking and dragging the title at the top."
+					.. "\n\n"
+					.. "Resize the window by clicking and dragging the right border, bottom border, or bottom right corner.",
 			},
 		},
 	},
