@@ -113,11 +113,80 @@ local options = {
 			},
 		},
 		spacer2 = AddVerticalSpacing(4),
-		sizeGroup = {
+		listViewFontGroup = {
 			order = 5,
 			type = "group",
 			inline = true,
-			name = "Main UI size",
+			name = "List view font",
+			args = {
+				row1 = {
+					order = 1,
+					type = "group",
+					inline = true,
+					name = "",
+					args = {
+						fontSize = {
+							order = 1,
+							type = "range",
+							name = "Size",
+							min = 4,
+							max = 32,
+							bigStep = 1,
+							get = function()
+								return addon.Database:GetListViewFontSize()
+							end,
+							set = function(_, value)
+								addon.ListView:UpdateFontSize(value)
+							end,
+						},
+						spacer1 = AddHorizontalSpacing(2),
+						font = {
+							order = 3,
+							type = "select",
+							name = "Font",
+							desc = "Determines the font used for the list view.",
+							dialogControl = "LSM30_Font",
+							values = AceGUIWidgetLSMlists.font,
+							get = function()
+								return addon.Database:GetListViewFont()
+							end,
+							set = function(_, value)
+								addon.ListView:UpdateFont(value)
+							end,
+						},
+					},
+				},
+				spacer3 = AddVerticalSpacing(2),
+				row2 = {
+					order = 3,
+					type = "group",
+					inline = true,
+					name = "",
+					args = {
+						spacing = {
+							order = 4,
+							type = "range",
+							name = "Spacing",
+							min = 0,
+							max = 32,
+							bigStep = 1,
+							get = function()
+								return addon.Database:GetListViewSpacing()
+							end,
+							set = function(_, value)
+								addon.ListView:UpdateSpacing(value)
+							end,
+						},
+					},
+				},
+			},
+		},
+		spacer3 = AddVerticalSpacing(6),
+		sizeGroup = {
+			order = 7,
+			type = "group",
+			inline = true,
+			name = "Main window size",
 			args = {
 				row1 = {
 					order = 1,
@@ -131,7 +200,7 @@ local options = {
 							name = "Width",
 							desc = "Determines the width of the main window.",
 							min = addon.Constants.MIN_UI_WIDTH,
-							max = nil, -- Set via the `InitializeOptions` function
+							max = nil, -- Set later via the `InitializeOptions` function
 							step = 0.01,
 							bigStep = 1,
 							get = function()
@@ -148,7 +217,7 @@ local options = {
 							name = "Height",
 							desc = "Determines the height of the main window.",
 							min = addon.Constants.MIN_UI_HEIGHT,
-							max = nil, -- Set via the `InitializeOptions` function
+							max = nil, -- Set later via the `InitializeOptions` function
 							step = 0.01,
 							bigStep = 1,
 							get = function()
@@ -160,15 +229,15 @@ local options = {
 						},
 					},
 				},
+				spacer1 = AddVerticalSpacing(2),
 				row2 = {
-					order = 2,
+					order = 3,
 					type = "group",
 					inline = true,
 					name = "",
 					args = {
-						spacer1 = AddVerticalSpacing(1),
 						resizeEnabled = {
-							order = 2,
+							order = 1,
 							type = "toggle",
 							name = "Resize enabled",
 							desc = "When checked, it will be possible to resize the main window by dragging it's bottom border, right border, or bottom right corner.",
