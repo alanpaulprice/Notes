@@ -1,6 +1,6 @@
 ## Interface: 110005
 ## Title: Notes
-## Version: 1.0.0
+## Version: 2.0.0
 ## Author: alanpaulprice
 ## Notes: A simple notepad.
 ## SavedVariables: NotesDB
