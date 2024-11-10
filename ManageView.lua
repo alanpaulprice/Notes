@@ -100,8 +100,6 @@ local function BuildDeleteControl(container)
 end
 
 function ManageView:Build(container)
-	print("ManageView:Build")
-
 	local simpleGroup = AceGUI:Create("SimpleGroup")
 	simpleGroup:SetFullWidth(true)
 	simpleGroup:SetFullHeight(true)
