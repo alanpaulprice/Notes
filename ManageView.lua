@@ -100,10 +100,23 @@ local function BuildDeleteControl(container)
 end
 
 function ManageView:Build(container)
-	BuildCreateControl(container)
-	addon.Utilities:AddAceGuiLabelSpacer(container, 8)
-	BuildRenameControl(container)
-	addon.Utilities:AddAceGuiLabelSpacer(container, 8)
-	BuildDeleteControl(container)
+	print("ManageView:Build")
+
+	local simpleGroup = AceGUI:Create("SimpleGroup")
+	simpleGroup:SetFullWidth(true)
+	simpleGroup:SetFullHeight(true)
+	simpleGroup:SetLayout("Fill")
+	container:AddChild(simpleGroup)
+
+	local scrollFrame = AceGUI:Create("ScrollFrame")
+	scrollFrame:SetLayout("List")
+	simpleGroup:AddChild(scrollFrame)
+
+	BuildCreateControl(scrollFrame)
+	addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, 8)
+	BuildRenameControl(scrollFrame)
+	addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, 8)
+	BuildDeleteControl(scrollFrame)
+	addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, 8)
 	UpdateDropdownLists()
 end
