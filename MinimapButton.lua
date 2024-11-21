@@ -18,7 +18,7 @@ function MinimapButton:Initialize()
 	MinimapButton.Button = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
 		type = "data source",
 		text = addonName,
-		icon = "Interface\\ICONS\\INV_Misc_PaperBundle02a.blp", -- "Interface\\ICONS\\INV_Misc_Note_04.blp"
+		icon = "Interface\\AddOns\\" .. addonName .. "\\INV_Misc_PaperBundle02a.blp",
 		OnClick = function(_, button)
 			if button == "LeftButton" then
 				addon.MainUi:Toggle()

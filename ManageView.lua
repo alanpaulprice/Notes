@@ -48,16 +48,52 @@ end
 
 local function BuildRenameControl(container)
 	local function RenameDropdownCallback(widget, event, note)
-		StaticPopup_ShowCustomGenericInputBox({
-			text = "Rename '" .. note.title .. "'",
-			callback = function(newNoteTitle)
-				addon.Database:SetNoteTitle(note.id, newNoteTitle)
-				UpdateDropdownLists()
-				addon.MainUi:UpdateStatusText()
+		local text = "Rename '" .. note.title .. "'"
+
+		local function handleRename(newNoteTitle)
+			addon.Database:SetNoteTitle(note.id, newNoteTitle)
+			UpdateDropdownLists()
+			addon.MainUi:UpdateStatusText()
+		end
+
+		addon.Utilities:RunCallbackForGameVersion({
+			mainline = function()
+				StaticPopup_ShowCustomGenericInputBox({
+					text = text,
+					callback = handleRename,
+					acceptText = _G.SAVE,
+					maxLetters = addon.Constants.NOTE_TITLE_MAX_LENGTH,
+					countInvisibleLetters = true,
+				})
 			end,
-			acceptText = "Save",
-			maxLetters = addon.Constants.NOTE_TITLE_MAX_LENGTH,
-			countInvisibleLetters = true,
+			classic = function()
+				local renameDialogName = string.upper(addonName) .. "_RENAME"
+
+				StaticPopupDialogs[renameDialogName] = {
+					text = text,
+					button1 = _G.SAVE,
+					button2 = _G.CANCEL,
+					hasEditBox = 1,
+					maxLetters = addon.Constants.NOTE_TITLE_MAX_LENGTH,
+					OnAccept = function(self)
+						local newNoteTitle = self.editBox:GetText()
+						handleRename(newNoteTitle)
+					end,
+					EditBoxOnEnterPressed = function(self)
+						local newNoteTitle = self:GetParent().editBox:GetText()
+						handleRename(newNoteTitle)
+						self:GetParent():Hide()
+					end,
+					EditBoxOnEscapePressed = function(self)
+						self:GetParent():Hide()
+					end,
+					timeout = 0,
+					whileDead = 1,
+					hideOnEscape = 1,
+				}
+
+				StaticPopup_Show(renameDialogName)
+			end,
 		})
 
 		widget:SetValue(nil)
@@ -71,23 +107,49 @@ end
 
 local function BuildDeleteControl(container)
 	local function DeleteDropdownCallback(widget, event, note)
-		StaticPopup_ShowCustomGenericConfirmation({
-			text = "Confirm deletion of '" .. note.title .. "'",
-			callback = function()
-				local currentNoteId = addon.Database:GetCurrentNoteId()
+		local text = "Are you sure you want to delete '" .. note.title .. "'?"
 
-				addon.Database:DeleteNote(note.id)
+		local function handleDelete()
+			print("handleDelete ran")
+			local currentNoteId = addon.Database:GetCurrentNoteId()
 
-				if note.id == currentNoteId then
-					addon.Database:SetCurrentNoteId(nil)
-					addon.MainUi:UpdateTabs()
-				end
+			addon.Database:DeleteNote(note.id)
 
-				UpdateDropdownLists()
-				addon.MainUi:UpdateStatusText()
+			if note.id == currentNoteId then
+				addon.Database:SetCurrentNoteId(nil)
+				addon.MainUi:UpdateTabs()
+			end
+
+			UpdateDropdownLists()
+			addon.MainUi:UpdateStatusText()
+		end
+
+		addon.Utilities:RunCallbackForGameVersion({
+			mainline = function()
+				StaticPopup_ShowCustomGenericConfirmation({
+					text = text,
+					callback = handleDelete,
+					acceptText = _G.DELETE,
+					cancelText = _G.CANCEL,
+				})
 			end,
-			acceptText = "Delete",
-			cancelText = "Cancel",
+			classic = function()
+				local deleteDialogName = string.upper(addonName) .. "_DELETE"
+
+				StaticPopupDialogs[deleteDialogName] = {
+					text = text,
+					button1 = _G.DELETE,
+					button2 = _G.CANCEL,
+					OnAccept = handleDelete,
+					timeout = 0,
+					exclusive = 1,
+					whileDead = 1,
+					hideOnEscape = 1,
+					showAlert = 1,
+				}
+
+				StaticPopup_Show(deleteDialogName)
+			end,
 		})
 
 		widget:SetValue(nil)

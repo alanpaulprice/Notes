@@ -1,4 +1,4 @@
-## Interface: 110005
+## Interface: 110005, 11505
 ## Title: Notes
 ## Version: 2.0.0
 ## Author: alanpaulprice
@@ -6,7 +6,7 @@
 ## SavedVariables: NotesDB
 ## SavedVariablesPerCharacter:
 ## OptionalDeps: Ace3
-## IconTexture: Interface\ICONS\INV_Misc_PaperBundle02a.blp
+## IconTexture: Interface\Addons\Notes\INV_Misc_PaperBundle02a.blp
 
 embeds.xml
 
