@@ -4,13 +4,15 @@ local ListView = addon.ListView
 
 local AceGUI = LibStub("AceGUI-3.0")
 
+local scrollFrame = nil
+
 local function BuildEmptyMessage(container)
 	addon.Utilities:AddAceGuiLabelSpacer(container, 16)
 
 	local label = AceGUI:Create("Label")
 	label:SetFullWidth(true)
 	label:SetJustifyH("CENTER")
-	local font, _, fontFlags = iLabel.label:GetFontObject():GetFont()
+	local font, _, fontFlags = label.label:GetFontObject():GetFont()
 	label:SetFont(font, 16, fontFlags)
 	label:SetText("You do not have any notes.\n\nCreate one via the 'Manage' tab.")
 	container:AddChild(label)
@@ -22,12 +24,12 @@ local function BuildListItems()
 	local spacing = addon.Database:GetListViewSpacing()
 
 	if spacing > 0 then
-		addon.Utilities:AddAceGuiLabelSpacer(ListView.scrollFrame, spacing / 2)
+		addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, spacing / 2)
 	end
 
 	for index, note in ipairs(notes) do
 		if index > 1 and spacing > 0 then
-			addon.Utilities:AddAceGuiLabelSpacer(ListView.scrollFrame, spacing)
+			addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, spacing)
 		end
 
 		local iLabel = AceGUI:Create("InteractiveLabel")
@@ -45,7 +47,7 @@ local function BuildListItems()
 
 		iLabel:SetText(note.title)
 		iLabel:SetHighlight("interface\\buttons\\ui-listbox-highlight.blp") -- "interface\\buttons\\ui-listbox-highlight2.blp"
-		ListView.scrollFrame:AddChild(iLabel)
+		scrollFrame:AddChild(iLabel)
 
 		iLabel:SetCallback("OnClick", function()
 			addon.Database:SetCurrentNoteId(note.id)
@@ -56,13 +58,13 @@ local function BuildListItems()
 	end
 
 	if spacing > 0 then
-		addon.Utilities:AddAceGuiLabelSpacer(ListView.scrollFrame, spacing / 2)
+		addon.Utilities:AddAceGuiLabelSpacer(scrollFrame, spacing / 2)
 	end
 end
 
 local function RebuildListItems()
-	if ListView.scrollFrame and ListView.scrollFrame:IsShown() then
-		ListView.scrollFrame:ReleaseChildren()
+	if scrollFrame and scrollFrame:IsShown() then
+		scrollFrame:ReleaseChildren()
 		BuildListItems()
 	end
 end
@@ -74,9 +76,9 @@ local function BuildList(container)
 	simpleGroup:SetLayout("Fill")
 	container:AddChild(simpleGroup)
 
-	ListView.scrollFrame = AceGUI:Create("ScrollFrame")
-	ListView.scrollFrame:SetLayout("List")
-	simpleGroup:AddChild(ListView.scrollFrame)
+	scrollFrame = AceGUI:Create("ScrollFrame")
+	scrollFrame:SetLayout("List")
+	simpleGroup:AddChild(scrollFrame)
 
 	BuildListItems()
 end
