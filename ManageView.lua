@@ -16,14 +16,15 @@ local function UpdateDropdownLists()
 	ManageView.DeleteDropdown:SetList(dropdownList)
 end
 
-local function CreateNote()
-	local note = addon.Database:CreateNote(ManageView.CreateEditBox:GetText())
-	addon.Database:SetCurrentNoteId(note.id)
-	addon.MainUi:UpdateStatusText()
-	addon.MainUi:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT)
-end
-
 local function BuildCreateControl(container)
+	local function handleCreate()
+		local note = addon.Database:CreateNote(ManageView.CreateEditBox:GetText())
+		addon.Database:SetCurrentNoteId(note.id)
+		addon.MainUi:UpdateStatusText()
+		addon.MainUi:UpdateTabs()
+		addon.MainUi:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT)
+	end
+
 	ManageView.CreateGroup = AceGUI:Create("SimpleGroup")
 	ManageView.CreateGroup:SetLayout("List")
 	ManageView.CreateGroup:SetFullWidth(true)
@@ -33,7 +34,7 @@ local function BuildCreateControl(container)
 	ManageView.CreateEditBox:SetRelativeWidth(1)
 	ManageView.CreateEditBox:SetLabel("Create a note")
 	ManageView.CreateEditBox:DisableButton(true)
-	ManageView.CreateEditBox:SetCallback("OnEnterPressed", CreateNote)
+	ManageView.CreateEditBox:SetCallback("OnEnterPressed", handleCreate)
 	ManageView.CreateEditBox:SetMaxLetters(addon.Constants.NOTE_TITLE_MAX_LENGTH)
 	ManageView.CreateGroup:AddChild(ManageView.CreateEditBox)
 
@@ -42,7 +43,7 @@ local function BuildCreateControl(container)
 	ManageView.CreateButton = AceGUI:Create("Button")
 	ManageView.CreateButton:SetAutoWidth(true)
 	ManageView.CreateButton:SetText("Create")
-	ManageView.CreateButton:SetCallback("OnClick", CreateNote)
+	ManageView.CreateButton:SetCallback("OnClick", handleCreate)
 	ManageView.CreateGroup:AddChild(ManageView.CreateButton)
 end
 
