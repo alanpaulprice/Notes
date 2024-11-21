@@ -4,13 +4,17 @@ local MinimapButton = addon.MinimapButton
 
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
+local icon = nil
+
 function MinimapButton:SetHidden(hidden)
 	addon.Database:SetMinimapButtonHidden(hidden)
 
-	if hidden then
-		MinimapButton.Icon:Hide(addonName)
-	else
-		MinimapButton.Icon:Show(addonName)
+	if icon then
+		if hidden then
+			icon:Hide(addonName)
+		else
+			icon:Show(addonName)
+		end
 	end
 end
 
@@ -37,6 +41,6 @@ function MinimapButton:Initialize()
 		end,
 	})
 
-	MinimapButton.Icon = LibStub("LibDBIcon-1.0", true)
-	MinimapButton.Icon:Register(addonName, MinimapButton.Button, addon.Database:GetUnclonedMinimapButton())
+	icon = LibStub("LibDBIcon-1.0", true)
+	icon:Register(addonName, MinimapButton.Button, addon.Database:GetUnclonedMinimapButton())
 end
