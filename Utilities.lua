@@ -63,40 +63,6 @@ function Utilities:CheckType(input, ...)
 	end
 end
 
-function Utilities:CheckNumberIsWithinBounds(number, min, max)
-	self:CheckType(number, "number")
-	self:CheckType(min, "number", "nil")
-	self:CheckType(max, "number", "nil")
-
-	if (min and number < min) or (max and number > max) then
-		error(
-			"Number was not within bounds."
-				.. " Number: "
-				.. tostring(number)
-				.. ", Minimum: "
-				.. tostring(min)
-				.. ", Maximum: "
-				.. tostring(max)
-		)
-	end
-end
-
-function Utilities:ClampNumber(number, min, max)
-	self:CheckType(number, "number")
-	self:CheckType(min, "number", "nil")
-	self:CheckType(max, "number", "nil")
-
-	local result = number
-
-	if min and (number < min) then
-		result = min
-	elseif max and (number > max) then
-		number = max
-	end
-
-	return result
-end
-
 function Utilities:FilterNonNumericCharactersFromString(input)
 	self:CheckType(input, "string")
 
@@ -142,85 +108,6 @@ function Utilities:TableContainsValue(table, value)
 	end
 
 	return false
-end
-
-function Utilities:GetTableLength(input)
-	Utilities:CheckType(input, "table")
-
-	local count = 0
-
-	for _ in pairs(input) do
-		count = count + 1
-	end
-
-	return count
-end
-
-function Utilities:GetTableKeys(input)
-	Utilities:CheckType(input, "table")
-
-	local keys = {}
-
-	for key, _ in pairs(input) do
-		table.insert(keys, tostring(key))
-	end
-
-	return unpack(keys)
-end
-
-function Utilities:PrintMetaTableKeys(input, sorted)
-	Utilities:CheckType(input, "table")
-
-	local metatable = getmetatable(input)
-
-	if Utilities:GetTableLength(metatable) > 0 then
-		Utilities:PrintTableKeys(metatable, sorted, false)
-	else
-		print("The metatable has no keys.")
-	end
-end
-
-function Utilities:PrintTableKeys(input, sorted, printMetatable)
-	Utilities:CheckType(input, "table")
-
-	if Utilities:GetTableLength(input) > 0 then
-		local keys = { Utilities:GetTableKeys(input) }
-
-		if sorted ~= false then
-			table.sort(keys)
-		end
-
-		for _, value in pairs(keys) do
-			print(value)
-		end
-	else
-		print("The table has no keys.")
-	end
-
-	if printMetatable ~= false then
-		print("-----")
-		Utilities:PrintMetaTableKeys(input, sorted)
-	end
-end
-
-function Utilities:CreateInterfaceOptionsCheckButton(label, parent, onClick)
-	local checkButton = CreateFrame("CheckButton", nil, parent, "InterfaceOptionsCheckButtonTemplate")
-	checkButton:SetFrameStrata("MEDIUM")
-
-	checkButton:SetScript("OnClick", function(self)
-		local checked = self:GetChecked()
-		onClick(self, checked and true or false)
-		if checked then
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		else
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-		end
-	end)
-
-	checkButton.Text:SetText(label)
-	checkButton.Text:SetPoint("LEFT", checkButton, "RIGHT", 4, 0)
-
-	return checkButton
 end
 
 function Utilities:AddToInspector(data, strName)
