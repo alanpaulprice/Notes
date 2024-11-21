@@ -4,6 +4,9 @@ local ManageView = addon.ManageView
 
 local AceGUI = LibStub("AceGUI-3.0")
 
+local renameDropdown = nil
+local deleteDropdown = nil
+
 local function UpdateDropdownLists()
 	local dropdownList = {}
 	local notes = addon.Database:GetNotes()
@@ -12,39 +15,46 @@ local function UpdateDropdownLists()
 		dropdownList[note] = note.title
 	end
 
-	ManageView.RenameDropdown:SetList(dropdownList)
-	ManageView.DeleteDropdown:SetList(dropdownList)
+	if renameDropdown then
+		renameDropdown:SetList(dropdownList)
+	end
+
+	if deleteDropdown then
+		deleteDropdown:SetList(dropdownList)
+	end
 end
 
 local function BuildCreateControl(container)
-	local function handleCreate()
-		local note = addon.Database:CreateNote(ManageView.CreateEditBox:GetText())
+	local function handleCreate(newNoteTitle)
+		local note = addon.Database:CreateNote(newNoteTitle)
 		addon.Database:SetCurrentNoteId(note.id)
 		addon.MainUi:UpdateStatusText()
 		addon.MainUi:UpdateTabs()
 		addon.MainUi:ChangeView(addon.Constants.UI_VIEW_ENUM.EDIT)
 	end
 
-	ManageView.CreateGroup = AceGUI:Create("SimpleGroup")
-	ManageView.CreateGroup:SetLayout("List")
-	ManageView.CreateGroup:SetFullWidth(true)
-	container:AddChild(ManageView.CreateGroup)
+	local simpleGroup = AceGUI:Create("SimpleGroup")
+	simpleGroup:SetLayout("List")
+	simpleGroup:SetFullWidth(true)
+	container:AddChild(simpleGroup)
 
-	ManageView.CreateEditBox = AceGUI:Create("EditBox")
-	ManageView.CreateEditBox:SetRelativeWidth(1)
-	ManageView.CreateEditBox:SetLabel("Create a note")
-	ManageView.CreateEditBox:DisableButton(true)
-	ManageView.CreateEditBox:SetCallback("OnEnterPressed", handleCreate)
-	ManageView.CreateEditBox:SetMaxLetters(addon.Constants.NOTE_TITLE_MAX_LENGTH)
-	ManageView.CreateGroup:AddChild(ManageView.CreateEditBox)
+	local createEditBox = AceGUI:Create("EditBox")
+	createEditBox:SetRelativeWidth(1)
+	createEditBox:SetLabel("Create a note")
+	createEditBox:DisableButton(true)
+	createEditBox:SetCallback("OnEnterPressed", function(self)
+		handleCreate(self:GetText())
+	end)
+	createEditBox:SetMaxLetters(addon.Constants.NOTE_TITLE_MAX_LENGTH)
+	simpleGroup:AddChild(createEditBox)
 
-	addon.Utilities:AddAceGuiLabelSpacer(ManageView.CreateGroup, 2)
+	addon.Utilities:AddAceGuiLabelSpacer(simpleGroup, 2)
 
-	ManageView.CreateButton = AceGUI:Create("Button")
-	ManageView.CreateButton:SetAutoWidth(true)
-	ManageView.CreateButton:SetText("Create")
-	ManageView.CreateButton:SetCallback("OnClick", handleCreate)
-	ManageView.CreateGroup:AddChild(ManageView.CreateButton)
+	local createButton = AceGUI:Create("Button")
+	createButton:SetAutoWidth(true)
+	createButton:SetText("Create")
+	createButton:SetCallback("OnClick", handleCreate)
+	simpleGroup:AddChild(createButton)
 end
 
 local function BuildRenameControl(container)
@@ -100,10 +110,10 @@ local function BuildRenameControl(container)
 		widget:SetValue(nil)
 	end
 
-	ManageView.RenameDropdown = AceGUI:Create("Dropdown")
-	ManageView.RenameDropdown:SetLabel("Rename a note")
-	ManageView.RenameDropdown:SetCallback("OnValueChanged", RenameDropdownCallback)
-	container:AddChild(ManageView.RenameDropdown)
+	renameDropdown = AceGUI:Create("Dropdown")
+	renameDropdown:SetLabel("Rename a note")
+	renameDropdown:SetCallback("OnValueChanged", RenameDropdownCallback)
+	container:AddChild(renameDropdown)
 end
 
 local function BuildDeleteControl(container)
@@ -155,10 +165,10 @@ local function BuildDeleteControl(container)
 		widget:SetValue(nil)
 	end
 
-	ManageView.DeleteDropdown = AceGUI:Create("Dropdown")
-	ManageView.DeleteDropdown:SetLabel("Delete a note")
-	ManageView.DeleteDropdown:SetCallback("OnValueChanged", DeleteDropdownCallback)
-	container:AddChild(ManageView.DeleteDropdown)
+	deleteDropdown = AceGUI:Create("Dropdown")
+	deleteDropdown:SetLabel("Delete a note")
+	deleteDropdown:SetCallback("OnValueChanged", DeleteDropdownCallback)
+	container:AddChild(deleteDropdown)
 end
 
 function ManageView:Build(container)
