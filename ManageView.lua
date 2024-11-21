@@ -110,7 +110,6 @@ local function BuildDeleteControl(container)
 		local text = "Are you sure you want to delete '" .. note.title .. "'?"
 
 		local function handleDelete()
-			print("handleDelete ran")
 			local currentNoteId = addon.Database:GetCurrentNoteId()
 
 			addon.Database:DeleteNote(note.id)
