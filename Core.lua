@@ -1,6 +1,6 @@
 local addonName, addon = ...
 LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
-addon.DEBUG = true
+addon.DEBUG = false
 
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
