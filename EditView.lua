@@ -6,19 +6,13 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 local editBox = nil
 
-local function UpdateEditBoxText()
-	if editBox and editBox:IsShown() then
-		local note = addon.Database:GetCurrentNote()
-		editBox:SetText(note.body)
-	end
-end
-
 function EditView:Build(container)
 	editBox = AceGUI:Create("MultiLineEditBox")
 	editBox:SetLabel("")
 	editBox:DisableButton(true)
 	editBox:SetFullHeight(true)
 	editBox:SetFullWidth(true)
+	editBox:SetText(addon.Database:GetCurrentNote().body)
 	editBox.editBox:SetTextInsets(8, 8, 8, 8)
 	local _, _, fontFlags = editBox.editBox:GetFontObject():GetFont()
 	editBox.editBox:SetFont(
@@ -29,7 +23,6 @@ function EditView:Build(container)
 	editBox:SetCallback("OnTextChanged", function(_, _, text)
 		addon.Database:SetNoteBody(addon.Database:GetCurrentNoteId(), text)
 	end)
-	UpdateEditBoxText()
 	container:AddChild(editBox)
 end
 
