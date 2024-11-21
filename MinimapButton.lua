@@ -33,7 +33,7 @@ function MinimapButton:Initialize()
 
 			tooltip:AddLine(addonName)
 			tooltip:AddLine("|CFFFFFFFFLeft-click|r or |CFFFFFFFF/notes|r to toggle the main window.")
-			tooltip:AddLine("|CFFFFFFFFRight-click|r or |CFFFFFFFF/notes options|r to view the options.")
+			tooltip:AddLine("|CFFFFFFFFRight-click|r or |CFFFFFFFF/notes config|r to configure.")
 		end,
 	})
 
