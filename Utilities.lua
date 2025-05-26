@@ -78,6 +78,22 @@ function Utilities:FilterNonNumericCharactersFromString(input)
 	return result
 end
 
+function Utilities:ClampNumber(number, min, max)
+	self:CheckType(number, "number")
+	self:CheckType(min, "number", "nil")
+	self:CheckType(max, "number", "nil")
+
+	local result = number
+
+	if min and (number < min) then
+		result = min
+	elseif max and (number > max) then
+		number = max
+	end
+
+	return result
+end
+
 function Utilities:RoundNumber(number, numberOfPlaces, roundUpHalves)
 	self:CheckType(number, "number")
 	self:CheckType(numberOfPlaces, "number", "nil")
