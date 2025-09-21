@@ -53,7 +53,9 @@ local function BuildCreateControl(container)
 	local createButton = AceGUI:Create("Button")
 	createButton:SetAutoWidth(true)
 	createButton:SetText("Create")
-	createButton:SetCallback("OnClick", handleCreate)
+	createButton:SetCallback("OnClick", function()
+		handleCreate(createEditBox:GetText())
+	end)
 	simpleGroup:AddChild(createButton)
 end
 
